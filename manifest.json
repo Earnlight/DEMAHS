@@ -21,4 +21,15 @@
       "purpose": "any maskable"
     }
   ]
+  {
+  "name": "My Noegenesis",
+  "short_name": "Noegenesis",
+  "theme_color": "#1d1a0e",
+  "background_color": "#1d1a0e",
+  "display": "standalone",
+  "icons": [
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/favicon.png",          "sizes": "32x32",   "type": "image/png" }
+  ]
+}
 }
