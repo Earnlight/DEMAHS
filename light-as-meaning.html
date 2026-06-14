@@ -804,7 +804,7 @@ const ReaderState = (function () {
   book.addEventListener('click', e => {
     if (e.target.closest('button, a, input, [role="button"]')) return;
     const now = Date.now();
-    if (now - dtTime < 400 && Math.abs(e.clientX - dtX) < 50 && Math.abs(e.clientY - dtY) < 50) {
+    if (now - dtTime < 500 && Math.abs(e.clientX - dtX) < 50 && Math.abs(e.clientY - dtY) < 50) {
       dtTime = 0;
       if (isFS) exit(); else enter();
     } else {
@@ -1193,6 +1193,11 @@ const ReaderState = (function () {
   });
 
   // ── Long-press (touch + mouse) — opens the panel ──
+  // Track last touchend to block synthetic mousedown that DuckDuckGo fires ~300ms later;
+  // without this, mousedown re-starts the long-press timer, it fires 600ms later setting
+  // longPressFired=true, and the second tap's click is swallowed — killing double-tap.
+  let lastTouchEnd = 0;
+
   function startLongPress() {
     longPressTimer = setTimeout(() => {
       longPressFired = true;
@@ -1203,13 +1208,23 @@ const ReaderState = (function () {
   function cancelLongPress() {
     if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
   }
-  ribbon.addEventListener('touchstart',  startLongPress, { passive: true });
-  ribbon.addEventListener('mousedown',   startLongPress);
+
+  ribbon.addEventListener('touchstart', startLongPress, { passive: true });
   ['touchend','touchcancel','touchmove'].forEach(ev =>
-    ribbon.addEventListener(ev, cancelLongPress, { passive: true }));
+    ribbon.addEventListener(ev, () => {
+      if (ev === 'touchend') lastTouchEnd = Date.now();
+      cancelLongPress();
+    }, { passive: true }));
+
+  // Only use mousedown for genuine mouse (not synthetic post-touch events)
+  ribbon.addEventListener('mousedown', () => {
+    if (Date.now() - lastTouchEnd < 600) return; // skip synthetic
+    startLongPress();
+  });
   ['mouseup','mouseleave'].forEach(ev => ribbon.addEventListener(ev, cancelLongPress));
 
   // ── Tap: single = navigate to most recent; double = clear most recent bookmark ──
+  // 500ms window — generous enough for DuckDuckGo's slower click delivery
   ribbon.addEventListener('click', () => {
     if (longPressFired) { longPressFired = false; return; }
     if (tapTimer) {
@@ -1228,7 +1243,7 @@ const ReaderState = (function () {
           // No bookmarks — add one for current page
           addBookmark(ReaderState.getCurrent());
         }
-      }, 400);
+      }, 500);
     }
   });
 
