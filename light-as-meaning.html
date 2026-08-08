@@ -411,6 +411,39 @@
   .la-page-btn:disabled { opacity: 0.25; cursor: default; }
   .la-page-info { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); }
 
+
+  .bm-preview { font-family: 'Cormorant Garamond', serif; font-size: 0.76rem; font-style: italic; color: var(--text-dim); line-height: 1.4; padding-left: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* ── FIRST-VISIT INTRO OVERLAY ── */
+  #intro-overlay {
+    position: fixed; inset: 0; z-index: 10000;
+    background: rgba(13,10,4,0.97); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; opacity: 0; transition: opacity 0.5s;
+  }
+  #intro-overlay.visible { opacity: 1; }
+  #intro-overlay.gone    { display: none; }
+  #intro-panel { max-width: 600px; width: 100%; text-align: center; max-height: 90vh; overflow-y: auto; padding: 10px 4px 24px; }
+  #intro-panel::-webkit-scrollbar { width: 3px; }
+  #intro-panel::-webkit-scrollbar-thumb { background: var(--gold-dim, rgba(227,193,77,0.3)); border-radius: 2px; }
+  .intro-ornament  { color: var(--gold); font-size: 1rem; letter-spacing: 0.4em; margin-bottom: 0.6em; opacity: 0.7; }
+  .intro-title     { font-family: 'Cinzel', serif; font-size: clamp(1.1rem, 5vw, 1.8rem); font-weight: 600; color: var(--gold-light); letter-spacing: 0.06em; margin-bottom: 0.3em; }
+  .intro-divider   { width: 40%; height: 1px; background: linear-gradient(to right, transparent, var(--gold), transparent); margin: 0.8em auto; }
+  .intro-sub       { font-family: 'Cormorant Garamond', serif; font-size: clamp(0.85rem, 2.5vw, 1.05rem); color: var(--text-dim); font-style: italic; margin-bottom: 2em; letter-spacing: 0.05em; }
+  .intro-grid      { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin-bottom: 2em; text-align: left; }
+  .intro-feat      { background: var(--form-bg); border: 1px solid var(--form-border); border-radius: 4px; padding: 13px 13px 11px; }
+  .intro-feat-icon { font-family: 'Cinzel', serif; font-size: 0.9rem; color: var(--gold); margin-bottom: 6px; letter-spacing: 0.04em; }
+  .intro-feat-name { font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text); margin-bottom: 5px; }
+  .intro-feat-desc { font-family: 'Cormorant Garamond', serif; font-size: 0.8rem; color: var(--text-dim); line-height: 1.5; font-style: italic; }
+  #intro-dismiss {
+    background: var(--btn-bg); border: 1px solid var(--gold); color: var(--gold-light);
+    font-family: 'Cinzel', serif; font-size: clamp(0.58rem, 1.5vw, 0.72rem); letter-spacing: 0.22em;
+    text-transform: uppercase; padding: 13px 36px; border-radius: 3px; cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 22px rgba(227,193,77,0.12);
+  }
+  #intro-dismiss:hover { background: var(--btn-hover); box-shadow: 0 0 32px rgba(227,193,77,0.25); }
+
   #definition-bubble { position: fixed; z-index: 9999; max-width: 260px; background: var(--menu-bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); display: none; pointer-events: none; }
   #definition-bubble::before { content: ''; position: absolute; bottom: -7px; left: 50%; width: 12px; height: 12px; background: var(--menu-bg); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); transform: translateX(-50%) rotate(45deg); }
   #def-word { font-family: 'Cinzel', serif; font-size: 0.72rem; color: var(--gold-light); letter-spacing: 0.1em; margin-bottom: 4px; }
@@ -441,6 +474,7 @@
 <div id="hl-action">
   <button type="button" id="hl-btn-highlight" data-tip="Highlight selected text">✦ Highlight</button>
   <button type="button" id="hl-btn-share" data-tip="Share selected text">↑ Share</button>
+  <button type="button" id="hl-btn-copy" data-tip="Copy selected text">Copy</button>
 </div>
 
 <!-- Fullscreen pop-up bars -->
@@ -608,6 +642,100 @@
 </section>
 
 <script>
+// ══════════════════════════════════════════
+// AUTO PAGINATOR — paste your chapter text below; pages are created automatically.
+// Leave CHAPTER_TEXT empty to use manual page divs instead.
+// ══════════════════════════════════════════
+(function () {
+  // ── Edit these values for each chapter ────────────────────────────────────
+  const PAGE_HEADER   = 'Light As Meaning';  // shown at the top of every page
+  const CHAPTER_TITLE = 'Chapter IV';        // shown only on the first content page
+  const CHAPTER_TEXT  = `
+
+  `;  // ← paste your full chapter text here between the backticks
+  // ─────────────────────────────────────────────────────────────────────────
+
+  if (!CHAPTER_TEXT.trim()) return; // empty → use manual page divs
+
+  const book = document.getElementById('book');
+  if (!book) return;
+
+  // Remove existing content pages, keep the cover
+  Array.from(book.querySelectorAll('.page:not(.page-cover)')).forEach(p => p.remove());
+
+  // Split text on blank lines → paragraphs
+  const paras = CHAPTER_TEXT.trim().split(/\n{2,}/).map(s => s.trim()).filter(Boolean);
+  if (!paras.length) return;
+
+  // ── Measurement: create an invisible page to learn available body height ──
+  const probe = document.createElement('div'); probe.className = 'page active';
+  probe.style.cssText = 'position:absolute;inset:0;visibility:hidden;pointer-events:none;';
+  const probeInner  = document.createElement('div'); probeInner.className  = 'page-inner';
+  const probeHdr    = document.createElement('div'); probeHdr.className    = 'page-header'; probeHdr.textContent = PAGE_HEADER;
+  const probeBody   = document.createElement('div'); probeBody.className   = 'page-body';
+  probeInner.appendChild(probeHdr); probeInner.appendChild(probeBody);
+  probe.appendChild(probeInner); book.appendChild(probe);
+  const maxH = probeBody.clientHeight; // available height per page
+
+  // Seed first-page probe with the chapter title + ornament (they take space)
+  if (CHAPTER_TITLE) {
+    const t = document.createElement('div'); t.className = 'chapter-title';   t.textContent = CHAPTER_TITLE;
+    const o = document.createElement('div'); o.className = 'chapter-ornament'; o.textContent = '— ✦ —';
+    probeBody.appendChild(t); probeBody.appendChild(o);
+  }
+
+  // ── Distribute paragraphs across pages ──
+  const pages  = [];   // [{paras[], isFirst}]
+  let bucket   = [];
+  let isFirst  = true;
+
+  paras.forEach(text => {
+    const p = document.createElement('p'); p.textContent = text;
+    probeBody.appendChild(p);
+
+    const overflow = probeBody.scrollHeight > maxH;
+
+    if (overflow && bucket.length > 0) {
+      // This paragraph pushed over the limit — save current page, start new one
+      probeBody.removeChild(p);
+      pages.push({ paras: bucket, isFirst });
+      bucket  = [text];
+      isFirst = false;
+      probeBody.innerHTML = '';
+      const np = document.createElement('p'); np.textContent = text; probeBody.appendChild(np);
+    } else if (overflow) {
+      // Single paragraph already fills the page — commit it as its own page
+      pages.push({ paras: [text], isFirst });
+      bucket  = [];
+      isFirst = false;
+      probeBody.innerHTML = '';
+    } else {
+      bucket.push(text);
+    }
+  });
+  if (bucket.length) pages.push({ paras: bucket, isFirst });
+
+  book.removeChild(probe);
+
+  // ── Build actual page elements ──
+  pages.forEach(({ paras: ps, isFirst: first }) => {
+    const pageEl = document.createElement('div'); pageEl.className = 'page';
+    const inner  = document.createElement('div'); inner.className = 'page-inner';
+    const hdr    = document.createElement('div'); hdr.className = 'page-header'; hdr.textContent = PAGE_HEADER;
+    const body   = document.createElement('div'); body.className = 'page-body';
+
+    if (first && CHAPTER_TITLE) {
+      const t = document.createElement('div'); t.className = 'chapter-title';   t.textContent = CHAPTER_TITLE;
+      const o = document.createElement('div'); o.className = 'chapter-ornament'; o.textContent = '— ✦ —';
+      body.appendChild(t); body.appendChild(o);
+    }
+    ps.forEach(text => { const p = document.createElement('p'); p.textContent = text; body.appendChild(p); });
+
+    inner.appendChild(hdr); inner.appendChild(body);
+    pageEl.appendChild(inner); book.appendChild(pageEl);
+  });
+})();
+
 // ══════════════════════════════════════════
 // CHROME VISIBILITY
 // ══════════════════════════════════════════
@@ -958,6 +1086,27 @@ const ReaderState = (function () {
       if (text && window.__sharePassage) window.__sharePassage(text);
     });
   }
+  const copyBtn = document.getElementById('hl-btn-copy');
+  if (copyBtn) {
+    copyBtn.addEventListener('mousedown', e => e.preventDefault()); // keep selection alive
+    copyBtn.addEventListener('click', () => {
+      const sel  = window.getSelection();
+      const text = sel ? sel.toString().trim() : '';
+      if (!text) { hideAction(); return; }
+      hideAction();
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          if (window.__showToast) window.__showToast('Copied to clipboard');
+        }).catch(() => fallbackCopy(text));
+      } else { fallbackCopy(text); }
+    });
+    function fallbackCopy(text) {
+      const t = document.createElement('textarea'); t.value = text;
+      t.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(t);
+      t.focus(); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+      if (window.__showToast) window.__showToast('Copied to clipboard');
+    }
+  }
 
   function goToHighlight(h) {
     const target = h.spans && h.spans[0];
@@ -1279,8 +1428,9 @@ const ReaderState = (function () {
     catch { showToast('Could not copy'); }
     document.body.removeChild(t);
   }
-  // Exposed globally so the highlight IIFE and highlights menu can use it
+  // Exposed globally
   window.__sharePassage = sharePassage;
+  window.__showToast    = showToast;
 })();
 
 // ══════════════════════════════════════════
@@ -1518,11 +1668,33 @@ document.getElementById('public-toggle').addEventListener('change', function () 
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
     const btn = document.getElementById('submit-btn');
+
+    // ── Client-side limit: max 2 submissions per 24 hours per browser ──
+    const RL_KEY = 'noegenesis-form-submits-lam';
+    const MAX = 2, WINDOW_MS = 24 * 3600 * 1000;
+    let rl;
+    try { rl = JSON.parse(localStorage.getItem(RL_KEY)) || { count: 0, resetAt: 0 }; } catch { rl = { count: 0, resetAt: 0 }; }
+    if (Date.now() > rl.resetAt) { rl.count = 0; rl.resetAt = Date.now() + WINDOW_MS; }
+    if (rl.count >= MAX) {
+      msg.textContent = 'You have reached the daily message limit. Please try again tomorrow, or email earnlight@mynoegenesis.com directly.';
+      return;
+    }
+
     btn.textContent = 'Sending\u2026'; btn.disabled = true;
     try {
-      const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } });
-      if (res.ok) { msg.textContent = 'Your message has been received. Thank you.'; form.reset(); document.getElementById('public-value').value = 'No'; }
-      else { msg.textContent = 'Something went wrong. Please try again or email directly.'; }
+      const res  = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        rl.count++;
+        localStorage.setItem(RL_KEY, JSON.stringify(rl));
+        msg.textContent = 'Your message has been received. Thank you.';
+        form.reset(); document.getElementById('public-value').value = 'No';
+        if (rl.count >= MAX) msg.textContent += ' (You have reached today\u2019s message limit.)';
+      } else if (res.status === 429 || /limit|quota|exceed/i.test(JSON.stringify(data))) {
+        msg.textContent = 'The submission limit for this form has been reached. Please email earnlight@mynoegenesis.com directly.';
+      } else {
+        msg.textContent = 'Something went wrong. Please try again or email directly.';
+      }
     } catch { msg.textContent = 'Could not send. Please check your connection.'; }
     btn.textContent = 'Send \u2736'; btn.disabled = false;
   });
@@ -1639,6 +1811,34 @@ document.getElementById('public-toggle').addEventListener('change', function () 
 })();
 
 // ══════════════════════════════════════════
+// FIRST-VISIT INTRO OVERLAY
+// ══════════════════════════════════════════
+(function () {
+  const SEEN_KEY = 'noegenesis-intro-seen-lam';
+  const overlay  = document.getElementById('intro-overlay');
+  const dismiss  = document.getElementById('intro-dismiss');
+  if (!overlay) return;
+
+  if (!localStorage.getItem(SEEN_KEY)) {
+    // Small delay so the reader loads visibly beneath the overlay
+    requestAnimationFrame(() => overlay.classList.add('visible'));
+    document.body.style.overflow = 'hidden';
+  } else {
+    overlay.classList.add('gone');
+  }
+
+  function close() {
+    overlay.classList.remove('visible');
+    localStorage.setItem(SEEN_KEY, '1');
+    document.body.style.overflow = '';
+    setTimeout(() => overlay.classList.add('gone'), 500);
+  }
+
+  if (dismiss) dismiss.addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+})();
+
+// ══════════════════════════════════════════
 // TOOLTIP SYSTEM — floating hover box for all data-tip elements
 // ══════════════════════════════════════════
 (function () {
@@ -1700,5 +1900,48 @@ document.getElementById('public-toggle').addEventListener('change', function () 
     navigator.serviceWorker.register('/service-worker.js');
   }
 </script>
+
+<!-- ── FIRST-VISIT FEATURE GUIDE ── -->
+<div id="intro-overlay">
+  <div id="intro-panel">
+    <div class="intro-ornament">✦ ✦ ✦</div>
+    <div class="intro-title">Light As Meaning</div>
+    <div class="intro-divider"></div>
+    <div class="intro-sub">A guide to your reading experience</div>
+    <div class="intro-grid">
+      <div class="intro-feat">
+        <div class="intro-feat-icon">← →</div>
+        <div class="intro-feat-name">Navigate</div>
+        <div class="intro-feat-desc">Swipe left or right on the page, or tap the Prev / Next buttons in the bar below the reader</div>
+      </div>
+      <div class="intro-feat">
+        <div class="intro-feat-icon">⛶</div>
+        <div class="intro-feat-name">Fullscreen</div>
+        <div class="intro-feat-desc">Double-tap anywhere on the page, or press the button in the top-right corner of the reader</div>
+      </div>
+      <div class="intro-feat">
+        <div class="intro-feat-icon">🔖</div>
+        <div class="intro-feat-name">Bookmarks</div>
+        <div class="intro-feat-desc">Tap the gold ribbon to navigate to your most recent bookmark. Long-press to open your full bookmark list</div>
+      </div>
+      <div class="intro-feat">
+        <div class="intro-feat-icon">Find</div>
+        <div class="intro-feat-name">Search</div>
+        <div class="intro-feat-desc">Use the search bar above the reader to locate any word or phrase across all pages of this chapter</div>
+      </div>
+      <div class="intro-feat">
+        <div class="intro-feat-icon">✦</div>
+        <div class="intro-feat-name">Highlights</div>
+        <div class="intro-feat-desc">Select any passage — options to highlight, copy, or share it appear above your selection. Highlights are saved</div>
+      </div>
+      <div class="intro-feat">
+        <div class="intro-feat-icon">⇥</div>
+        <div class="intro-feat-name">Go to Page</div>
+        <div class="intro-feat-desc">Tap the page number in the reader bar, or use the "Go to Page" button below the reader to jump anywhere</div>
+      </div>
+    </div>
+    <button id="intro-dismiss">Begin Reading &ensp;✦</button>
+  </div>
+</div>
 </body>
 </html>
