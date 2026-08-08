@@ -418,10 +418,11 @@
   #intro-overlay {
     position: fixed; inset: 0; z-index: 10000;
     background: rgba(13,10,4,0.97); backdrop-filter: blur(8px);
-    display: flex; align-items: center; justify-content: center;
-    padding: 20px; opacity: 0; transition: opacity 0.5s;
+    display: none; align-items: center; justify-content: center;
+    padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.4s;
   }
-  #intro-overlay.visible { opacity: 1; }
+  #intro-overlay.active  { display: flex; }
+  #intro-overlay.visible { opacity: 1; pointer-events: auto; }
   #intro-overlay.gone    { display: none; }
   #intro-panel { max-width: 600px; width: 100%; text-align: center; max-height: 90vh; overflow-y: auto; padding: 10px 4px 24px; }
   #intro-panel::-webkit-scrollbar { width: 3px; }
@@ -640,6 +641,25 @@
   <div class="la-section-title">Latest Additions</div>
   <div id="la-list"></div>
 </section>
+
+<!-- ── FIRST-VISIT FEATURE GUIDE — must be before the script so getElementById finds it ── -->
+<div id="intro-overlay">
+  <div id="intro-panel">
+    <div class="intro-ornament">✦ ✦ ✦</div>
+    <div class="intro-title">Light As Meaning</div>
+    <div class="intro-divider"></div>
+    <div class="intro-sub">A guide to your reading experience</div>
+    <div class="intro-grid">
+      <div class="intro-feat"><div class="intro-feat-icon">← →</div><div class="intro-feat-name">Navigate</div><div class="intro-feat-desc">Swipe left or right on the page, or tap Prev / Next in the bar below the reader</div></div>
+      <div class="intro-feat"><div class="intro-feat-icon">⛶</div><div class="intro-feat-name">Fullscreen</div><div class="intro-feat-desc">Double-tap anywhere on the page, or press the button in the top-right corner of the reader</div></div>
+      <div class="intro-feat"><div class="intro-feat-icon">🔖</div><div class="intro-feat-name">Bookmarks</div><div class="intro-feat-desc">Tap the gold ribbon to go to your most recent bookmark. Long-press to open the full bookmark list</div></div>
+      <div class="intro-feat"><div class="intro-feat-icon">Find</div><div class="intro-feat-name">Search</div><div class="intro-feat-desc">Use the search bar above the reader to find any word or phrase across all pages</div></div>
+      <div class="intro-feat"><div class="intro-feat-icon">✦</div><div class="intro-feat-name">Highlights</div><div class="intro-feat-desc">Select any passage — highlight, copy, or share options appear above your selection</div></div>
+      <div class="intro-feat"><div class="intro-feat-icon">⇥</div><div class="intro-feat-name">Go to Page</div><div class="intro-feat-desc">Tap the page number in the reader bar, or use the Go to Page button below the reader</div></div>
+    </div>
+    <button id="intro-dismiss">Begin Reading &ensp;✦</button>
+  </div>
+</div>
 
 <script>
 // ══════════════════════════════════════════
@@ -1820,18 +1840,20 @@ document.getElementById('public-toggle').addEventListener('change', function () 
   if (!overlay) return;
 
   if (!localStorage.getItem(SEEN_KEY)) {
-    // Small delay so the reader loads visibly beneath the overlay
+    // First visit — make flex then fade in
+    overlay.classList.add('active');
     requestAnimationFrame(() => overlay.classList.add('visible'));
     document.body.style.overflow = 'hidden';
-  } else {
-    overlay.classList.add('gone');
   }
+  // If already seen, overlay stays display:none (default) — nothing to do
 
   function close() {
+    // Remove .visible first — pointer-events:none kicks in immediately,
+    // so the page becomes interactive again before the fade finishes
     overlay.classList.remove('visible');
     localStorage.setItem(SEEN_KEY, '1');
     document.body.style.overflow = '';
-    setTimeout(() => overlay.classList.add('gone'), 500);
+    setTimeout(() => overlay.classList.remove('active'), 400);
   }
 
   if (dismiss) dismiss.addEventListener('click', close);
@@ -1900,48 +1922,5 @@ document.getElementById('public-toggle').addEventListener('change', function () 
     navigator.serviceWorker.register('/service-worker.js');
   }
 </script>
-
-<!-- ── FIRST-VISIT FEATURE GUIDE ── -->
-<div id="intro-overlay">
-  <div id="intro-panel">
-    <div class="intro-ornament">✦ ✦ ✦</div>
-    <div class="intro-title">Light As Meaning</div>
-    <div class="intro-divider"></div>
-    <div class="intro-sub">A guide to your reading experience</div>
-    <div class="intro-grid">
-      <div class="intro-feat">
-        <div class="intro-feat-icon">← →</div>
-        <div class="intro-feat-name">Navigate</div>
-        <div class="intro-feat-desc">Swipe left or right on the page, or tap the Prev / Next buttons in the bar below the reader</div>
-      </div>
-      <div class="intro-feat">
-        <div class="intro-feat-icon">⛶</div>
-        <div class="intro-feat-name">Fullscreen</div>
-        <div class="intro-feat-desc">Double-tap anywhere on the page, or press the button in the top-right corner of the reader</div>
-      </div>
-      <div class="intro-feat">
-        <div class="intro-feat-icon">🔖</div>
-        <div class="intro-feat-name">Bookmarks</div>
-        <div class="intro-feat-desc">Tap the gold ribbon to navigate to your most recent bookmark. Long-press to open your full bookmark list</div>
-      </div>
-      <div class="intro-feat">
-        <div class="intro-feat-icon">Find</div>
-        <div class="intro-feat-name">Search</div>
-        <div class="intro-feat-desc">Use the search bar above the reader to locate any word or phrase across all pages of this chapter</div>
-      </div>
-      <div class="intro-feat">
-        <div class="intro-feat-icon">✦</div>
-        <div class="intro-feat-name">Highlights</div>
-        <div class="intro-feat-desc">Select any passage — options to highlight, copy, or share it appear above your selection. Highlights are saved</div>
-      </div>
-      <div class="intro-feat">
-        <div class="intro-feat-icon">⇥</div>
-        <div class="intro-feat-name">Go to Page</div>
-        <div class="intro-feat-desc">Tap the page number in the reader bar, or use the "Go to Page" button below the reader to jump anywhere</div>
-      </div>
-    </div>
-    <button id="intro-dismiss">Begin Reading &ensp;✦</button>
-  </div>
-</div>
 </body>
 </html>
