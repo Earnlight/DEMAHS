@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#1d1a0e">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>How To Build Your Light</title>
+<title>How To Build Light</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -564,7 +564,7 @@
         <div class="cover-border"></div>
         <div class="cover-content">
           <div class="cover-ornament">✦ ✦ ✦</div>
-          <div class="cover-title">How To Build Your Light</div>
+          <div class="cover-title">How To Build Light</div>
           <div class="cover-divider"></div>
           <div class="cover-author">By Hamza Earnlight</div>
           <div class="cover-summary">
@@ -576,7 +576,7 @@
       <!-- PAGE 1 -->
       <div class="page" data-page="1">
         <div class="page-inner">
-          <div class="page-header">How To Build Your Light</div>
+          <div class="page-header">How To Build Light</div>
           <div class="page-body">
             <div class="chapter-title">Chapter One</div>
             <div class="chapter-ornament">— ✦ —</div>
@@ -592,7 +592,7 @@
       <!-- PAGE 2 -->
       <div class="page" data-page="2">
         <div class="page-inner">
-          <div class="page-header">How To Build Your Light</div>
+          <div class="page-header">How To Build Light</div>
           <div class="page-body">
             <!-- EDIT YOUR TEXT BELOW -->
             <p>The story continues on this page.</p>
@@ -638,7 +638,7 @@
       <textarea id="c-message" name="message" required placeholder="Write your thoughts here…"></textarea>
       <div class="hint-drag">Tip: highlight a passage in the book and drag it here.</div>
     </div>
-    <input type="hidden" name="page" value="How To Build Your Light">
+    <input type="hidden" name="page" value="How To Build Light">
     <input type="hidden" id="public-value" name="make_public" value="No">
     <div class="public-row">
       <label class="toggle-wrap">
@@ -685,7 +685,7 @@
 <div id="intro-overlay">
   <div id="intro-panel">
     <div class="intro-ornament">✦ ✦ ✦</div>
-    <div class="intro-title">How To Build Your Light</div>
+    <div class="intro-title">How To Build Light</div>
     <div class="intro-divider"></div>
     <div class="intro-sub">A guide to your reading experience</div>
     <div class="intro-grid">
@@ -707,7 +707,7 @@
 // ══════════════════════════════════════════
 (function () {
   // ── Edit these values for each chapter ────────────────────────────────────
-  const PAGE_HEADER   = 'How To Build Your Light';  // shown at the top of every page
+  const PAGE_HEADER   = 'How To Build Light';  // shown at the top of every page
   const CHAPTER_TITLE = 'Chapter II';        // shown only on the first content page
   const CHAPTER_TEXT  = `
 **Step 1:** Remember truth often, any truth will do, and the ones closest to you are best.
@@ -973,7 +973,7 @@ const ReaderState = (function () {
 // ══════════════════════════════════════════
 (function () {
   const CURRENT_FILE = 'how-to-build-your-light.html';
-  const PAGE_TITLE    = 'How to Build Your Light';
+  const PAGE_TITLE    = 'How to Build Light';
   const LASTREAD_KEY  = 'noegenesis-lastread';
   const book = document.getElementById('book');
   if (!book) return;
@@ -1607,8 +1607,8 @@ const ReaderState = (function () {
   }
   async function sharePassage(text) {
     const payload = {
-      title: 'From \u201cHow To Build Your Light\u201d by Hamza Earnlight',
-      text: text + '\n\n\u2014 From \u201cHow To Build Your Light\u201d by Hamza Earnlight\nhttps://www.mynoegenesis.com',
+      title: 'From \u201cHow To Build Light\u201d by Hamza Earnlight',
+      text: text + '\n\n\u2014 From \u201cHow To Build Light\u201d by Hamza Earnlight\nhttps://www.mynoegenesis.com',
     };
     if (navigator.share) {
       try { await navigator.share(payload); return; }
