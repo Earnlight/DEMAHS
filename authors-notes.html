@@ -778,7 +778,7 @@
 // ══════════════════════════════════════════
 (function () {
   // ── Edit these values for each chapter ────────────────────────────────────
-  const PAGE_HEADER   = 'Author's Notes';  // shown at the top of every page
+  const PAGE_HEADER   = 'Author\'s Notes';  // shown at the top of every page
   const CHAPTER_TITLE = 'Chapter One';        // shown only on the first content page
   const CHAPTER_TEXT  = ``;  // ← paste your full chapter text here between the backticks
   // ─────────────────────────────────────────────────────────────────────────
@@ -1079,7 +1079,7 @@ const ReaderState = (function () {
 // ══════════════════════════════════════════
 (function () {
   const CURRENT_FILE = 'authors-notes.html';
-  const PAGE_TITLE    = 'Author's Notes';
+  const PAGE_TITLE    = 'Author\'s Notes';
   const LASTREAD_KEY  = 'noegenesis-lastread';
   const book = document.getElementById('book');
   if (!book) return;
@@ -1713,8 +1713,8 @@ const ReaderState = (function () {
   }
   async function sharePassage(text) {
     const payload = {
-      title: 'From \u201cAuthor's Notes\u201d by Lucius Earnlight',
-      text: text + '\n\n\u2014 From \u201cAuthor's Notes\u201d by Lucius Earnlight\nhttps://www.mynoegenesis.com',
+      title: 'From \u201cAuthor\'s Notes\u201d by Lucius Earnlight',
+      text: text + '\n\n\u2014 From \u201cAuthor\'s Notes\u201d by Lucius Earnlight\nhttps://www.mynoegenesis.com',
     };
     if (navigator.share) {
       try { await navigator.share(payload); return; }
