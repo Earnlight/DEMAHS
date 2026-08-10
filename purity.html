@@ -922,6 +922,36 @@ const ReaderState = (function () {
 })();
 
 // ══════════════════════════════════════════
+// CONTINUE READING — remembers this book's furthest position for the library page,
+// and resumes from it when opened via "<file>.html?resume=1"
+// ══════════════════════════════════════════
+(function () {
+  const CURRENT_FILE = 'purity.html';
+  const PAGE_TITLE    = 'Purity';
+  const LASTREAD_KEY  = 'noegenesis-lastread';
+  const book = document.getElementById('book');
+  if (!book) return;
+  const totalContent = book.querySelectorAll('.page').length - 1;
+
+  function record() {
+    const activeEl = book.querySelector('.page.active');
+    const idx = activeEl ? parseInt(activeEl.getAttribute('data-page'), 10) : NaN;
+    if (isNaN(idx) || idx <= 0) return;
+    try {
+      localStorage.setItem(LASTREAD_KEY, JSON.stringify({ file: CURRENT_FILE, title: PAGE_TITLE, page: idx, total: totalContent, ts: Date.now() }));
+    } catch {}
+  }
+  new MutationObserver(record).observe(book, { attributes: true, attributeFilter: ['class'], subtree: true });
+
+  if (/[?&]resume=1\b/.test(location.search)) {
+    try {
+      const rec = JSON.parse(localStorage.getItem(LASTREAD_KEY));
+      if (rec && rec.file === CURRENT_FILE && rec.page > 0) ReaderState.jumpToPage(rec.page);
+    } catch {}
+  }
+})();
+
+// ══════════════════════════════════════════
 // FULLSCREEN
 // ══════════════════════════════════════════
 (function () {

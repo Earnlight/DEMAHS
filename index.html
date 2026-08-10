@@ -357,6 +357,27 @@
     .contact-links { flex-direction: column; align-items: stretch; }
     .contact-btn { justify-content: center; }
   }
+
+  /* ── CONTINUE READING — shown only when a saved reading position exists ── */
+  #continue-reading { max-width: 1100px; margin: 0 auto clamp(28px, 4vw, 44px); padding: 0 clamp(20px, 5vw, 48px); }
+  .continue-btn {
+    display: flex; align-items: center; gap: 18px;
+    padding: clamp(16px, 2.6vw, 22px) clamp(20px, 3.4vw, 28px);
+    background: linear-gradient(135deg, rgba(227,193,77,0.16) 0%, rgba(88,70,18,0.55) 60%, rgba(29,26,14,0.75) 100%);
+    border: 1px solid rgba(227,193,77,0.5); border-radius: 5px; text-decoration: none;
+    position: relative; overflow: hidden;
+    box-shadow: 0 6px 26px rgba(0,0,0,0.45), 0 0 0 1px rgba(227,193,77,0.06);
+    transition: border-color 0.3s, transform 0.25s, box-shadow 0.3s;
+  }
+  .continue-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(120deg, rgba(255,255,255,0.08), transparent 40%); pointer-events: none; }
+  .continue-btn:hover { border-color: rgba(227,193,77,0.85); transform: translateY(-2px); box-shadow: 0 10px 34px rgba(0,0,0,0.5), 0 0 24px rgba(227,193,77,0.15); }
+  .cr-icon { font-size: clamp(1.1rem, 2.6vw, 1.5rem); color: var(--gold); flex-shrink: 0; position: relative; z-index: 1; }
+  .cr-text { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; position: relative; z-index: 1; }
+  .cr-label { font-family: 'Cinzel', serif; font-size: clamp(0.46rem, 1.1vw, 0.58rem); letter-spacing: 0.3em; text-transform: uppercase; color: rgba(227,193,77,0.65); }
+  .cr-title { font-family: 'Cinzel', serif; font-size: clamp(0.95rem, 2.4vw, 1.25rem); font-weight: 600; color: var(--gold-light); letter-spacing: 0.03em; }
+  .cr-progress { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(0.72rem, 1.6vw, 0.85rem); color: rgba(227,193,77,0.6); }
+  .cr-arrow { font-size: 1.1rem; color: var(--gold); flex-shrink: 0; transition: transform 0.25s; position: relative; z-index: 1; }
+  .continue-btn:hover .cr-arrow { transform: translateX(5px); }
 </style>
 </head>
 <body>
@@ -369,6 +390,19 @@
   <div class="header-byline">An ongoing work intended for reading pleasure</div>
  <div class="header-byline">Discovery leads me to Express through a Medium my Artistry facilitating a Heightened Self</div>
 </header>
+
+<!-- Continue Reading — populated by JS below only when a saved position exists -->
+<div id="continue-reading" style="display:none">
+  <a href="#" id="continue-reading-link" class="continue-btn">
+    <span class="cr-icon">&#10022;</span>
+    <span class="cr-text">
+      <span class="cr-label">Continue Reading</span>
+      <span class="cr-title" id="continue-reading-title"></span>
+      <span class="cr-progress" id="continue-reading-progress"></span>
+    </span>
+    <span class="cr-arrow">&rarr;</span>
+  </a>
+</div>
 
 <main class="library">
   <p class="section-label">Select a chapter to begin reading</p>
@@ -619,6 +653,25 @@
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js');
   }
+</script>
+
+<script>
+  (function () {
+    let rec;
+    try { rec = JSON.parse(localStorage.getItem('noegenesis-lastread')); } catch { rec = null; }
+    if (!rec || !rec.file || !(rec.page > 0)) return;
+
+    const row   = document.getElementById('continue-reading');
+    const link  = document.getElementById('continue-reading-link');
+    const title = document.getElementById('continue-reading-title');
+    const prog  = document.getElementById('continue-reading-progress');
+    if (!row || !link || !title || !prog) return;
+
+    link.href = rec.file + '?resume=1';
+    title.textContent = rec.title || rec.file;
+    prog.textContent = rec.total > 0 ? 'Page ' + rec.page + ' of ' + rec.total : 'Page ' + rec.page;
+    row.style.display = 'block';
+  })();
 </script>
 
 </body>
