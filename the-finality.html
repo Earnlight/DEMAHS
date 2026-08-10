@@ -726,6 +726,16 @@
   </form>
 </section>
 
+<!-- Next chapter — closing call-to-action -->
+<div id="next-chapter-row">
+  <a href="paradise.html" id="next-chapter-btn" data-tip="Continue to Paradise">
+    <span class="ncb-text">
+      <span class="ncb-label">Next Chapter</span>
+      <span class="ncb-title">Paradise</span>
+    </span>
+    <span class="ncb-arrow">→</span>
+  </a>
+</div>
 
 <div id="comments-display"></div>
 
@@ -2091,36 +2101,6 @@ document.getElementById('public-toggle').addEventListener('change', function () 
   }
 
   renderPage(0);
-})();
-
-// ══════════════════════════════════════════
-// FIRST-VISIT INTRO OVERLAY
-// ══════════════════════════════════════════
-(function () {
-  const SEEN_KEY = 'noegenesis-intro-seen-the-finality';
-  const overlay  = document.getElementById('intro-overlay');
-  const dismiss  = document.getElementById('intro-dismiss');
-  if (!overlay) return;
-
-  if (!localStorage.getItem(SEEN_KEY)) {
-    // First visit — make flex then fade in
-    overlay.classList.add('active');
-    requestAnimationFrame(() => overlay.classList.add('visible'));
-    document.body.style.overflow = 'hidden';
-  }
-  // If already seen, overlay stays display:none (default) — nothing to do
-
-  function close() {
-    // Remove .visible first — pointer-events:none kicks in immediately,
-    // so the page becomes interactive again before the fade finishes
-    overlay.classList.remove('visible');
-    localStorage.setItem(SEEN_KEY, '1');
-    document.body.style.overflow = '';
-    setTimeout(() => overlay.classList.remove('active'), 400);
-  }
-
-  if (dismiss) dismiss.addEventListener('click', close);
-  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
 })();
 
 // ══════════════════════════════════════════

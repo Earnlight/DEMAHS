@@ -8,7 +8,24 @@
 <meta name="theme-color" content="#1d1a0e">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Advice</title>
+<title>Weight</title>
+<meta name="description" content="INPUT">
+
+<!-- Open Graph -->
+<meta property="og:type" content="book">
+<meta property="og:title" content="Weight">
+<meta property="og:description" content="INPUT">
+<meta property="og:url" content="https://www.demahs.com/weight.html">
+<meta property="og:image" content="https://www.demahs.com/android-chrome-512x512.png">
+<meta property="og:site_name" content="The DEMAHS — Lucius Earnlight">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Weight">
+<meta name="twitter:description" content="INPUT">
+<meta name="twitter:image" content="https://www.demahs.com/android-chrome-512x512.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,6 +42,7 @@
     --form-input-text: #f5dd8c; --form-heading: rgba(227,193,77,0.62);
     --home-color: rgba(227,193,77,0.66); --frame: rgba(227,193,77,0.5);
     --frame-soft: rgba(227,193,77,0.2); --menu-bg: #241e0d;
+    --reader-font-scale: 1;
   }
 
   [data-theme="dark"] .page:not(.page-cover) {
@@ -67,6 +85,7 @@
   body.reader-fullscreen #search-bar,
   body.reader-fullscreen #search-nav,
   body.reader-fullscreen #controls,
+  body.reader-fullscreen #reader-toolbar,
   body.reader-fullscreen #goto-page-row,
   body.reader-fullscreen #comment-section,
   body.reader-fullscreen #comments-display,
@@ -182,6 +201,39 @@
   #search-nav button:hover { background: var(--btn-hover); }
   #search-count { font-family: 'Cinzel', serif; font-size: clamp(0.45rem, 1.1vw, 0.58rem); color: var(--text-dim); letter-spacing: 0.1em; white-space: nowrap; }
 
+  /* ── SLIM READING-PROGRESS BAR — persistent thin line at the very top of the viewport ── */
+  #reading-progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%; z-index: 10050;
+    background: linear-gradient(to right, var(--gold), var(--gold-light));
+    box-shadow: 0 0 8px rgba(227,193,77,0.55);
+    transition: width 0.4s ease; pointer-events: none;
+  }
+
+  /* ── READER TOOLBAR — reading time · progress · font-size controls ── */
+  #reader-toolbar {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+    padding: 7px 14px; width: min(640px, 88vw); margin-bottom: 12px;
+  }
+  .rt-item { display: flex; align-items: center; gap: 6px; font-family: 'Cinzel', serif; font-size: clamp(0.46rem, 1.15vw, 0.6rem); letter-spacing: 0.1em; color: var(--text); text-transform: uppercase; white-space: nowrap; }
+  .rt-icon { color: var(--gold); font-size: 0.95em; }
+  .rt-progress-wrap { display: flex; align-items: center; gap: 8px; flex: 1 1 140px; min-width: 100px; }
+  .rt-track { flex: 1; height: 5px; border-radius: 3px; background: rgba(227,193,77,0.14); border: 1px solid var(--border); overflow: hidden; }
+  .rt-fill { height: 100%; width: 0%; background: linear-gradient(to right, var(--gold), var(--gold-light)); border-radius: 3px; transition: width 0.4s ease; }
+  .rt-progress-text { font-family: 'Cinzel', serif; font-size: clamp(0.44rem, 1.1vw, 0.56rem); letter-spacing: 0.08em; color: var(--text-dim); min-width: 2.6em; text-align: right; }
+  .rt-font-controls { display: flex; align-items: center; gap: 6px; }
+  .rt-font-controls button {
+    background: var(--btn-bg); border: 1px solid var(--border); color: var(--gold);
+    font-family: 'Cinzel', serif; letter-spacing: 0.05em; border-radius: 3px; cursor: pointer;
+    padding: 3px 9px; line-height: 1; transition: background 0.2s, border-color 0.2s, opacity 0.2s;
+  }
+  .rt-font-controls button:first-child { font-size: 0.62rem; }
+  .rt-font-controls button:last-child { font-size: 0.82rem; }
+  .rt-font-controls button:hover { background: var(--btn-hover); border-color: var(--gold); }
+  .rt-font-controls button:disabled { opacity: 0.28; cursor: default; }
+  #font-size-pct { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.08em; color: var(--text-dim); min-width: 2.6em; text-align: center; }
+  @media (max-width: 600px) { #reader-toolbar { width: 88vw; gap: 10px 16px; } }
+
   /* ── BOOK ── */
   #book-container { position: relative; width: min(640px, 88vw); margin-top: 16px; overflow: visible; }
   #book-scene { width: 100%; perspective: 2500px; }
@@ -218,7 +270,7 @@
     flex: 1; display: flex; flex-direction: column; position: relative; z-index: 2; overflow: hidden;
   }
   .page-header { font-family: 'Cinzel', serif; font-size: max(0.5rem, 2.1cqi); letter-spacing: 0.2em; color: var(--ink-light); text-transform: uppercase; border-bottom: 1px solid var(--paper-dark); padding-bottom: 0.6em; margin-bottom: 1.2em; text-align: center; }
-  .page-body { flex: 1; font-size: max(0.72rem, 2.5cqi); line-height: 1.72; color: var(--ink); font-weight: 300; text-align: justify; hyphens: auto; overflow-y: auto; }
+  .page-body { flex: 1; font-size: calc(max(0.72rem, 2.5cqi) * var(--reader-font-scale)); line-height: 1.72; color: var(--ink); font-weight: 300; text-align: justify; hyphens: auto; overflow-y: auto; }
   .page-body p + p { margin-top: 0.9em; text-indent: 1.5em; }
   .page-body strong, .page-body b { font-weight: 600; }
   .page-body em, .page-body i { font-style: italic; }
@@ -491,6 +543,9 @@
 </head>
 <body>
 
+<!-- Persistent thin reading-progress line at the very top of the viewport -->
+<div id="reading-progress-bar" role="progressbar" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+
 <!-- Fixed top-left library link -->
 <a href="index.html" id="home-btn" data-tip="Back to library">← Library</a>
 
@@ -534,6 +589,22 @@
   <button id="search-next-btn" data-tip="Next match">Next →</button>
 </div>
 
+<!-- Reading time · page progress · font-size controls -->
+<div id="reader-toolbar">
+  <div class="rt-item" data-tip="Estimated reading time for the whole book">
+    <span class="rt-icon">◷</span><span id="reading-time-text">— min read</span>
+  </div>
+  <div class="rt-progress-wrap" data-tip="Your progress through the book">
+    <div class="rt-track"><div class="rt-fill" id="rt-fill"></div></div>
+    <span class="rt-progress-text" id="rt-progress-text">0%</span>
+  </div>
+  <div class="rt-font-controls" role="group" aria-label="Text size">
+    <button type="button" id="font-dec-btn" aria-label="Decrease text size" data-tip="Smaller text">A−</button>
+    <span id="font-size-pct">100%</span>
+    <button type="button" id="font-inc-btn" aria-label="Increase text size" data-tip="Larger text">A+</button>
+  </div>
+</div>
+
 <div id="book-container">
   <div id="book-scene">
     <div id="book">
@@ -564,11 +635,11 @@
         <div class="cover-border"></div>
         <div class="cover-content">
           <div class="cover-ornament">✦ ✦ ✦</div>
-          <div class="cover-title">Advice</div>
+          <div class="cover-title">Weight</div>
           <div class="cover-divider"></div>
           <div class="cover-author">By Lucius Earnlight</div>
           <div class="cover-summary">
-            <p>Light is the greatest form of existence. Here is a succint explanation on how to generate and refine your light to be potent.</p>
+            <p>INPUT</p>
           </div>
         </div>
       </div>
@@ -576,7 +647,7 @@
       <!-- PAGE 1 -->
       <div class="page" data-page="1">
         <div class="page-inner">
-          <div class="page-header">Advice</div>
+          <div class="page-header">Weight</div>
           <div class="page-body">
             <div class="chapter-title">Chapter One</div>
             <div class="chapter-ornament">— ✦ —</div>
@@ -592,7 +663,7 @@
       <!-- PAGE 2 -->
       <div class="page" data-page="2">
         <div class="page-inner">
-          <div class="page-header">Advice</div>
+          <div class="page-header">Weight</div>
           <div class="page-body">
             <!-- EDIT YOUR TEXT BELOW -->
             <p>The story continues on this page.</p>
@@ -638,7 +709,7 @@
       <textarea id="c-message" name="message" required placeholder="Write your thoughts here…"></textarea>
       <div class="hint-drag">Tip: highlight a passage in the book and drag it here.</div>
     </div>
-    <input type="hidden" name="page" value="Advice">
+    <input type="hidden" name="page" value="Weight">
     <input type="hidden" id="public-value" name="make_public" value="No">
     <div class="public-row">
       <label class="toggle-wrap">
@@ -657,10 +728,10 @@
 
 <!-- Next chapter — closing call-to-action -->
 <div id="next-chapter-row">
-  <a href="the-continuum.html" id="next-chapter-btn" data-tip="Continue to The Continuum">
+  <a href="hierarchy.html" id="next-chapter-btn" data-tip="Continue to Hierarchy">
     <span class="ncb-text">
       <span class="ncb-label">Next Chapter</span>
-      <span class="ncb-title">The Continuum</span>
+      <span class="ncb-title">Hierarchy</span>
     </span>
     <span class="ncb-arrow">→</span>
   </a>
@@ -685,7 +756,7 @@
 <div id="intro-overlay">
   <div id="intro-panel">
     <div class="intro-ornament">✦ ✦ ✦</div>
-    <div class="intro-title">Advice</div>
+    <div class="intro-title">Weight</div>
     <div class="intro-divider"></div>
     <div class="intro-sub">A guide to your reading experience</div>
     <div class="intro-grid">
@@ -707,28 +778,9 @@
 // ══════════════════════════════════════════
 (function () {
   // ── Edit these values for each chapter ────────────────────────────────────
-  const PAGE_HEADER   = 'Advice';  // shown at the top of every page
-  const CHAPTER_TITLE = 'Chapter III';        // shown only on the first content page
-  const CHAPTER_TEXT  = `
-**Step 1:** Remember truth often, any truth will do, and the ones closest to you are best.
-
-**Step 2:** Using your remembrances of the truth, ensure your thoughts, being and doings are honourable. Deviation from truth results in stress, adherence to it results in peace.
-
-**Step 3:** From your honourable thoughts, being and doings, you earn of realities that contextually surround the actions you have taken, rendering you more knowledgeable about the realities you partake in and more importantly, your earnings facilitate your evolution from an inferior position to a superior position.
-
-**Step 4:** Derive from the specific truth/earnings you are observing (this is also a smaller way to build light in itself. The complete method I am sharing here is a more advanced version that builds your light greater, stronger and to be more potent). For example, a derivation from the truth of the sun is that the rays are hot.
-
-**Step 5:** Extrapolate from what you derived. This is where you have complete autonomy, and have fun—For example, a derivation from the truth of the sky could be the sky is blue. The extrapolations from this are numerable, e.g. all who know the colour blue, know that the sky is blue, thus rendering you increased in knowledge without external input. Another extrapolation could be that the colour blue’s meaning signifies what encompasses the earth. Another extrapolation could be that the sky’s colour is permanently blue. This is a very rudimentary example but it illustrates my point well—the truth of something always has a possible derivations that are sourced from it. The extrapolations of the derivations from truth are infinite, while limited to our capabilities.
-
-The extrapolations are what we do in private, and they can be extremely fun, it’s literally building your internal understanding and contributing to building your light. A ramification of extrapolating derivations consistently is vilification through xenophobia and agnostophobia on the part of the observer. Which leads me to my next step.
-
-**Step 6:** Those who extrapolate will be observed to be different than the ‘norm’, whatever the norm may be. This will lead to vilification by default, as the person is keeping a secret from others, and in a world where information is rightfully public (aside from that which is rightfully private (determined to be rightful by whether or not we have shame in the pursuit of knowledge of the secret, and honour while pursuing it)), action will need to be taken to either a) intentionally alleviate the concerns of those who observe the one who is extrapolating or b) accommodate internally for the inevitable public revelation of what you are in relation to their concern. The former requires active input, the latter requires internal preparation. Vindicate yourself from the inevitable vilification of secrecy.
-
-**Step 7:** The above actions repeatedly carried out generate interest in the form of giving and receiving. You will eventually be able to input x amount of effort, and you will receive x+y quality of responses, with y being greater than x as it is the interest generated from the giving of x. This is a concrete guarantee. The interest generated in society as a result of the above actions leads to interactions and transactions where light, purity, honour, integrity, wisdom, trust, love etc are all foundational and observed by the interactors, resulting in satisfaction abound and happiness encompassing both the one carrying out the actions and those near them.
-
-Above is detailed what one must undertake to generate light. As a result of internal generation of light, communal growth comes around, which carries the effect over from internal to external settings. The interest generated from efforts is what enables society to grow and adapt to their supremacy. The actions up to step 6 are responsible for internal generation of light. Step 7 is the natural evolution from private growth to public growth. Light generates automatically as a result of this process, we are built to develop light, if we can but understand how, and master the way.
-
-Light, is everything.`;  // ← paste your full chapter text here between the backticks
+  const PAGE_HEADER   = 'Weight';  // shown at the top of every page
+  const CHAPTER_TITLE = 'Chapter One';        // shown only on the first content page
+  const CHAPTER_TEXT  = ``;  // ← paste your full chapter text here between the backticks
   // ─────────────────────────────────────────────────────────────────────────
 
   if (!CHAPTER_TEXT.trim()) return; // empty → use manual page divs
@@ -843,6 +895,52 @@ document.documentElement.setAttribute('data-theme', 'dark');
 })();
 
 // ══════════════════════════════════════════
+// ESTIMATED READING TIME — counts words across every content page
+// ══════════════════════════════════════════
+(function () {
+  const WPM = 220;
+  const el = document.getElementById('reading-time-text');
+  if (!el) return;
+  const words = Array.from(document.querySelectorAll('.page-body'))
+    .reduce((sum, body) => sum + ((body.textContent.match(/\S+/g) || []).length), 0);
+  const minutes = Math.max(1, Math.round(words / WPM));
+  el.textContent = minutes + ' min read';
+})();
+
+// ══════════════════════════════════════════
+// FONT SIZE CONTROLS — scales the page text, remembers the choice
+// ══════════════════════════════════════════
+(function () {
+  const FONT_KEY = 'noegenesis-font-scale-weight';
+  const steps = [0.85, 0.925, 1, 1.1, 1.2, 1.35, 1.5];
+  const root = document.documentElement;
+  const pctEl = document.getElementById('font-size-pct');
+  const decBtn = document.getElementById('font-dec-btn');
+  const incBtn = document.getElementById('font-inc-btn');
+  if (!decBtn || !incBtn) return;
+
+  let idx = steps.indexOf(1);
+  const saved = parseFloat(localStorage.getItem(FONT_KEY));
+  if (!isNaN(saved)) {
+    idx = steps.reduce((best, val, i) =>
+      Math.abs(val - saved) < Math.abs(steps[best] - saved) ? i : best, idx);
+  }
+
+  function apply() {
+    const scale = steps[idx];
+    root.style.setProperty('--reader-font-scale', scale);
+    if (pctEl) pctEl.textContent = Math.round(scale * 100) + '%';
+    decBtn.disabled = idx === 0;
+    incBtn.disabled = idx === steps.length - 1;
+    localStorage.setItem(FONT_KEY, String(scale));
+  }
+
+  decBtn.addEventListener('click', () => { if (idx > 0) { idx--; apply(); } });
+  incBtn.addEventListener('click', () => { if (idx < steps.length - 1) { idx++; apply(); } });
+  apply();
+})();
+
+// ══════════════════════════════════════════
 // READER
 // ══════════════════════════════════════════
 const ReaderState = (function () {
@@ -878,6 +976,14 @@ const ReaderState = (function () {
     // Go-to-page button always shows fresh
     const gp = document.getElementById('goto-page-btn');
     if (gp && !gp.querySelector('input')) { gp.textContent = 'Go to Page'; }
+    // Progress tracker — slim top bar + toolbar fill/label
+    const pct = totalContent > 0 ? Math.round((current / totalContent) * 100) : 0;
+    const slimBar = document.getElementById('reading-progress-bar');
+    if (slimBar) { slimBar.style.width = pct + '%'; slimBar.setAttribute('aria-valuenow', pct); }
+    const rtFill = document.getElementById('rt-fill');
+    if (rtFill) rtFill.style.width = pct + '%';
+    const rtPct = document.getElementById('rt-progress-text');
+    if (rtPct) rtPct.textContent = pct + '%';
   }
 
   function goTo(index, direction) {
@@ -972,8 +1078,8 @@ const ReaderState = (function () {
 // and resumes from it when opened via "<file>.html?resume=1"
 // ══════════════════════════════════════════
 (function () {
-  const CURRENT_FILE = 'advice.html';
-  const PAGE_TITLE    = 'Advice';
+  const CURRENT_FILE = 'weight.html';
+  const PAGE_TITLE    = 'Weight';
   const LASTREAD_KEY  = 'noegenesis-lastread';
   const book = document.getElementById('book');
   if (!book) return;
@@ -1052,7 +1158,7 @@ const ReaderState = (function () {
 // HIGHLIGHT FEATURE — fixed: wraps per text-node, text never disappears
 // ══════════════════════════════════════════
 (function () {
-  const HL_KEY  = 'noegenesis-highlights-lam';
+  const HL_KEY  = 'noegenesis-highlights-weight';
   const action  = document.getElementById('hl-action');
   const actBtn   = document.getElementById('hl-btn-highlight');
   const shareBtn = document.getElementById('hl-btn-share');
@@ -1344,7 +1450,7 @@ const ReaderState = (function () {
 // BOOKMARK — multi-page bookmarks with names and text previews
 // ══════════════════════════════════════════
 (function () {
-  const STORAGE_KEY = 'noegenesis-bookmarks-v2-lam';
+  const STORAGE_KEY = 'noegenesis-bookmarks-v2-weight';
   const ribbon      = document.getElementById('bookmark-ribbon');
   const ribbonNum   = document.getElementById('bm-num');
   const bmMenu      = document.getElementById('bookmark-menu');
@@ -1364,7 +1470,7 @@ const ReaderState = (function () {
 
   // Migrate from old single-bookmark format
   (function migrate() {
-    const oldKey = 'noegenesis-bookmark-lam';
+    const oldKey = 'noegenesis-bookmark-weight';
     const oldVal = localStorage.getItem(oldKey);
     if (oldVal && !localStorage.getItem(STORAGE_KEY)) {
       const p = parseInt(oldVal, 10);
@@ -1607,8 +1713,8 @@ const ReaderState = (function () {
   }
   async function sharePassage(text) {
     const payload = {
-      title: 'From \u201cAdvice\u201d by Lucius Earnlight',
-      text: text + '\n\n\u2014 From \u201cAdvice\u201d by Lucius Earnlight\nhttps://www.mynoegenesis.com',
+      title: 'From \u201cWeight\u201d by Lucius Earnlight',
+      text: text + '\n\n\u2014 From \u201cWeight\u201d by Lucius Earnlight\nhttps://www.mynoegenesis.com',
     };
     if (navigator.share) {
       try { await navigator.share(payload); return; }
@@ -1857,7 +1963,7 @@ document.getElementById('public-toggle').addEventListener('change', function () 
     const btn = document.getElementById('submit-btn');
 
     // ── Client-side limit: max 2 submissions per 24 hours per browser ──
-    const RL_KEY = 'noegenesis-form-submits-lam';
+    const RL_KEY = 'noegenesis-form-submits-weight';
     const MAX = 2, WINDOW_MS = 24 * 3600 * 1000;
     let rl;
     try { rl = JSON.parse(localStorage.getItem(RL_KEY)) || { count: 0, resetAt: 0 }; } catch { rl = { count: 0, resetAt: 0 }; }

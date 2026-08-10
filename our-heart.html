@@ -1949,36 +1949,6 @@ document.getElementById('public-toggle').addEventListener('change', function () 
 })();
 
 // ══════════════════════════════════════════
-// FIRST-VISIT INTRO OVERLAY
-// ══════════════════════════════════════════
-(function () {
-  const SEEN_KEY = 'noegenesis-intro-seen-lam';
-  const overlay  = document.getElementById('intro-overlay');
-  const dismiss  = document.getElementById('intro-dismiss');
-  if (!overlay) return;
-
-  if (!localStorage.getItem(SEEN_KEY)) {
-    // First visit — make flex then fade in
-    overlay.classList.add('active');
-    requestAnimationFrame(() => overlay.classList.add('visible'));
-    document.body.style.overflow = 'hidden';
-  }
-  // If already seen, overlay stays display:none (default) — nothing to do
-
-  function close() {
-    // Remove .visible first — pointer-events:none kicks in immediately,
-    // so the page becomes interactive again before the fade finishes
-    overlay.classList.remove('visible');
-    localStorage.setItem(SEEN_KEY, '1');
-    document.body.style.overflow = '';
-    setTimeout(() => overlay.classList.remove('active'), 400);
-  }
-
-  if (dismiss) dismiss.addEventListener('click', close);
-  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
-})();
-
-// ══════════════════════════════════════════
 // TOOLTIP SYSTEM — floating hover box for all data-tip elements
 // ══════════════════════════════════════════
 (function () {
