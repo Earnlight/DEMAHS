@@ -1,7 +1,7 @@
 // My Noegenesis — Service Worker
 // Caches all pages for offline use and fast loading
 
-const CACHE_NAME = 'noegenesis-v1';
+const CACHE_NAME = 'noegenesis-v2';
 
 // List every file in your site here
 const ASSETS = [
@@ -38,10 +38,13 @@ const ASSETS = [
   '/reading.html',
   '/delusion.html',
   '/weakness.html',
+  '/weight.html',
+  '/hierarchy.html',
   '/the-finality.html',
+  '/paradise.html',
   '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png'
+  '/android-chrome-192x192.png',
+  '/android-chrome-512x512.png'
 ];
 
 // Install: cache everything
@@ -64,17 +67,16 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch: serve from cache, fall back to network
+// Fetch: try the network first so edits show up immediately, cache the
+// result for offline use, and only fall back to the cache when offline.
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      return cached || fetch(event.request).then(response => {
-        // Cache new pages as they are visited
-        return caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, response.clone());
-          return response;
-        });
-      });
-    }).catch(() => caches.match('/index.html'))
+    fetch(event.request).then(response => {
+      const copy = response.clone();
+      caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+      return response;
+    }).catch(() =>
+      caches.match(event.request).then(cached => cached || caches.match('/index.html'))
+    )
   );
 });
