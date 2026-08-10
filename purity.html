@@ -397,6 +397,23 @@
   .comment-card .cc-name { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 7px; }
   .comment-card .cc-msg { font-family: 'Cormorant Garamond', serif; font-size: clamp(0.8rem, 1.8vw, 0.95rem); color: var(--text); line-height: 1.65; }
 
+  /* ── NEXT CHAPTER — closing call-to-action, bottom-right of the page ── */
+  #next-chapter-row { width: min(640px, 88vw); margin: 26px auto 0; display: flex; justify-content: flex-end; }
+  #next-chapter-btn {
+    display: inline-flex; align-items: center; gap: 16px; text-decoration: none;
+    background: linear-gradient(135deg, rgba(227,193,77,0.16), rgba(227,193,77,0.05));
+    border: 1px solid var(--gold); border-radius: 4px; padding: 14px 20px 14px 24px;
+    box-shadow: 0 0 0 rgba(227,193,77,0); transition: background 0.25s, box-shadow 0.25s, transform 0.25s;
+  }
+  #next-chapter-btn:hover { background: linear-gradient(135deg, rgba(227,193,77,0.26), rgba(227,193,77,0.1)); box-shadow: 0 0 24px rgba(227,193,77,0.2); transform: translateY(-2px); }
+  #next-chapter-btn:active { transform: translateY(0); }
+  .ncb-text { display: flex; flex-direction: column; gap: 3px; text-align: right; }
+  .ncb-label { font-family: 'Cinzel', serif; font-size: clamp(0.42rem, 1.05vw, 0.52rem); letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-dim); }
+  .ncb-title { font-family: 'Cinzel', serif; font-size: clamp(0.78rem, 2vw, 0.98rem); font-weight: 600; letter-spacing: 0.04em; color: var(--gold-light); }
+  .ncb-arrow { font-size: 1.25rem; line-height: 1; color: var(--gold); transition: transform 0.25s; flex-shrink: 0; }
+  #next-chapter-btn:hover .ncb-arrow { transform: translateX(6px); }
+  @media (max-width: 600px) { #next-chapter-row { width: 88vw; } }
+
   /* ── LATEST ADDITIONS ── */
   #latest-additions { width: min(640px, 88vw); margin-top: 28px; }
   .la-section-title { font-family: 'Cinzel', serif; font-size: clamp(0.55rem, 1.4vw, 0.72rem); letter-spacing: 0.25em; color: var(--form-heading); text-transform: uppercase; text-align: center; margin-bottom: 14px; }
@@ -605,6 +622,17 @@
     <div id="form-message"></div>
   </form>
 </section>
+
+<!-- Next chapter — closing call-to-action -->
+<div id="next-chapter-row">
+  <a href="our-heart.html" id="next-chapter-btn" data-tip="Continue to Our Heart">
+    <span class="ncb-text">
+      <span class="ncb-label">Next Chapter</span>
+      <span class="ncb-title">Our Heart</span>
+    </span>
+    <span class="ncb-arrow">→</span>
+  </a>
+</div>
 
 <div id="comments-display"></div>
 
