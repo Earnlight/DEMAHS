@@ -9,6 +9,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Light As Meaning</title>
+<meta name="description" content="The only thing we take with us from this world into the next life when we die is our light, the accumulation of which is the purpose of life.">
+
+<!-- Open Graph -->
+<meta property="og:type" content="book">
+<meta property="og:title" content="Light As Meaning">
+<meta property="og:description" content="The only thing we take with us from this world into the next life when we die is our light, the accumulation of which is the purpose of life.">
+<meta property="og:url" content="https://www.demahs.com/light-as-meaning.html">
+<meta property="og:image" content="https://www.demahs.com/android-chrome-512x512.png">
+<meta property="og:site_name" content="The DEMAHS — Lucius Earnlight">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Light As Meaning">
+<meta name="twitter:description" content="The only thing we take with us from this world into the next life when we die is our light, the accumulation of which is the purpose of life.">
+<meta name="twitter:image" content="https://www.demahs.com/android-chrome-512x512.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,6 +42,7 @@
     --form-input-text: #f5dd8c; --form-heading: rgba(227,193,77,0.62);
     --home-color: rgba(227,193,77,0.66); --frame: rgba(227,193,77,0.5);
     --frame-soft: rgba(227,193,77,0.2); --menu-bg: #241e0d;
+    --reader-font-scale: 1;
   }
 
   [data-theme="dark"] .page:not(.page-cover) {
@@ -67,6 +85,7 @@
   body.reader-fullscreen #search-bar,
   body.reader-fullscreen #search-nav,
   body.reader-fullscreen #controls,
+  body.reader-fullscreen #reader-toolbar,
   body.reader-fullscreen #goto-page-row,
   body.reader-fullscreen #comment-section,
   body.reader-fullscreen #comments-display,
@@ -182,6 +201,39 @@
   #search-nav button:hover { background: var(--btn-hover); }
   #search-count { font-family: 'Cinzel', serif; font-size: clamp(0.45rem, 1.1vw, 0.58rem); color: var(--text-dim); letter-spacing: 0.1em; white-space: nowrap; }
 
+  /* ── SLIM READING-PROGRESS BAR — persistent thin line at the very top of the viewport ── */
+  #reading-progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%; z-index: 10050;
+    background: linear-gradient(to right, var(--gold), var(--gold-light));
+    box-shadow: 0 0 8px rgba(227,193,77,0.55);
+    transition: width 0.4s ease; pointer-events: none;
+  }
+
+  /* ── READER TOOLBAR — reading time · progress · font-size controls ── */
+  #reader-toolbar {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+    padding: 7px 14px; width: min(640px, 88vw); margin-bottom: 12px;
+  }
+  .rt-item { display: flex; align-items: center; gap: 6px; font-family: 'Cinzel', serif; font-size: clamp(0.46rem, 1.15vw, 0.6rem); letter-spacing: 0.1em; color: var(--text); text-transform: uppercase; white-space: nowrap; }
+  .rt-icon { color: var(--gold); font-size: 0.95em; }
+  .rt-progress-wrap { display: flex; align-items: center; gap: 8px; flex: 1 1 140px; min-width: 100px; }
+  .rt-track { flex: 1; height: 5px; border-radius: 3px; background: rgba(227,193,77,0.14); border: 1px solid var(--border); overflow: hidden; }
+  .rt-fill { height: 100%; width: 0%; background: linear-gradient(to right, var(--gold), var(--gold-light)); border-radius: 3px; transition: width 0.4s ease; }
+  .rt-progress-text { font-family: 'Cinzel', serif; font-size: clamp(0.44rem, 1.1vw, 0.56rem); letter-spacing: 0.08em; color: var(--text-dim); min-width: 2.6em; text-align: right; }
+  .rt-font-controls { display: flex; align-items: center; gap: 6px; }
+  .rt-font-controls button {
+    background: var(--btn-bg); border: 1px solid var(--border); color: var(--gold);
+    font-family: 'Cinzel', serif; letter-spacing: 0.05em; border-radius: 3px; cursor: pointer;
+    padding: 3px 9px; line-height: 1; transition: background 0.2s, border-color 0.2s, opacity 0.2s;
+  }
+  .rt-font-controls button:first-child { font-size: 0.62rem; }
+  .rt-font-controls button:last-child { font-size: 0.82rem; }
+  .rt-font-controls button:hover { background: var(--btn-hover); border-color: var(--gold); }
+  .rt-font-controls button:disabled { opacity: 0.28; cursor: default; }
+  #font-size-pct { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.08em; color: var(--text-dim); min-width: 2.6em; text-align: center; }
+  @media (max-width: 600px) { #reader-toolbar { width: 88vw; gap: 10px 16px; } }
+
   /* ── BOOK ── */
   #book-container { position: relative; width: min(640px, 88vw); margin-top: 16px; overflow: visible; }
   #book-scene { width: 100%; perspective: 2500px; }
@@ -218,7 +270,7 @@
     flex: 1; display: flex; flex-direction: column; position: relative; z-index: 2; overflow: hidden;
   }
   .page-header { font-family: 'Cinzel', serif; font-size: max(0.5rem, 2.1cqi); letter-spacing: 0.2em; color: var(--ink-light); text-transform: uppercase; border-bottom: 1px solid var(--paper-dark); padding-bottom: 0.6em; margin-bottom: 1.2em; text-align: center; }
-  .page-body { flex: 1; font-size: max(0.72rem, 2.5cqi); line-height: 1.72; color: var(--ink); font-weight: 300; text-align: justify; hyphens: auto; overflow-y: auto; }
+  .page-body { flex: 1; font-size: calc(max(0.72rem, 2.5cqi) * var(--reader-font-scale)); line-height: 1.72; color: var(--ink); font-weight: 300; text-align: justify; hyphens: auto; overflow-y: auto; }
   .page-body p + p { margin-top: 0.9em; text-indent: 1.5em; }
   .page-body strong, .page-body b { font-weight: 600; }
   .page-body em, .page-body i { font-style: italic; }
@@ -474,6 +526,9 @@
 </head>
 <body>
 
+<!-- Persistent thin reading-progress line at the very top of the viewport -->
+<div id="reading-progress-bar" role="progressbar" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+
 <!-- Fixed top-left library link -->
 <a href="index.html" id="home-btn" data-tip="Back to library">← Library</a>
 
@@ -515,6 +570,22 @@
   <button id="search-prev-btn" data-tip="Previous match">← Prev</button>
   <span id="search-count"></span>
   <button id="search-next-btn" data-tip="Next match">Next →</button>
+</div>
+
+<!-- Reading time · page progress · font-size controls -->
+<div id="reader-toolbar">
+  <div class="rt-item" data-tip="Estimated reading time for the whole book">
+    <span class="rt-icon">◷</span><span id="reading-time-text">— min read</span>
+  </div>
+  <div class="rt-progress-wrap" data-tip="Your progress through the book">
+    <div class="rt-track"><div class="rt-fill" id="rt-fill"></div></div>
+    <span class="rt-progress-text" id="rt-progress-text">0%</span>
+  </div>
+  <div class="rt-font-controls" role="group" aria-label="Text size">
+    <button type="button" id="font-dec-btn" aria-label="Decrease text size" data-tip="Smaller text">A−</button>
+    <span id="font-size-pct">100%</span>
+    <button type="button" id="font-inc-btn" aria-label="Increase text size" data-tip="Larger text">A+</button>
+  </div>
 </div>
 
 <div id="book-container">
@@ -938,6 +1009,52 @@ document.documentElement.setAttribute('data-theme', 'dark');
 })();
 
 // ══════════════════════════════════════════
+// ESTIMATED READING TIME — counts words across every content page
+// ══════════════════════════════════════════
+(function () {
+  const WPM = 220;
+  const el = document.getElementById('reading-time-text');
+  if (!el) return;
+  const words = Array.from(document.querySelectorAll('.page-body'))
+    .reduce((sum, body) => sum + ((body.textContent.match(/\S+/g) || []).length), 0);
+  const minutes = Math.max(1, Math.round(words / WPM));
+  el.textContent = minutes + ' min read';
+})();
+
+// ══════════════════════════════════════════
+// FONT SIZE CONTROLS — scales the page text, remembers the choice
+// ══════════════════════════════════════════
+(function () {
+  const FONT_KEY = 'noegenesis-font-scale-lam';
+  const steps = [0.85, 0.925, 1, 1.1, 1.2, 1.35, 1.5];
+  const root = document.documentElement;
+  const pctEl = document.getElementById('font-size-pct');
+  const decBtn = document.getElementById('font-dec-btn');
+  const incBtn = document.getElementById('font-inc-btn');
+  if (!decBtn || !incBtn) return;
+
+  let idx = steps.indexOf(1);
+  const saved = parseFloat(localStorage.getItem(FONT_KEY));
+  if (!isNaN(saved)) {
+    idx = steps.reduce((best, val, i) =>
+      Math.abs(val - saved) < Math.abs(steps[best] - saved) ? i : best, idx);
+  }
+
+  function apply() {
+    const scale = steps[idx];
+    root.style.setProperty('--reader-font-scale', scale);
+    if (pctEl) pctEl.textContent = Math.round(scale * 100) + '%';
+    decBtn.disabled = idx === 0;
+    incBtn.disabled = idx === steps.length - 1;
+    localStorage.setItem(FONT_KEY, String(scale));
+  }
+
+  decBtn.addEventListener('click', () => { if (idx > 0) { idx--; apply(); } });
+  incBtn.addEventListener('click', () => { if (idx < steps.length - 1) { idx++; apply(); } });
+  apply();
+})();
+
+// ══════════════════════════════════════════
 // READER
 // ══════════════════════════════════════════
 const ReaderState = (function () {
@@ -973,6 +1090,14 @@ const ReaderState = (function () {
     // Go-to-page button always shows fresh
     const gp = document.getElementById('goto-page-btn');
     if (gp && !gp.querySelector('input')) { gp.textContent = 'Go to Page'; }
+    // Progress tracker — slim top bar + toolbar fill/label
+    const pct = totalContent > 0 ? Math.round((current / totalContent) * 100) : 0;
+    const slimBar = document.getElementById('reading-progress-bar');
+    if (slimBar) { slimBar.style.width = pct + '%'; slimBar.setAttribute('aria-valuenow', pct); }
+    const rtFill = document.getElementById('rt-fill');
+    if (rtFill) rtFill.style.width = pct + '%';
+    const rtPct = document.getElementById('rt-progress-text');
+    if (rtPct) rtPct.textContent = pct + '%';
   }
 
   function goTo(index, direction) {
