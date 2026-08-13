@@ -982,8 +982,12 @@
       if (indexPromise) return indexPromise;
       status.textContent = 'Indexing…';
       let failCount = 0;
+      const indexNonce = Date.now();
       indexPromise = Promise.all(books.map(b =>
-        fetch(b.file, { cache: 'no-store' })
+        // Cache-busting query param: `no-store` only stops the browser reusing its own
+        // cache — it can't force a CDN/edge cache in front of the site to skip a hit on
+        // the exact same URL. A unique URL per index build sidesteps that layer too.
+        fetch(b.file + '?_sw=' + indexNonce, { cache: 'no-store' })
           .then(r => {
             if (!r.ok) { failCount++; console.error('[search] ' + b.file + ' returned HTTP ' + r.status); return ''; }
             return r.text();
