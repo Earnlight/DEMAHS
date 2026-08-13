@@ -559,7 +559,7 @@
   <a href="#" id="continue-reading-link" class="continue-btn">
     <span class="cr-icon">&#10022;</span>
     <span class="cr-text">
-      <span class="cr-label">Continue Reading</span>
+      <span class="cr-label" id="continue-reading-label">Continue Reading</span>
       <span class="cr-title" id="continue-reading-title"></span>
       <span class="cr-progress" id="continue-reading-progress"></span>
     </span>
@@ -895,15 +895,39 @@
 
     const row   = document.getElementById('continue-reading');
     const link  = document.getElementById('continue-reading-link');
+    const label = document.getElementById('continue-reading-label');
     const title = document.getElementById('continue-reading-title');
     const prog  = document.getElementById('continue-reading-progress');
     const bar   = document.getElementById('continue-reading-bar');
-    if (!row || !link || !title || !prog || !bar) return;
+    if (!row || !link || !label || !title || !prog || !bar) return;
+
+    const pct = rec.total > 0 ? Math.min(100, Math.round((rec.page / rec.total) * 100)) : 0;
+
+    // Finished the book — point to whatever comes next in the library's
+    // reading order instead of just resuming the last page again.
+    if (pct >= 100) {
+      const order = Array.from(document.querySelectorAll('.book-btn')).map(btn => ({
+        file: btn.getAttribute('href'),
+        title: (btn.querySelector('.btn-title') || {}).textContent || btn.getAttribute('href'),
+      }));
+      const idx  = order.findIndex(b => b.file === rec.file);
+      const next = (idx !== -1 && idx + 1 < order.length) ? order[idx + 1] : null;
+
+      if (next) {
+        link.href = next.file;
+        label.textContent = 'Up Next';
+        title.textContent = next.title;
+        prog.textContent = '';
+        bar.style.width = '0%';
+        row.style.display = 'block';
+        return;
+      }
+    }
 
     link.href = rec.file + '?resume=1';
+    label.textContent = 'Continue Reading';
     title.textContent = rec.title || rec.file;
     if (rec.total > 0) {
-      const pct = Math.min(100, Math.round((rec.page / rec.total) * 100));
       prog.textContent = 'Page ' + rec.page + ' of ' + rec.total + ' — ' + pct + '% read';
       bar.style.width = pct + '%';
     } else {
