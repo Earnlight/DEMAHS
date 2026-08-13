@@ -1014,17 +1014,12 @@
           .catch(err => { failCount++; console.error('[search] failed to fetch/parse ' + b.file, err); return []; })
       )).then(lists => {
         index = lists.flat();
-        const lamUnits = index.filter(u => u.file === 'light-as-meaning.html');
-        const lamChars = lamUnits.reduce((n, u) => n + u.text.length, 0);
-        if (failCount > 0) {
-          status.textContent = failCount + ' of ' + books.length + ' chapters failed to load — see console (F12)';
-        } else if (index.length === 0) {
-          status.textContent = 'Index built but found no searchable text — see console (F12)';
-        } else {
-          status.textContent = 'Indexed ' + books.length + ' chapters, ' + index.length + ' pages (' + lamChars + ' chars in Light as Meaning)';
+        status.textContent = failCount > 0
+          ? failCount + ' of ' + books.length + ' chapters failed to load — see console (F12)'
+          : (index.length === 0 ? 'Index built but found no searchable text — see console (F12)' : '');
+        if (failCount > 0 || index.length === 0) {
+          console.warn('[search] index built with ' + index.length + ' searchable page(s) across ' + (books.length - failCount) + '/' + books.length + ' chapters.');
         }
-        console.warn('[search] index built with ' + index.length + ' searchable page(s) across ' + (books.length - failCount) + '/' + books.length + ' chapters.');
-        console.warn('[search] Light as Meaning: ' + lamUnits.length + ' page(s), ' + lamChars + ' chars. First page preview: ' + (lamUnits[0] ? JSON.stringify(lamUnits[0].text.slice(0, 200)) : '(none — no pages extracted at all)'));
         return index;
       });
       return indexPromise;
