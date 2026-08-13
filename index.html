@@ -4,8 +4,8 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
- <link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="/manifest.json">
+<link rel="alternate" type="application/rss+xml" title="The DEMAHS — Updates" href="/feed.xml">
 <meta name="theme-color" content="#1d1a0e">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -113,6 +113,100 @@
     text-align: center;
     margin-bottom: clamp(20px, 3vw, 36px);
     animation: fadeUp 1s 0.5s ease both;
+  }
+
+  /* ── LIBRARY SEARCH ── */
+  #library-search {
+    position: relative;
+    max-width: 520px;
+    margin: 0 auto clamp(28px, 4vw, 44px);
+  }
+
+  .ls-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: rgba(42, 35, 10, 0.55);
+    border: 1px solid rgba(227, 193, 77, 0.28);
+    border-radius: 4px;
+    transition: border-color 0.3s;
+  }
+
+  .ls-bar:focus-within { border-color: rgba(227, 193, 77, 0.7); }
+
+  .ls-icon { font-size: 0.9rem; color: rgba(227, 193, 77, 0.55); flex-shrink: 0; }
+
+  #ls-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--gold-light);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+  }
+
+  #ls-input::placeholder { color: rgba(227, 193, 77, 0.4); font-style: italic; }
+
+  .ls-status {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.72rem;
+    color: rgba(227, 193, 77, 0.5);
+    flex-shrink: 0;
+  }
+
+  .ls-results {
+    position: absolute;
+    left: 0; right: 0; top: calc(100% + 8px);
+    max-height: 60vh;
+    overflow-y: auto;
+    background: #241d0d;
+    border: 1px solid rgba(227, 193, 77, 0.32);
+    border-radius: 4px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.55);
+    z-index: 20;
+  }
+
+  .ls-row {
+    display: block;
+    padding: 10px 16px;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(227, 193, 77, 0.12);
+  }
+
+  .ls-row:last-child { border-bottom: none; }
+  .ls-row:hover, .ls-row:focus { background: rgba(227, 193, 77, 0.08); }
+
+  .ls-row-head {
+    font-family: 'Cinzel', serif;
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    color: rgba(227, 193, 77, 0.75);
+    margin-bottom: 4px;
+  }
+
+  .ls-row-snippet {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: rgba(245, 221, 140, 0.75);
+  }
+
+  .ls-row-snippet mark {
+    background: transparent;
+    color: var(--gold-light);
+    font-weight: 600;
+  }
+
+  .ls-empty {
+    padding: 14px 16px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.82rem;
+    color: rgba(227, 193, 77, 0.55);
   }
 
   /* ── FRONT MATTER: centred row ── */
@@ -237,6 +331,23 @@
   }
 
   .book-btn:hover .btn-arrow { color: var(--gold); transform: translateX(3px); }
+
+  .btn-progress-label {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(0.6rem, 1.3vw, 0.7rem);
+    color: rgba(227, 193, 77, 0.55);
+    margin-top: 2px;
+  }
+
+  .btn-progress-bar {
+    position: absolute;
+    left: 0; bottom: 0;
+    height: 2px;
+    background: linear-gradient(to right, rgba(227, 193, 77, 0.75), var(--gold-light));
+    z-index: 1;
+  }
 
   /* Staggered delays — front matter */
   .front-matter .book-btn:nth-child(1) { animation-delay: 0.05s; }
@@ -457,6 +568,16 @@
 
 <main class="library">
   <p class="section-label">Select a chapter to begin reading</p>
+
+  <!-- SITE-WIDE SEARCH — indexes every chapter on first use, searched client-side -->
+  <div id="library-search">
+    <div class="ls-bar">
+      <span class="ls-icon">&#128269;</span>
+      <input type="text" id="ls-input" placeholder="Search every chapter…" autocomplete="off" aria-label="Search every chapter">
+      <span class="ls-status" id="ls-status"></span>
+    </div>
+    <div id="ls-results" class="ls-results" hidden></div>
+  </div>
 
   <!-- FRONT MATTER (centred) -->
   <div class="front-matter">
@@ -709,6 +830,10 @@
       <span class="icon">&#10022;</span> Substack
     </a>
 
+    <a href="/feed.xml" class="contact-btn">
+      <span class="icon">&#128225;</span> RSS
+    </a>
+
   </div>
 </section>
 
@@ -759,6 +884,151 @@
     title.textContent = rec.title || rec.file;
     prog.textContent = rec.total > 0 ? 'Page ' + rec.page + ' of ' + rec.total : 'Page ' + rec.page;
     row.style.display = 'block';
+  })();
+</script>
+
+<script>
+  (function () {
+    let all;
+    try { all = JSON.parse(localStorage.getItem('noegenesis-progress')) || {}; } catch { all = {}; }
+
+    document.querySelectorAll('.book-btn').forEach(btn => {
+      const p = all[btn.getAttribute('href')];
+      if (!p || !(p.total > 0) || !(p.page > 0)) return;
+      const pct = Math.min(100, Math.round((p.page / p.total) * 100));
+
+      const label = document.createElement('span');
+      label.className = 'btn-progress-label';
+      label.textContent = pct >= 100 ? 'Finished' : pct + '% read';
+      const textEl = btn.querySelector('.btn-text');
+      if (textEl) textEl.appendChild(label);
+
+      const bar = document.createElement('div');
+      bar.className = 'btn-progress-bar';
+      bar.style.width = pct + '%';
+      btn.appendChild(bar);
+    });
+  })();
+</script>
+
+<script>
+  // Site-wide search — no backend, so it fetches every chapter's HTML on first
+  // use, extracts each page's text client-side, and searches that in-memory index.
+  (function () {
+    const input     = document.getElementById('ls-input');
+    const status    = document.getElementById('ls-status');
+    const resultsEl = document.getElementById('ls-results');
+    const wrap      = document.getElementById('library-search');
+    if (!input || !status || !resultsEl || !wrap) return;
+
+    const books = Array.from(document.querySelectorAll('.book-btn')).map(btn => ({
+      file: btn.getAttribute('href'),
+      title: (btn.querySelector('.btn-title') || {}).textContent || btn.getAttribute('href'),
+    }));
+
+    let index = null;
+    let indexPromise = null;
+
+    function extractUnits(html) {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const units = [];
+      const pages = doc.querySelectorAll('.page[data-page]');
+      if (pages.length) {
+        pages.forEach(p => {
+          const n = parseInt(p.getAttribute('data-page'), 10);
+          if (isNaN(n) || n <= 0) return; // skip the cover
+          const body = p.querySelector('.page-body') || p;
+          const text = body.textContent.replace(/\s+/g, ' ').trim();
+          if (text) units.push({ page: n, text });
+        });
+      } else {
+        const man = doc.querySelector('.manuscript') || doc.querySelector('main');
+        if (man) {
+          const text = man.textContent.replace(/\s+/g, ' ').trim();
+          if (text) units.push({ page: null, text });
+        }
+      }
+      return units;
+    }
+
+    function buildIndex() {
+      if (index) return Promise.resolve(index);
+      if (indexPromise) return indexPromise;
+      status.textContent = 'Indexing…';
+      indexPromise = Promise.all(books.map(b =>
+        fetch(b.file)
+          .then(r => (r.ok ? r.text() : ''))
+          .then(html => (html ? extractUnits(html).map(u => ({ file: b.file, title: b.title, page: u.page, text: u.text })) : []))
+          .catch(() => [])
+      )).then(lists => {
+        index = lists.flat();
+        status.textContent = '';
+        return index;
+      });
+      return indexPromise;
+    }
+
+    function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+    function renderResults(query) {
+      const q = query.trim();
+      resultsEl.innerHTML = '';
+      if (q.length < 2) { resultsEl.hidden = true; return; }
+
+      const needle = q.toLowerCase();
+      const re = new RegExp(escapeRegExp(q), 'i');
+      const matches = [];
+      for (const unit of index) {
+        const at = unit.text.toLowerCase().indexOf(needle);
+        if (at === -1) continue;
+        matches.push({ unit, at });
+        if (matches.length >= 30) break;
+      }
+
+      resultsEl.hidden = false;
+      if (!matches.length) {
+        const empty = document.createElement('div');
+        empty.className = 'ls-empty';
+        empty.textContent = 'No matches found.';
+        resultsEl.appendChild(empty);
+        return;
+      }
+
+      matches.forEach(({ unit, at }) => {
+        const start = Math.max(0, at - 50);
+        const end   = Math.min(unit.text.length, at + q.length + 80);
+        let snippet = (start > 0 ? '…' : '') + unit.text.slice(start, end) + (end < unit.text.length ? '…' : '');
+        snippet = snippet.replace(re, m => '<mark>' + m + '</mark>');
+
+        const row = document.createElement('a');
+        row.className = 'ls-row';
+        row.href = unit.file + (unit.page ? '?page=' + unit.page : '');
+
+        const head = document.createElement('div');
+        head.className = 'ls-row-head';
+        head.textContent = unit.title + (unit.page ? ' — page ' + unit.page : '');
+
+        const body = document.createElement('div');
+        body.className = 'ls-row-snippet';
+        body.innerHTML = snippet;
+
+        row.appendChild(head);
+        row.appendChild(body);
+        resultsEl.appendChild(row);
+      });
+    }
+
+    let debounceTimer;
+    input.addEventListener('focus', () => { buildIndex(); });
+    input.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      const query = input.value;
+      if (!query.trim()) { resultsEl.hidden = true; return; }
+      debounceTimer = setTimeout(() => { buildIndex().then(() => renderResults(query)); }, 200);
+    });
+    document.addEventListener('click', e => {
+      if (!wrap.contains(e.target)) resultsEl.hidden = true;
+    });
   })();
 </script>
 

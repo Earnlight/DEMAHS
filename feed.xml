@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+  <title>The DEMAHS — Hamza Earnlight</title>
+  <link>https://www.demahs.com/index.html</link>
+  <description>Recent updates to the DEMAHS library.</description>
+  <language>en-us</language>
+  <item>
+    <title>Introduction, Foreword &amp; Author’s Notes</title>
+    <link>https://www.demahs.com/introduction.html</link>
+    <guid isPermaLink="false">introduction.html-2026-08-13-Introduction, Foreword &amp; Author’s Notes</guid>
+    <pubDate>Thu, 13 Aug 2026 00:00:00 GMT</pubDate>
+    <description>Rebuilt as standalone manuscript pages, ready for their text.</description>
+  </item>
+  <item>
+    <title>Weight, Hierarchy &amp; Paradise</title>
+    <link>https://www.demahs.com/weight.html?page=0</link>
+    <guid isPermaLink="false">weight.html-2026-08-13-Weight, Hierarchy &amp; Paradise</guid>
+    <pubDate>Thu, 13 Aug 2026 00:00:00 GMT</pubDate>
+    <description>Three new chapters added to the library.</description>
+  </item>
+  <item>
+    <title>How to Build Light</title>
+    <link>https://www.demahs.com/how-to-build-your-light.html?page=0</link>
+    <guid isPermaLink="false">how-to-build-your-light.html-2026-08-13-How to Build Light</guid>
+    <pubDate>Thu, 13 Aug 2026 00:00:00 GMT</pubDate>
+    <description>Chapter renamed from &quot;How to Build Your Light&quot;.</description>
+  </item>
+</channel>
+</rss>

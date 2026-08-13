@@ -1081,6 +1081,7 @@ const ReaderState = (function () {
   const CURRENT_FILE = 'reading.html';
   const PAGE_TITLE    = 'Reading';
   const LASTREAD_KEY  = 'noegenesis-lastread';
+  const PROGRESS_KEY  = 'noegenesis-progress';
   const book = document.getElementById('book');
   if (!book) return;
   const totalContent = book.querySelectorAll('.page').length - 1;
@@ -1091,6 +1092,9 @@ const ReaderState = (function () {
     if (isNaN(idx) || idx <= 0) return;
     try {
       localStorage.setItem(LASTREAD_KEY, JSON.stringify({ file: CURRENT_FILE, title: PAGE_TITLE, page: idx, total: totalContent, ts: Date.now() }));
+      const allProg = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}');
+      allProg[CURRENT_FILE] = { page: idx, total: totalContent };
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(allProg));
     } catch {}
   }
   new MutationObserver(record).observe(book, { attributes: true, attributeFilter: ['class'], subtree: true });
