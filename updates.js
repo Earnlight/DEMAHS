@@ -6,6 +6,9 @@
 // entry here each time a paragraph, page, or chapter is added or changed,
 // newest entry first. index.html reads this file directly and renders it.
 //
+// After editing, run `node scripts/generate-feed.js` to regenerate feed.xml
+// (the RSS feed at /feed.xml) so it matches this list.
+//
 // Fields per entry:
 //   date  — 'YYYY-MM-DD', shown on the card and used to sort newest-first
 //   book  — filename of the page the update lives on (e.g. 'light-as-meaning.html'),
