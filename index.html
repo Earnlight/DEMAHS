@@ -521,7 +521,7 @@
   }
 
   /* ── CONTINUE READING — shown only when a saved reading position exists ── */
-  #continue-reading { max-width: 1100px; margin: 0 auto clamp(28px, 4vw, 44px); padding: 0 clamp(20px, 5vw, 48px); }
+  #continue-reading, #start-reading { max-width: 1100px; margin: 0 auto clamp(28px, 4vw, 44px); padding: 0 clamp(20px, 5vw, 48px); }
   .continue-btn {
     display: flex; align-items: center; gap: 18px;
     padding: clamp(16px, 2.6vw, 22px) clamp(20px, 3.4vw, 28px);
@@ -540,6 +540,7 @@
   .cr-progress { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(0.72rem, 1.6vw, 0.85rem); color: rgba(227,193,77,0.6); }
   .cr-arrow { font-size: 1.1rem; color: var(--gold); flex-shrink: 0; transition: transform 0.25s; position: relative; z-index: 1; }
   .continue-btn:hover .cr-arrow { transform: translateX(5px); }
+  .cr-bar { position: absolute; left: 0; bottom: 0; height: 3px; background: linear-gradient(to right, rgba(227,193,77,0.85), var(--gold-light)); z-index: 1; }
 </style>
 </head>
 <body>
@@ -561,6 +562,20 @@
       <span class="cr-label">Continue Reading</span>
       <span class="cr-title" id="continue-reading-title"></span>
       <span class="cr-progress" id="continue-reading-progress"></span>
+    </span>
+    <span class="cr-arrow">&rarr;</span>
+    <div class="cr-bar" id="continue-reading-bar"></div>
+  </a>
+</div>
+
+<!-- Start Reading — shown by JS below only when no saved position exists yet -->
+<div id="start-reading" style="display:none">
+  <a href="light-as-meaning.html" class="continue-btn">
+    <span class="cr-icon">&#10022;</span>
+    <span class="cr-text">
+      <span class="cr-label">New Here?</span>
+      <span class="cr-title">Start Reading</span>
+      <span class="cr-progress">Chapter I — Light as Meaning</span>
     </span>
     <span class="cr-arrow">&rarr;</span>
   </a>
@@ -872,17 +887,28 @@
   (function () {
     let rec;
     try { rec = JSON.parse(localStorage.getItem('noegenesis-lastread')); } catch { rec = null; }
-    if (!rec || !rec.file || !(rec.page > 0)) return;
+    if (!rec || !rec.file || !(rec.page > 0)) {
+      const startRow = document.getElementById('start-reading');
+      if (startRow) startRow.style.display = 'block';
+      return;
+    }
 
     const row   = document.getElementById('continue-reading');
     const link  = document.getElementById('continue-reading-link');
     const title = document.getElementById('continue-reading-title');
     const prog  = document.getElementById('continue-reading-progress');
-    if (!row || !link || !title || !prog) return;
+    const bar   = document.getElementById('continue-reading-bar');
+    if (!row || !link || !title || !prog || !bar) return;
 
     link.href = rec.file + '?resume=1';
     title.textContent = rec.title || rec.file;
-    prog.textContent = rec.total > 0 ? 'Page ' + rec.page + ' of ' + rec.total : 'Page ' + rec.page;
+    if (rec.total > 0) {
+      const pct = Math.min(100, Math.round((rec.page / rec.total) * 100));
+      prog.textContent = 'Page ' + rec.page + ' of ' + rec.total + ' — ' + pct + '% read';
+      bar.style.width = pct + '%';
+    } else {
+      prog.textContent = 'Page ' + rec.page;
+    }
     row.style.display = 'block';
   })();
 </script>
@@ -956,7 +982,7 @@
       if (indexPromise) return indexPromise;
       status.textContent = 'Indexing…';
       indexPromise = Promise.all(books.map(b =>
-        fetch(b.file)
+        fetch(b.file, { cache: 'no-store' })
           .then(r => (r.ok ? r.text() : ''))
           .then(html => (html ? extractUnits(html).map(u => ({ file: b.file, title: b.title, page: u.page, text: u.text })) : []))
           .catch(() => [])
