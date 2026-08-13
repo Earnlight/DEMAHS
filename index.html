@@ -981,14 +981,23 @@
       if (index) return Promise.resolve(index);
       if (indexPromise) return indexPromise;
       status.textContent = 'Indexing…';
+      let failCount = 0;
       indexPromise = Promise.all(books.map(b =>
         fetch(b.file, { cache: 'no-store' })
-          .then(r => (r.ok ? r.text() : ''))
+          .then(r => {
+            if (!r.ok) { failCount++; console.error('[search] ' + b.file + ' returned HTTP ' + r.status); return ''; }
+            return r.text();
+          })
           .then(html => (html ? extractUnits(html).map(u => ({ file: b.file, title: b.title, page: u.page, text: u.text })) : []))
-          .catch(() => [])
+          .catch(err => { failCount++; console.error('[search] failed to fetch/parse ' + b.file, err); return []; })
       )).then(lists => {
         index = lists.flat();
-        status.textContent = '';
+        status.textContent = failCount > 0
+          ? failCount + ' of ' + books.length + ' chapters failed to load — see console (F12)'
+          : (index.length === 0 ? 'Index built but found no searchable text — see console (F12)' : '');
+        if (failCount > 0 || index.length === 0) {
+          console.warn('[search] index built with ' + index.length + ' searchable page(s) across ' + (books.length - failCount) + '/' + books.length + ' chapters.');
+        }
         return index;
       });
       return indexPromise;
