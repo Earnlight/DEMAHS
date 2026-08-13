@@ -971,7 +971,12 @@ const ReaderState = (function () {
   }
   new MutationObserver(record).observe(book, { attributes: true, attributeFilter: ['class'], subtree: true });
 
-  if (/[?&]resume=1\b/.test(location.search)) {
+  const urlParams = new URLSearchParams(location.search);
+  if (urlParams.has('page')) {
+    // Deep link from the library's "Recent Updates" feed — jump straight to the given page.
+    const n = parseInt(urlParams.get('page'), 10);
+    if (!isNaN(n)) ReaderState.jumpToPage(n);
+  } else if (urlParams.get('resume') === '1') {
     try {
       const rec = JSON.parse(localStorage.getItem(LASTREAD_KEY));
       if (rec && rec.file === CURRENT_FILE && rec.page > 0) ReaderState.jumpToPage(rec.page);

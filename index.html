@@ -329,6 +329,52 @@
 
   .contact-btn .icon { font-size: 1em; opacity: 0.7; }
 
+  /* ── RECENT UPDATES ── */
+  .updates {
+    max-width: 900px; margin: 0 auto;
+    padding: clamp(40px, 7vw, 64px) clamp(20px, 5vw, 48px) 0;
+    text-align: center;
+  }
+  .updates-list {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-top: clamp(20px, 3vw, 32px); text-align: left;
+  }
+  .update-card {
+    display: flex; align-items: center; gap: 16px;
+    padding: clamp(14px, 2.2vw, 18px) clamp(16px, 3vw, 22px);
+    background: linear-gradient(135deg, rgba(88, 70, 18, 0.5) 0%, rgba(29, 26, 14, 0.75) 100%);
+    border: 1px solid rgba(227, 193, 77, 0.26); border-left: 2px solid var(--gold);
+    border-radius: 4px; text-decoration: none;
+    transition: border-color 0.25s, transform 0.2s, background 0.25s;
+  }
+  .update-card:hover {
+    border-color: rgba(227, 193, 77, 0.6); transform: translateX(3px);
+    background: linear-gradient(135deg, rgba(88, 70, 18, 0.65) 0%, rgba(29, 26, 14, 0.85) 100%);
+  }
+  .update-date {
+    font-family: 'Cinzel', serif; font-size: clamp(0.44rem, 1.1vw, 0.55rem);
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-dim);
+    white-space: nowrap; flex-shrink: 0; min-width: 82px;
+  }
+  .update-body { flex: 1; min-width: 0; }
+  .update-title {
+    font-family: 'Cinzel', serif; font-size: clamp(0.62rem, 1.4vw, 0.74rem);
+    letter-spacing: 0.05em; color: var(--gold-light); margin-bottom: 3px;
+  }
+  .update-note {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: clamp(0.8rem, 1.7vw, 0.92rem); color: rgba(227, 193, 77, 0.75); line-height: 1.4;
+  }
+  .update-arrow {
+    font-size: 0.9rem; color: rgba(227, 193, 77, 0.4); flex-shrink: 0;
+    transition: color 0.25s, transform 0.25s;
+  }
+  .update-card:hover .update-arrow { color: var(--gold); transform: translateX(3px); }
+  .updates-empty {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    color: rgba(227, 193, 77, 0.5); font-size: 0.95rem; padding: 10px 0 4px;
+  }
+
   footer {
     text-align: center;
     padding: 24px 24px 40px;
@@ -359,6 +405,8 @@
     .grid { grid-template-columns: 1fr; }
     .contact-links { flex-direction: column; align-items: stretch; }
     .contact-btn { justify-content: center; }
+    .update-card { flex-wrap: wrap; }
+    .update-date { min-width: 0; }
   }
 
   /* ── CONTINUE READING — shown only when a saved reading position exists ── */
@@ -664,6 +712,12 @@
   </div>
 </section>
 
+<!-- RECENT UPDATES — populated from updates.js -->
+<section class="updates">
+  <p class="contact-label">Recent Updates</p>
+  <div class="updates-list" id="updates-list"></div>
+</section>
+
 <footer>
   <p>The DEMAHS &nbsp;&middot;&nbsp; Hamza Earnlight &nbsp;&middot;&nbsp; All rights reserved</p>
 </footer>
@@ -689,6 +743,65 @@
     title.textContent = rec.title || rec.file;
     prog.textContent = rec.total > 0 ? 'Page ' + rec.page + ' of ' + rec.total : 'Page ' + rec.page;
     row.style.display = 'block';
+  })();
+</script>
+
+<script src="updates.js"></script>
+<script>
+  (function () {
+    const list = document.getElementById('updates-list');
+    if (!list) return;
+
+    const entries = (typeof SITE_UPDATES !== 'undefined' ? SITE_UPDATES : []).slice();
+    if (!entries.length) {
+      const empty = document.createElement('p');
+      empty.className = 'updates-empty';
+      empty.textContent = 'Nothing new yet — check back soon.';
+      list.appendChild(empty);
+      return;
+    }
+
+    entries.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+
+    const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    entries.forEach(entry => {
+      const isLink = !!entry.book;
+      const card = document.createElement(isLink ? 'a' : 'div');
+      card.className = 'update-card';
+      if (isLink) {
+        card.href = entry.book + (entry.page !== null && entry.page !== undefined ? '?page=' + entry.page : '');
+      }
+
+      const dateEl = document.createElement('span');
+      dateEl.className = 'update-date';
+      const d = new Date(entry.date + 'T00:00:00');
+      dateEl.textContent = isNaN(d) ? entry.date : dateFmt.format(d);
+
+      const body = document.createElement('span');
+      body.className = 'update-body';
+      const titleEl = document.createElement('span');
+      titleEl.className = 'update-title';
+      titleEl.textContent = entry.title || entry.book || '';
+      const noteEl = document.createElement('span');
+      noteEl.className = 'update-note';
+      noteEl.textContent = entry.note || '';
+      body.appendChild(titleEl);
+      body.appendChild(document.createElement('br'));
+      body.appendChild(noteEl);
+
+      card.appendChild(dateEl);
+      card.appendChild(body);
+
+      if (isLink) {
+        const arrow = document.createElement('span');
+        arrow.className = 'update-arrow';
+        arrow.textContent = '→';
+        card.appendChild(arrow);
+      }
+
+      list.appendChild(card);
+    });
   })();
 </script>
 
