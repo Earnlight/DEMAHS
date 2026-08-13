@@ -644,35 +644,6 @@
         </div>
       </div>
 
-      <!-- PAGE 1 -->
-      <div class="page" data-page="1">
-        <div class="page-inner">
-          <div class="page-header">Greatness</div>
-          <div class="page-body">
-            <div class="chapter-title">Chapter One</div>
-            <div class="chapter-ornament">— ✦ —</div>
-            <!-- EDIT YOUR TEXT BELOW -->
-            <p>This is the opening of your first chapter. Replace this placeholder text with your own writing.</p>
-            <p>You may write as much or as little as you like on each page.</p>
-            <p>Continue your story here, adding as many paragraphs as the page will hold comfortably.</p>
-            <!-- END EDIT -->
-          </div>
-        </div>
-      </div>
-
-      <!-- PAGE 2 -->
-      <div class="page" data-page="2">
-        <div class="page-inner">
-          <div class="page-header">Greatness</div>
-          <div class="page-body">
-            <!-- EDIT YOUR TEXT BELOW -->
-            <p>The story continues on this page.</p>
-            <p>Use this space to develop your ideas.</p>
-            <!-- END EDIT -->
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
 
@@ -780,7 +751,17 @@
   // ── Edit these values for each chapter ────────────────────────────────────
   const PAGE_HEADER   = 'Greatness';  // shown at the top of every page
   const CHAPTER_TITLE = 'Chapter One';        // shown only on the first content page
-  const CHAPTER_TEXT  = ``;  // ← paste your full chapter text here between the backticks
+  const CHAPTER_TEXT  = `
+This is the opening of your first chapter. Replace this placeholder text with your own writing.
+
+You may write as much or as little as you like on each page.
+
+Continue your story here, adding as many paragraphs as the page will hold comfortably.
+
+The story continues on this page.
+
+Use this space to develop your ideas.
+  `;  // ← paste your full chapter text here between the backticks
   // ─────────────────────────────────────────────────────────────────────────
 
   if (!CHAPTER_TEXT.trim()) return; // empty → use manual page divs
