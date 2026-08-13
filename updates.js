@@ -23,13 +23,6 @@
 const SITE_UPDATES = [
   {
     date: '2026-08-13',
-    book: 'light-as-meaning.html',
-    title: 'Light As Meaning',
-    page: 1,
-    note: 'Chapter One opening text added.',
-  },
-  {
-    date: '2026-08-13',
     book: 'introduction.html',
     title: 'Introduction, Foreword & Author’s Notes',
     page: null,

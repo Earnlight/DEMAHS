@@ -958,6 +958,24 @@
     function extractUnits(html) {
       const doc = new DOMParser().parseFromString(html, 'text/html');
       const units = [];
+
+      // Some readers ("auto paginator" chapters) hold their real text in a
+      // CHAPTER_TEXT JS variable that overwrites the static .page divs at
+      // runtime — a script this parser never executes, so it never sees that
+      // content otherwise. Prefer it when present, since the static divs
+      // are then just inert fallback markup the visitor never actually sees.
+      for (const script of doc.querySelectorAll('script')) {
+        const src = script.textContent;
+        if (!src || src.indexOf('CHAPTER_TEXT') === -1) continue;
+        const m = src.match(/const CHAPTER_TEXT\s*=\s*`([\s\S]*?)`\s*;/);
+        if (!m) continue;
+        const raw = m[1].trim();
+        if (!raw) break; // empty → falls through to the manual page divs below
+        raw.split(/\n{2,}/).map(s => s.replace(/\s+/g, ' ').trim()).filter(Boolean)
+          .forEach(text => units.push({ page: null, text }));
+        return units;
+      }
+
       const pages = doc.querySelectorAll('.page[data-page]');
       if (pages.length) {
         pages.forEach(p => {
@@ -1022,9 +1040,15 @@
       const needle = q.toLowerCase();
       const re = new RegExp(escapeRegExp(q), 'i');
       const matches = [];
+      const perFileCount = {};
       for (const unit of index) {
         const at = unit.text.toLowerCase().indexOf(needle);
         if (at === -1) continue;
+        // Cap matches per chapter so a common word in one long auto-paginated
+        // chapter (many paragraph-sized units) can't crowd out every other book.
+        const c = perFileCount[unit.file] || 0;
+        if (c >= 3) continue;
+        perFileCount[unit.file] = c + 1;
         matches.push({ unit, at });
         if (matches.length >= 30) break;
       }
