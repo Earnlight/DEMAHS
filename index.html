@@ -521,7 +521,8 @@
   }
 
   /* ── CONTINUE READING — shown only when a saved reading position exists ── */
-  #continue-reading, #start-reading { max-width: 1100px; margin: 0 auto clamp(28px, 4vw, 44px); padding: 0 clamp(20px, 5vw, 48px); }
+  #continue-reading { max-width: 1100px; margin: 0 auto clamp(28px, 4vw, 44px); padding: 0 clamp(20px, 5vw, 48px); }
+  #start-reading { margin-bottom: clamp(24px, 4vw, 40px); }
   .continue-btn {
     display: flex; align-items: center; gap: 18px;
     padding: clamp(16px, 2.6vw, 22px) clamp(20px, 3.4vw, 28px);
@@ -568,19 +569,6 @@
   </a>
 </div>
 
-<!-- Start Reading — shown by JS below only when no saved position exists yet -->
-<div id="start-reading" style="display:none">
-  <a href="light-as-meaning.html" class="continue-btn">
-    <span class="cr-icon">&#10022;</span>
-    <span class="cr-text">
-      <span class="cr-label">New Here?</span>
-      <span class="cr-title">Start Reading</span>
-      <span class="cr-progress">Chapter I — Light as Meaning</span>
-    </span>
-    <span class="cr-arrow">&rarr;</span>
-  </a>
-</div>
-
 <main class="library">
   <p class="section-label">Select a chapter to begin reading</p>
 
@@ -612,6 +600,19 @@
       <span class="btn-arrow">&rarr;</span>
     </a>
 
+  </div>
+
+  <!-- Start Reading — shown by JS below only when no saved position exists yet -->
+  <div id="start-reading" style="display:none">
+    <a href="light-as-meaning.html" class="continue-btn">
+      <span class="cr-icon">&#10022;</span>
+      <span class="cr-text">
+        <span class="cr-label">New Here?</span>
+        <span class="cr-title">Start Reading</span>
+        <span class="cr-progress">Chapter I — Light as Meaning</span>
+      </span>
+      <span class="cr-arrow">&rarr;</span>
+    </a>
   </div>
 
   <div class="grid-divider"></div>
