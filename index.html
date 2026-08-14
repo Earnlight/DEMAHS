@@ -98,6 +98,16 @@
     animation: fadeDown 1s 0.45s ease both;
   }
 
+  .reading-summary {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.5rem, 1.2vw, 0.65rem);
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-top: 1em;
+    animation: fadeDown 1s 0.55s ease both;
+  }
+
   .library {
     max-width: 1100px;
     margin: 0 auto;
@@ -552,6 +562,7 @@
   <div class="header-author">Hamza Earnlight</div>
   <div class="header-byline">An ongoing work intended for reading pleasure</div>
  <div class="header-byline">Discovery leads me to Express through a Medium, my Artistry, facilitating a Heightened Self</div>
+  <div class="reading-summary" id="reading-summary" style="display:none"></div>
 </header>
 
 <!-- Continue Reading — populated by JS below only when a saved position exists -->
@@ -885,6 +896,56 @@
 </script>
 
 <script>
+  // Shared: extracts a book's real text from its raw HTML. Used by both the
+  // site-wide search index and the "X min read" estimate on the Start
+  // Reading card, so there's exactly one place that knows how to read a
+  // chapter's content — some readers ("auto paginator" chapters) hold their
+  // real text in a CHAPTER_TEXT JS variable that overwrites the static .page
+  // divs at runtime, a script DOMParser never executes, so it never sees
+  // that content otherwise. Prefer it when present, since the static divs
+  // are then just inert fallback markup the visitor never actually sees.
+  function noegenesisExtractUnits(html) {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const units = [];
+
+    for (const script of doc.querySelectorAll('script')) {
+      const src = script.textContent;
+      if (!src || src.indexOf('CHAPTER_TEXT') === -1) continue;
+      const m = src.match(/const CHAPTER_TEXT\s*=\s*`([\s\S]*?)`\s*;/);
+      if (!m) continue;
+      const raw = m[1].trim();
+      if (!raw) break; // empty → falls through to the manual page divs below
+      raw.split(/\n{2,}/).map(s => s.replace(/\s+/g, ' ').trim()).filter(Boolean)
+        .forEach(text => units.push({ page: null, text }));
+      return units;
+    }
+
+    const pages = doc.querySelectorAll('.page[data-page]');
+    if (pages.length) {
+      pages.forEach(p => {
+        const n = parseInt(p.getAttribute('data-page'), 10);
+        if (isNaN(n) || n <= 0) return; // skip the cover
+        const body = p.querySelector('.page-body') || p;
+        const text = body.textContent.replace(/\s+/g, ' ').trim();
+        if (text) units.push({ page: n, text });
+      });
+    } else {
+      const man = doc.querySelector('.manuscript') || doc.querySelector('main');
+      if (man) {
+        const text = man.textContent.replace(/\s+/g, ' ').trim();
+        if (text) units.push({ page: null, text });
+      }
+    }
+    return units;
+  }
+
+  function noegenesisMinutesRead(units) {
+    const words = units.reduce((n, u) => n + (u.text.match(/\S+/g) || []).length, 0);
+    return words > 0 ? Math.max(1, Math.round(words / 220)) : null;
+  }
+</script>
+
+<script>
   (function () {
     let rec;
     try { rec = JSON.parse(localStorage.getItem('noegenesis-lastread')); } catch { rec = null; }
@@ -901,9 +962,23 @@
           { file: 'authors-notes.html', label: "Author's Notes" },
         ];
         const next = FRONT_MATTER.find(f => !fm[f.file]);
-        startLink.href = next ? next.file : 'light-as-meaning.html';
-        startProg.textContent = next ? next.label : 'Chapter I — Light as Meaning';
+        const targetFile  = next ? next.file : 'light-as-meaning.html';
+        const targetLabel = next ? next.label : 'Chapter I — Light as Meaning';
+        startLink.href = targetFile;
+        startProg.textContent = targetLabel;
         startRow.style.display = 'block';
+
+        // Fill in "X min read" once fetched — kept separate from the label
+        // above so the card shows something useful immediately, not blank
+        // while the fetch is in flight.
+        fetch(targetFile, { cache: 'no-store' })
+          .then(r => (r.ok ? r.text() : ''))
+          .then(html => {
+            if (!html) return;
+            const minutes = noegenesisMinutesRead(noegenesisExtractUnits(html));
+            if (minutes) startProg.textContent = targetLabel + ' · ' + minutes + ' min read';
+          })
+          .catch(() => {});
       }
       return;
     }
@@ -973,6 +1048,19 @@
       bar.style.width = pct + '%';
       btn.appendChild(bar);
     });
+
+    // Overall reading-journey summary in the header — only shown once the
+    // visitor has actually finished at least one chapter, so a brand-new
+    // visitor doesn't see a discouraging "0 of 32" on their first visit.
+    const total    = document.querySelectorAll('.grid .book-btn').length;
+    const finished = Object.values(all).filter(p => p.total > 0 && p.page >= p.total).length;
+    if (finished > 0 && total > 0) {
+      const summary = document.getElementById('reading-summary');
+      if (summary) {
+        summary.textContent = finished + ' of ' + total + ' chapters read';
+        summary.style.display = 'block';
+      }
+    }
   })();
 </script>
 
@@ -994,46 +1082,6 @@
     let index = null;
     let indexPromise = null;
 
-    function extractUnits(html) {
-      const doc = new DOMParser().parseFromString(html, 'text/html');
-      const units = [];
-
-      // Some readers ("auto paginator" chapters) hold their real text in a
-      // CHAPTER_TEXT JS variable that overwrites the static .page divs at
-      // runtime — a script this parser never executes, so it never sees that
-      // content otherwise. Prefer it when present, since the static divs
-      // are then just inert fallback markup the visitor never actually sees.
-      for (const script of doc.querySelectorAll('script')) {
-        const src = script.textContent;
-        if (!src || src.indexOf('CHAPTER_TEXT') === -1) continue;
-        const m = src.match(/const CHAPTER_TEXT\s*=\s*`([\s\S]*?)`\s*;/);
-        if (!m) continue;
-        const raw = m[1].trim();
-        if (!raw) break; // empty → falls through to the manual page divs below
-        raw.split(/\n{2,}/).map(s => s.replace(/\s+/g, ' ').trim()).filter(Boolean)
-          .forEach(text => units.push({ page: null, text }));
-        return units;
-      }
-
-      const pages = doc.querySelectorAll('.page[data-page]');
-      if (pages.length) {
-        pages.forEach(p => {
-          const n = parseInt(p.getAttribute('data-page'), 10);
-          if (isNaN(n) || n <= 0) return; // skip the cover
-          const body = p.querySelector('.page-body') || p;
-          const text = body.textContent.replace(/\s+/g, ' ').trim();
-          if (text) units.push({ page: n, text });
-        });
-      } else {
-        const man = doc.querySelector('.manuscript') || doc.querySelector('main');
-        if (man) {
-          const text = man.textContent.replace(/\s+/g, ' ').trim();
-          if (text) units.push({ page: null, text });
-        }
-      }
-      return units;
-    }
-
     function buildIndex() {
       if (index) return Promise.resolve(index);
       if (indexPromise) return indexPromise;
@@ -1049,7 +1097,7 @@
             if (!r.ok) { failCount++; console.error('[search] ' + b.file + ' returned HTTP ' + r.status); return ''; }
             return r.text();
           })
-          .then(html => (html ? extractUnits(html).map(u => ({ file: b.file, title: b.title, page: u.page, text: u.text })) : []))
+          .then(html => (html ? noegenesisExtractUnits(html).map(u => ({ file: b.file, title: b.title, page: u.page, text: u.text })) : []))
           .catch(err => { failCount++; console.error('[search] failed to fetch/parse ' + b.file, err); return []; })
       )).then(lists => {
         index = lists.flat();
