@@ -209,29 +209,19 @@
     color: rgba(227, 193, 77, 0.55);
   }
 
-  /* ── FRONT MATTER: compact inline row ── */
-  .front-matter-row {
+  /* ── FRONT MATTER: centred row ── */
+  .front-matter {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    align-items: center;
-    gap: clamp(10px, 2vw, 18px);
+    gap: clamp(12px, 2vw, 20px);
     margin-bottom: clamp(24px, 4vw, 40px);
-    animation: fadeUp 0.6s 0.1s ease both;
   }
 
-  .fm-link {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(0.62rem, 1.4vw, 0.75rem);
-    letter-spacing: 0.1em;
-    color: rgba(227, 193, 77, 0.65);
-    text-decoration: none;
-    transition: color 0.25s;
+  .front-matter .book-btn {
+    width: clamp(200px, 28vw, 300px);
+    flex-shrink: 0;
   }
-
-  .fm-link:hover { color: var(--gold-light); }
-
-  .fm-sep { color: rgba(227, 193, 77, 0.28); font-size: 0.55rem; }
 
   /* ── DIVIDER between front matter and chapters ── */
   .grid-divider {
@@ -241,73 +231,162 @@
     margin: 0 auto clamp(24px, 4vw, 40px);
   }
 
-  /* ── CHAPTERS: compact table of contents ── */
-  .toc-list {
-    column-count: 1;
-    column-gap: clamp(24px, 4vw, 48px);
+  /* ── MAIN GRID ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+    gap: clamp(12px, 2vw, 20px);
   }
 
-  @media (min-width: 720px) {
-    .toc-list { column-count: 2; }
-  }
-
-  .toc-row {
+  /* ── BOOK BUTTON ── */
+  .book-btn {
     display: flex;
-    align-items: baseline;
-    gap: clamp(10px, 1.8vw, 14px);
-    padding: clamp(8px, 1.4vw, 10px) 6px;
-    border-bottom: 1px solid rgba(227, 193, 77, 0.10);
+    align-items: center;
+    gap: 16px;
+    padding: clamp(14px, 2.5vw, 20px) clamp(16px, 3vw, 24px);
+    background: linear-gradient(135deg, rgba(88, 70, 18, 0.7) 0%, rgba(42, 35, 10, 0.88) 100%);
+    border: 1px solid rgba(227, 193, 77, 0.30);
+    border-radius: 4px;
     text-decoration: none;
-    break-inside: avoid-column;
-    -webkit-column-break-inside: avoid;
-    transition: background 0.2s, padding-left 0.2s;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.25s, box-shadow 0.3s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(227,193,77,0.04);
     opacity: 0;
-    animation: fadeUp 0.45s ease forwards;
+    animation: fadeUp 0.6s ease forwards;
   }
 
-  .toc-row:hover { background: rgba(227, 193, 77, 0.06); padding-left: 12px; }
+  .book-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(227, 193, 77, 0.12) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
 
-  .toc-num {
+  .book-btn::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .book-btn:hover {
+    border-color: rgba(227, 193, 77, 0.72);
+    transform: translateY(-2px) translateX(2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(227,193,77,0.08), inset 0 1px 0 rgba(227, 193, 77, 0.15);
+  }
+
+  .book-btn:hover::before { opacity: 1; }
+  .book-btn:hover::after  { opacity: 1; }
+  .book-btn:hover .btn-number { color: var(--gold); }
+  .book-btn:hover .btn-title  { color: #fef6df; }
+
+  .btn-number {
     font-family: 'Cinzel', serif;
-    font-size: clamp(0.55rem, 1.1vw, 0.62rem);
-    color: rgba(227, 193, 77, 0.5);
-    letter-spacing: 0.06em;
-    min-width: 26px;
+    font-size: clamp(0.55rem, 1.2vw, 0.68rem);
+    color: rgba(227, 193, 77, 0.55);
+    letter-spacing: 0.1em;
+    min-width: 28px;
+    transition: color 0.3s;
     flex-shrink: 0;
-    transition: color 0.25s;
+    position: relative;
+    z-index: 1;
   }
 
-  .toc-row:hover .toc-num { color: var(--gold); }
+  .btn-divider {
+    width: 1px;
+    height: 28px;
+    background: linear-gradient(to bottom, transparent, rgba(227,193,77,0.42), transparent);
+    flex-shrink: 0;
+  }
 
-  .toc-title {
+  .btn-text {
     flex: 1;
-    min-width: 0;
-    font-family: 'Cinzel', serif;
-    font-size: clamp(0.78rem, 1.6vw, 0.88rem);
-    letter-spacing: 0.02em;
-    color: var(--gold-light);
-    transition: color 0.25s;
+    position: relative;
+    z-index: 1;
   }
 
-  .toc-row:hover .toc-title { color: #fef6df; }
+  .btn-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.7rem, 1.6vw, 0.9rem);
+    font-weight: 600;
+    color: var(--gold-light);
+    letter-spacing: 0.06em;
+    line-height: 1.3;
+    transition: color 0.3s;
+  }
 
-  .toc-meta {
+  .btn-arrow {
+    font-size: 0.7rem;
+    color: rgba(227, 193, 77, 0.32);
+    transition: color 0.3s, transform 0.3s;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .book-btn:hover .btn-arrow { color: var(--gold); transform: translateX(3px); }
+
+  .btn-progress-label {
+    display: block;
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: clamp(0.62rem, 1.3vw, 0.7rem);
-    color: rgba(227, 193, 77, 0.45);
-    flex-shrink: 0;
-    white-space: nowrap;
+    font-size: clamp(0.6rem, 1.3vw, 0.7rem);
+    color: rgba(227, 193, 77, 0.55);
+    margin-top: 2px;
   }
 
-  .toc-arrow {
-    font-size: 0.65rem;
-    color: rgba(227, 193, 77, 0.28);
-    flex-shrink: 0;
-    transition: color 0.25s, transform 0.25s;
+  .btn-progress-bar {
+    position: absolute;
+    left: 0; bottom: 0;
+    height: 2px;
+    background: linear-gradient(to right, rgba(227, 193, 77, 0.75), var(--gold-light));
+    z-index: 1;
   }
 
-  .toc-row:hover .toc-arrow { color: var(--gold); transform: translateX(3px); }
+  /* Staggered delays — front matter */
+  .front-matter .book-btn:nth-child(1) { animation-delay: 0.05s; }
+  .front-matter .book-btn:nth-child(2) { animation-delay: 0.10s; }
+  .front-matter .book-btn:nth-child(3) { animation-delay: 0.15s; }
+
+  /* Staggered delays — main grid */
+  .grid .book-btn:nth-child(1)  { animation-delay: 0.20s; }
+  .grid .book-btn:nth-child(2)  { animation-delay: 0.25s; }
+  .grid .book-btn:nth-child(3)  { animation-delay: 0.30s; }
+  .grid .book-btn:nth-child(4)  { animation-delay: 0.35s; }
+  .grid .book-btn:nth-child(5)  { animation-delay: 0.40s; }
+  .grid .book-btn:nth-child(6)  { animation-delay: 0.45s; }
+  .grid .book-btn:nth-child(7)  { animation-delay: 0.50s; }
+  .grid .book-btn:nth-child(8)  { animation-delay: 0.55s; }
+  .grid .book-btn:nth-child(9)  { animation-delay: 0.60s; }
+  .grid .book-btn:nth-child(10) { animation-delay: 0.65s; }
+  .grid .book-btn:nth-child(11) { animation-delay: 0.70s; }
+  .grid .book-btn:nth-child(12) { animation-delay: 0.75s; }
+  .grid .book-btn:nth-child(13) { animation-delay: 0.80s; }
+  .grid .book-btn:nth-child(14) { animation-delay: 0.85s; }
+  .grid .book-btn:nth-child(15) { animation-delay: 0.90s; }
+  .grid .book-btn:nth-child(16) { animation-delay: 0.95s; }
+  .grid .book-btn:nth-child(17) { animation-delay: 1.00s; }
+  .grid .book-btn:nth-child(18) { animation-delay: 1.05s; }
+  .grid .book-btn:nth-child(19) { animation-delay: 1.10s; }
+  .grid .book-btn:nth-child(20) { animation-delay: 1.15s; }
+  .grid .book-btn:nth-child(21) { animation-delay: 1.20s; }
+  .grid .book-btn:nth-child(22) { animation-delay: 1.25s; }
+  .grid .book-btn:nth-child(23) { animation-delay: 1.30s; }
+  .grid .book-btn:nth-child(24) { animation-delay: 1.35s; }
+  .grid .book-btn:nth-child(25) { animation-delay: 1.40s; }
+  .grid .book-btn:nth-child(26) { animation-delay: 1.45s; }
+  .grid .book-btn:nth-child(27) { animation-delay: 1.50s; }
+  .grid .book-btn:nth-child(28) { animation-delay: 1.55s; }
+  .grid .book-btn:nth-child(29) { animation-delay: 1.60s; }
+  .grid .book-btn:nth-child(30) { animation-delay: 1.65s; }
+  .grid .book-btn:nth-child(31) { animation-delay: 1.70s; }
+  .grid .book-btn:nth-child(32) { animation-delay: 1.75s; }
 
   /* ── CONTACT ── */
   .contact {
@@ -432,8 +511,9 @@
   }
 
   @media (max-width: 600px) {
-    .front-matter-row { flex-direction: column; gap: 8px; }
-    .fm-sep { display: none; }
+    .front-matter { flex-direction: column; align-items: stretch; }
+    .front-matter .book-btn { width: 100%; }
+    .grid { grid-template-columns: 1fr; }
     .contact-links { flex-direction: column; align-items: stretch; }
     .contact-btn { justify-content: center; }
     .update-card { flex-wrap: wrap; }
@@ -461,55 +541,6 @@
   .cr-arrow { font-size: 1.1rem; color: var(--gold); flex-shrink: 0; transition: transform 0.25s; position: relative; z-index: 1; }
   .continue-btn:hover .cr-arrow { transform: translateX(5px); }
   .cr-bar { position: absolute; left: 0; bottom: 0; height: 3px; background: linear-gradient(to right, rgba(227,193,77,0.85), var(--gold-light)); z-index: 1; }
-
-  /* ── BEGIN YOUR JOURNEY — the exciting hero CTA for first-time visitors ── */
-  .begin-btn {
-    padding: clamp(22px, 3.6vw, 32px) clamp(26px, 4vw, 40px);
-    border-color: rgba(227, 193, 77, 0.65);
-    background: linear-gradient(135deg, rgba(227,193,77,0.22) 0%, rgba(122,96,37,0.55) 55%, rgba(29,26,14,0.85) 100%);
-    animation: beginPulse 3.2s ease-in-out infinite;
-  }
-
-  .begin-btn::after {
-    content: '';
-    position: absolute;
-    top: 0; bottom: 0; width: 55%;
-    background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,0.22) 50%, transparent 80%);
-    transform: translateX(-160%);
-    animation: beginShimmer 4.5s ease-in-out infinite;
-    pointer-events: none;
-  }
-
-  .begin-btn .cr-icon { font-size: clamp(1.4rem, 3.2vw, 2rem); animation: beginTwinkle 3.2s ease-in-out infinite; }
-  .begin-btn .cr-title { font-size: clamp(1.15rem, 3vw, 1.6rem); }
-
-  .begin-btn:hover {
-    border-color: var(--gold-light);
-    transform: translateY(-3px) scale(1.015);
-    box-shadow: 0 14px 44px rgba(0,0,0,0.55), 0 0 60px rgba(227,193,77,0.28);
-  }
-
-  .begin-btn:hover .cr-arrow { transform: translateX(8px); }
-
-  @keyframes beginPulse {
-    0%, 100% { box-shadow: 0 6px 30px rgba(0,0,0,0.5), 0 0 0 1px rgba(227,193,77,0.1), 0 0 30px rgba(227,193,77,0.10); }
-    50%      { box-shadow: 0 6px 30px rgba(0,0,0,0.5), 0 0 0 1px rgba(227,193,77,0.18), 0 0 55px rgba(227,193,77,0.30); }
-  }
-
-  @keyframes beginShimmer {
-    0%   { transform: translateX(-160%); }
-    45%  { transform: translateX(260%); }
-    100% { transform: translateX(260%); }
-  }
-
-  @keyframes beginTwinkle {
-    0%, 100% { transform: scale(1) rotate(0deg); }
-    50%      { transform: scale(1.18) rotate(8deg); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .begin-btn, .begin-btn::after, .begin-btn .cr-icon { animation: none !important; }
-  }
 </style>
 </head>
 <body>
@@ -537,13 +568,13 @@
   </a>
 </div>
 
-<!-- Begin Your Journey — shown by JS below only when no saved position exists yet -->
+<!-- Start Reading — shown by JS below only when no saved position exists yet -->
 <div id="start-reading" style="display:none">
-  <a href="light-as-meaning.html" class="continue-btn begin-btn">
+  <a href="light-as-meaning.html" class="continue-btn">
     <span class="cr-icon">&#10022;</span>
     <span class="cr-text">
       <span class="cr-label">New Here?</span>
-      <span class="cr-title">Begin Your Journey</span>
+      <span class="cr-title">Start Reading</span>
       <span class="cr-progress">Chapter I — Light as Meaning</span>
     </span>
     <span class="cr-arrow">&rarr;</span>
@@ -551,7 +582,7 @@
 </div>
 
 <main class="library">
-  <p class="section-label">Chapters</p>
+  <p class="section-label">Select a chapter to begin reading</p>
 
   <!-- SITE-WIDE SEARCH — indexes every chapter on first use, searched client-side -->
   <div id="library-search">
@@ -563,59 +594,235 @@
     <div id="ls-results" class="ls-results" hidden></div>
   </div>
 
-  <!-- FRONT MATTER (compact inline row) -->
-  <div class="front-matter-row">
-    <a href="introduction.html" class="lib-link fm-link"><span class="lib-title">Introduction</span></a>
-    <span class="fm-sep">&#10022;</span>
-    <a href="foreword.html" class="lib-link fm-link"><span class="lib-title">Foreword</span></a>
-    <span class="fm-sep">&#10022;</span>
-    <a href="authors-notes.html" class="lib-link fm-link"><span class="lib-title">Author's Notes</span></a>
+  <!-- FRONT MATTER (centred) -->
+  <div class="front-matter">
+
+    <a href="introduction.html" class="book-btn">
+      <span class="btn-text"><span class="btn-title">Introduction</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="foreword.html" class="book-btn">
+      <span class="btn-text"><span class="btn-title">Foreword</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="authors-notes.html" class="book-btn">
+      <span class="btn-text"><span class="btn-title">Author's Notes</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
   </div>
 
   <div class="grid-divider"></div>
 
-  <!-- MAIN CHAPTERS — compact table of contents -->
-  <div class="toc-list">
-    <a href="light-as-meaning.html" class="lib-link toc-row"><span class="toc-num">I</span><span class="lib-title toc-title">Light as Meaning</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="how-to-build-your-light.html" class="lib-link toc-row"><span class="toc-num">II</span><span class="lib-title toc-title">How to Build Light</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="purity.html" class="lib-link toc-row"><span class="toc-num">III</span><span class="lib-title toc-title">Purity</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="our-heart.html" class="lib-link toc-row"><span class="toc-num">IV</span><span class="lib-title toc-title">Our Heart</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="the-pen.html" class="lib-link toc-row"><span class="toc-num">V</span><span class="lib-title toc-title">The Pen</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="our-mind.html" class="lib-link toc-row"><span class="toc-num">VI</span><span class="lib-title toc-title">Our Mind</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="truth.html" class="lib-link toc-row"><span class="toc-num">VII</span><span class="lib-title toc-title">Truth</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="honour.html" class="lib-link toc-row"><span class="toc-num">VIII</span><span class="lib-title toc-title">Honour</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="understanding.html" class="lib-link toc-row"><span class="toc-num">IX</span><span class="lib-title toc-title">Understanding</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="advice.html" class="lib-link toc-row"><span class="toc-num">X</span><span class="lib-title toc-title">Advice</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="the-continuum.html" class="lib-link toc-row"><span class="toc-num">XI</span><span class="lib-title toc-title">The Continuum</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="imagination.html" class="lib-link toc-row"><span class="toc-num">XII</span><span class="lib-title toc-title">Imagination</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="greatness.html" class="lib-link toc-row"><span class="toc-num">XIII</span><span class="lib-title toc-title">Greatness</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="reality.html" class="lib-link toc-row"><span class="toc-num">XIV</span><span class="lib-title toc-title">Reality</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="thoughts.html" class="lib-link toc-row"><span class="toc-num">XV</span><span class="lib-title toc-title">Thoughts</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="power.html" class="lib-link toc-row"><span class="toc-num">XVI</span><span class="lib-title toc-title">Power</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="reason.html" class="lib-link toc-row"><span class="toc-num">XVII</span><span class="lib-title toc-title">Reason</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="belief.html" class="lib-link toc-row"><span class="toc-num">XVIII</span><span class="lib-title toc-title">Belief</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="pleasure.html" class="lib-link toc-row"><span class="toc-num">XIX</span><span class="lib-title toc-title">Pleasure</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="morality.html" class="lib-link toc-row"><span class="toc-num">XX</span><span class="lib-title toc-title">Morality</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="the-unseen.html" class="lib-link toc-row"><span class="toc-num">XXI</span><span class="lib-title toc-title">The Unseen</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="age-vs-evolution.html" class="lib-link toc-row"><span class="toc-num">XXII</span><span class="lib-title toc-title">Age vs Evolution</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="the-conscience.html" class="lib-link toc-row"><span class="toc-num">XXIII</span><span class="lib-title toc-title">The Conscience</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="gravitation.html" class="lib-link toc-row"><span class="toc-num">XXIV</span><span class="lib-title toc-title">Gravitation</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="the-nature-of-life.html" class="lib-link toc-row"><span class="toc-num">XXV</span><span class="lib-title toc-title">The Nature of Life</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="reading.html" class="lib-link toc-row"><span class="toc-num">XXVI</span><span class="lib-title toc-title">Reading</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="delusion.html" class="lib-link toc-row"><span class="toc-num">XXVII</span><span class="lib-title toc-title">Delusion</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="weakness.html" class="lib-link toc-row"><span class="toc-num">XXVIII</span><span class="lib-title toc-title">Weakness</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="weight.html" class="lib-link toc-row"><span class="toc-num">XXIX</span><span class="lib-title toc-title">Weight</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="hierarchy.html" class="lib-link toc-row"><span class="toc-num">XXX</span><span class="lib-title toc-title">Hierarchy</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="the-finality.html" class="lib-link toc-row"><span class="toc-num">XXXI</span><span class="lib-title toc-title">The Finality</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
-    <a href="paradise.html" class="lib-link toc-row"><span class="toc-num">XXXII</span><span class="lib-title toc-title">Paradise</span><span class="toc-meta"></span><span class="toc-arrow">&rarr;</span></a>
+  <!-- MAIN CHAPTERS -->
+  <div class="grid">
+
+    <a href="light-as-meaning.html" class="book-btn">
+      <span class="btn-number">I</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Light as Meaning</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="how-to-build-your-light.html" class="book-btn">
+      <span class="btn-number">II</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">How to Build Light</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+   <a href="purity.html" class="book-btn">
+      <span class="btn-number">III</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Purity</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+   
+   <a href="our-heart.html" class="book-btn">
+      <span class="btn-number">IV</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Our Heart</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+<a href="the-pen.html" class="book-btn">
+      <span class="btn-number">V</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">The Pen</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+<a href="our-mind.html" class="book-btn">
+      <span class="btn-number">VI</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Our Mind</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+<a href="truth.html" class="book-btn">
+      <span class="btn-number">VII</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Truth</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+<a href="honour.html" class="book-btn">
+      <span class="btn-number">VIII</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Honour</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+   <a href="understanding.html" class="book-btn">
+      <span class="btn-number">IX</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Understanding</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+   
+    <a href="advice.html" class="book-btn">
+      <span class="btn-number">X</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Advice</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="the-continuum.html" class="book-btn">
+      <span class="btn-number">XI</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">The Continuum</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="imagination.html" class="book-btn">
+      <span class="btn-number">XII</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Imagination</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    
+
+    <a href="greatness.html" class="book-btn">
+      <span class="btn-number">XIII</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Greatness</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    
+
+    
+
+    <a href="reality.html" class="book-btn">
+      <span class="btn-number">XIV</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Reality</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="thoughts.html" class="book-btn">
+      <span class="btn-number">XV</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Thoughts</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    
+
+    <a href="power.html" class="book-btn">
+      <span class="btn-number">XVI</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Power</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="reason.html" class="book-btn">
+      <span class="btn-number">XVII</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Reason</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="belief.html" class="book-btn">
+      <span class="btn-number">XVIII</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Belief</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="pleasure.html" class="book-btn">
+      <span class="btn-number">XIX</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Pleasure</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    
+
+    <a href="morality.html" class="book-btn">
+      <span class="btn-number">XX</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Morality</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="the-unseen.html" class="book-btn">
+      <span class="btn-number">XXI</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">The Unseen</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="age-vs-evolution.html" class="book-btn">
+      <span class="btn-number">XXII</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Age vs Evolution</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="the-conscience.html" class="book-btn">
+      <span class="btn-number">XXIII</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">The Conscience</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="gravitation.html" class="book-btn">
+      <span class="btn-number">XXIV</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Gravitation</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="the-nature-of-life.html" class="book-btn">
+      <span class="btn-number">XXV</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">The Nature of Life</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="reading.html" class="book-btn">
+      <span class="btn-number">XXVI</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Reading</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="delusion.html" class="book-btn">
+      <span class="btn-number">XXVII</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Delusion</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="weakness.html" class="book-btn">
+      <span class="btn-number">XXVIII</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Weakness</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="weight.html" class="book-btn">
+      <span class="btn-number">XXIX</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Weight</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="hierarchy.html" class="book-btn">
+      <span class="btn-number">XXX</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Hierarchy</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="the-finality.html" class="book-btn">
+      <span class="btn-number">XXXI</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">The Finality</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
+    <a href="paradise.html" class="book-btn">
+      <span class="btn-number">XXXII</span><span class="btn-divider"></span>
+      <span class="btn-text"><span class="btn-title">Paradise</span></span>
+      <span class="btn-arrow">&rarr;</span>
+    </a>
+
   </div>
 </main>
-
-<script>
-  document.querySelectorAll('.toc-row').forEach((row, i) => {
-    row.style.animationDelay = Math.min(i * 0.02, 0.5) + 's';
-  });
-</script>
 
 <!-- CONTACT -->
 <section class="contact">
@@ -699,9 +906,9 @@
     // Finished the book — point to whatever comes next in the library's
     // reading order instead of just resuming the last page again.
     if (pct >= 100) {
-      const order = Array.from(document.querySelectorAll('.lib-link')).map(btn => ({
+      const order = Array.from(document.querySelectorAll('.book-btn')).map(btn => ({
         file: btn.getAttribute('href'),
-        title: (btn.querySelector('.lib-title') || {}).textContent || btn.getAttribute('href'),
+        title: (btn.querySelector('.btn-title') || {}).textContent || btn.getAttribute('href'),
       }));
       const idx  = order.findIndex(b => b.file === rec.file);
       const next = (idx !== -1 && idx + 1 < order.length) ? order[idx + 1] : null;
@@ -735,12 +942,21 @@
     let all;
     try { all = JSON.parse(localStorage.getItem('noegenesis-progress')) || {}; } catch { all = {}; }
 
-    document.querySelectorAll('.toc-row').forEach(btn => {
+    document.querySelectorAll('.book-btn').forEach(btn => {
       const p = all[btn.getAttribute('href')];
       if (!p || !(p.total > 0) || !(p.page > 0)) return;
       const pct = Math.min(100, Math.round((p.page / p.total) * 100));
-      const meta = btn.querySelector('.toc-meta');
-      if (meta) meta.textContent = pct >= 100 ? '✓ Finished' : pct + '%';
+
+      const label = document.createElement('span');
+      label.className = 'btn-progress-label';
+      label.textContent = pct >= 100 ? 'Finished' : pct + '% read';
+      const textEl = btn.querySelector('.btn-text');
+      if (textEl) textEl.appendChild(label);
+
+      const bar = document.createElement('div');
+      bar.className = 'btn-progress-bar';
+      bar.style.width = pct + '%';
+      btn.appendChild(bar);
     });
   })();
 </script>
@@ -755,9 +971,9 @@
     const wrap      = document.getElementById('library-search');
     if (!input || !status || !resultsEl || !wrap) return;
 
-    const books = Array.from(document.querySelectorAll('.lib-link')).map(btn => ({
+    const books = Array.from(document.querySelectorAll('.book-btn')).map(btn => ({
       file: btn.getAttribute('href'),
-      title: (btn.querySelector('.lib-title') || {}).textContent || btn.getAttribute('href'),
+      title: (btn.querySelector('.btn-title') || {}).textContent || btn.getAttribute('href'),
     }));
 
     let index = null;
