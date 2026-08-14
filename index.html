@@ -521,8 +521,7 @@
   }
 
   /* ── CONTINUE READING — shown only when a saved reading position exists ── */
-  #continue-reading { max-width: 1100px; margin: 0 auto clamp(28px, 4vw, 44px); padding: 0 clamp(20px, 5vw, 48px); }
-  #start-reading { margin-bottom: clamp(24px, 4vw, 40px); }
+  #continue-reading, #start-reading { max-width: 1100px; margin: 0 auto clamp(28px, 4vw, 44px); padding: 0 clamp(20px, 5vw, 48px); }
   .continue-btn {
     display: flex; align-items: center; gap: 18px;
     padding: clamp(16px, 2.6vw, 22px) clamp(20px, 3.4vw, 28px);
@@ -569,6 +568,20 @@
   </a>
 </div>
 
+<!-- Start Reading — shown by JS below only when no saved position exists yet.
+     Progresses Introduction → Foreword → Author's Notes → Chapter I as each is read. -->
+<div id="start-reading" style="display:none">
+  <a href="introduction.html" id="start-reading-link" class="continue-btn">
+    <span class="cr-icon">&#10022;</span>
+    <span class="cr-text">
+      <span class="cr-label">New Here?</span>
+      <span class="cr-title">Start Reading</span>
+      <span class="cr-progress" id="start-reading-progress">Introduction</span>
+    </span>
+    <span class="cr-arrow">&rarr;</span>
+  </a>
+</div>
+
 <main class="library">
   <p class="section-label">Select a chapter to begin reading</p>
 
@@ -600,19 +613,6 @@
       <span class="btn-arrow">&rarr;</span>
     </a>
 
-  </div>
-
-  <!-- Start Reading — shown by JS below only when no saved position exists yet -->
-  <div id="start-reading" style="display:none">
-    <a href="light-as-meaning.html" class="continue-btn">
-      <span class="cr-icon">&#10022;</span>
-      <span class="cr-text">
-        <span class="cr-label">New Here?</span>
-        <span class="cr-title">Start Reading</span>
-        <span class="cr-progress">Chapter I — Light as Meaning</span>
-      </span>
-      <span class="cr-arrow">&rarr;</span>
-    </a>
   </div>
 
   <div class="grid-divider"></div>
@@ -889,8 +889,22 @@
     let rec;
     try { rec = JSON.parse(localStorage.getItem('noegenesis-lastread')); } catch { rec = null; }
     if (!rec || !rec.file || !(rec.page > 0)) {
-      const startRow = document.getElementById('start-reading');
-      if (startRow) startRow.style.display = 'block';
+      const startRow  = document.getElementById('start-reading');
+      const startLink = document.getElementById('start-reading-link');
+      const startProg = document.getElementById('start-reading-progress');
+      if (startRow && startLink && startProg) {
+        let fm;
+        try { fm = JSON.parse(localStorage.getItem('noegenesis-frontmatter-read')) || {}; } catch { fm = {}; }
+        const FRONT_MATTER = [
+          { file: 'introduction.html',  label: 'Introduction' },
+          { file: 'foreword.html',      label: 'Foreword' },
+          { file: 'authors-notes.html', label: "Author's Notes" },
+        ];
+        const next = FRONT_MATTER.find(f => !fm[f.file]);
+        startLink.href = next ? next.file : 'light-as-meaning.html';
+        startProg.textContent = next ? next.label : 'Chapter I — Light as Meaning';
+        startRow.style.display = 'block';
+      }
       return;
     }
 

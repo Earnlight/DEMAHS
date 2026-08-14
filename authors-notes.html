@@ -277,6 +277,17 @@
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js');
   }
+
+  // Mark this front-matter page as read, so the library's "Start Reading"
+  // card can progress to whichever of Introduction/Foreword/Author's Notes
+  // comes next instead of pointing back at this one.
+  (function () {
+    try {
+      const fm = JSON.parse(localStorage.getItem('noegenesis-frontmatter-read')) || {};
+      fm['authors-notes.html'] = true;
+      localStorage.setItem('noegenesis-frontmatter-read', JSON.stringify(fm));
+    } catch {}
+  })();
 </script>
 
 </body>
