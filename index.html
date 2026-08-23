@@ -1122,17 +1122,10 @@
       const needle = q.toLowerCase();
       const re = new RegExp(escapeRegExp(q), 'i');
       const matches = [];
-      const perFileCount = {};
       for (const unit of index) {
         const at = unit.text.toLowerCase().indexOf(needle);
         if (at === -1) continue;
-        // Cap matches per chapter so a common word in one long auto-paginated
-        // chapter (many paragraph-sized units) can't crowd out every other book.
-        const c = perFileCount[unit.file] || 0;
-        if (c >= 3) continue;
-        perFileCount[unit.file] = c + 1;
         matches.push({ unit, at });
-        if (matches.length >= 30) break;
       }
 
       resultsEl.hidden = false;
