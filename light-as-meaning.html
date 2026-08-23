@@ -610,7 +610,7 @@
     <div id="book">
 
       <!-- Bookmark ribbon lives INSIDE #book so it stays on the e-reader in normal and fullscreen modes -->
-      <div id="bookmark-ribbon" role="button" tabindex="0" aria-label="Go to bookmarked page" data-tip="Tap: navigate/bookmark · Double-tap: bookmark this page · Long-press: menu">
+      <div id="bookmark-ribbon" role="button" tabindex="0" aria-label="Go to bookmarked page" data-tip="Tap: navigate/bookmark · Double-tap: toggle bookmark here · Long-press: menu">
         <span class="bm-tick">✦</span>
         <span class="bm-num" id="bm-num"></span>
       </div>
@@ -1509,6 +1509,11 @@ const ReaderState = (function () {
     refresh();
     renderMenu();
   }
+  function toggleBookmark(page) {
+    const existing = load().find(b => b.page === page);
+    if (existing) removeBookmark(existing.id);
+    else addBookmark(page);
+  }
   function updateName(id, name) {
     const arr = load();
     const b = arr.find(b => b.id === id);
@@ -1653,14 +1658,14 @@ const ReaderState = (function () {
   });
   ['mouseup','mouseleave'].forEach(ev => ribbon.addEventListener(ev, cancelLongPress));
 
-  // ── Tap: single = navigate to most recent; double = bookmark the current page ──
+  // ── Tap: single = navigate to most recent; double = toggle a bookmark on the current page ──
   // 500ms window — generous enough for DuckDuckGo's slower click delivery
   ribbon.addEventListener('click', () => {
     if (longPressFired) { longPressFired = false; return; }
     if (tapTimer) {
-      // Double-tap → add (or refresh) a bookmark for the current page, keeping existing bookmarks
+      // Double-tap → bookmark the current page, or remove its bookmark if it already has one
       clearTimeout(tapTimer); tapTimer = null;
-      addBookmark(ReaderState.getCurrent());
+      toggleBookmark(ReaderState.getCurrent());
     } else {
       tapTimer = setTimeout(() => {
         tapTimer = null;
