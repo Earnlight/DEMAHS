@@ -238,6 +238,42 @@
   .ls-row-save:hover { color: rgba(227, 193, 77, 0.8); transform: scale(1.1); }
   .ls-row-save.saved { color: var(--gold); }
 
+  /* ── RESULTS PAGER ── */
+  .ls-pager {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 16px;
+    border-top: 1px solid rgba(227, 193, 77, 0.18);
+  }
+
+  .ls-pager-btn {
+    background: none;
+    border: 1px solid rgba(227, 193, 77, 0.3);
+    color: rgba(227, 193, 77, 0.75);
+    font-family: 'Cinzel', serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+
+  .ls-pager-btn:hover:not(:disabled) { background: rgba(227, 193, 77, 0.12); border-color: rgba(227, 193, 77, 0.6); color: var(--gold); }
+  .ls-pager-btn:disabled { opacity: 0.3; cursor: default; }
+
+  .ls-pager-info {
+    font-family: 'Cinzel', serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(227, 193, 77, 0.5);
+    white-space: nowrap;
+  }
+
   /* ── SAVED SEARCHES PANEL ── */
   #ls-saved { margin-top: 10px; }
 
@@ -1260,13 +1296,19 @@
 
     function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
+    // Results are paginated client-side (no re-search on Prev/Next) —
+    // renderResults() computes the full match list once per query and resets
+    // to page 1; renderResultsPage() just slices and (re)draws the current page.
+    const RESULTS_PAGE_SIZE = 7;
+    let lastMatches = [];
+    let lastQuery = '';
+    let resultsPage = 0;
+
     function renderResults(query) {
       const q = query.trim();
-      resultsEl.innerHTML = '';
-      if (q.length < 2) { resultsEl.hidden = true; return; }
+      if (q.length < 2) { resultsEl.hidden = true; resultsEl.innerHTML = ''; return; }
 
       const needle = q.toLowerCase();
-      const re = new RegExp(escapeRegExp(q), 'i');
       const matches = [];
       for (const unit of index) {
         const at = unit.text.toLowerCase().indexOf(needle);
@@ -1274,8 +1316,17 @@
         matches.push({ unit, at });
       }
 
+      lastMatches = matches;
+      lastQuery = q;
+      resultsPage = 0;
+      renderResultsPage();
+    }
+
+    function renderResultsPage() {
+      resultsEl.innerHTML = '';
       resultsEl.hidden = false;
-      if (!matches.length) {
+
+      if (!lastMatches.length) {
         const empty = document.createElement('div');
         empty.className = 'ls-empty';
         empty.textContent = 'No matches found.';
@@ -1283,7 +1334,14 @@
         return;
       }
 
-      matches.forEach(({ unit, at }, i) => {
+      const q = lastQuery;
+      const re = new RegExp(escapeRegExp(q), 'i');
+      const totalPages = Math.ceil(lastMatches.length / RESULTS_PAGE_SIZE);
+      const pageStart  = resultsPage * RESULTS_PAGE_SIZE;
+      const pageItems  = lastMatches.slice(pageStart, pageStart + RESULTS_PAGE_SIZE);
+
+      pageItems.forEach(({ unit, at }, iOnPage) => {
+        const i = pageStart + iOnPage;
         const start = Math.max(0, at - 50);
         const end   = Math.min(unit.text.length, at + q.length + 80);
         let snippet = (start > 0 ? '…' : '') + unit.text.slice(start, end) + (end < unit.text.length ? '…' : '');
@@ -1330,6 +1388,38 @@
         row.appendChild(saveBtn);
         resultsEl.appendChild(row);
       });
+
+      if (totalPages > 1) {
+        const pager = document.createElement('div');
+        pager.className = 'ls-pager';
+
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'ls-pager-btn';
+        prevBtn.textContent = '← Prev';
+        prevBtn.disabled = resultsPage === 0;
+        prevBtn.addEventListener('click', e => {
+          e.preventDefault(); e.stopPropagation();
+          if (resultsPage > 0) { resultsPage--; renderResultsPage(); }
+        });
+
+        const info = document.createElement('span');
+        info.className = 'ls-pager-info';
+        info.textContent = 'Page ' + (resultsPage + 1) + ' of ' + totalPages;
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'ls-pager-btn';
+        nextBtn.textContent = 'Next →';
+        nextBtn.disabled = resultsPage >= totalPages - 1;
+        nextBtn.addEventListener('click', e => {
+          e.preventDefault(); e.stopPropagation();
+          if (resultsPage < totalPages - 1) { resultsPage++; renderResultsPage(); }
+        });
+
+        pager.appendChild(prevBtn);
+        pager.appendChild(info);
+        pager.appendChild(nextBtn);
+        resultsEl.appendChild(pager);
+      }
     }
 
     let debounceTimer;
