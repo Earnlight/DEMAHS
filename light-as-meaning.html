@@ -1140,7 +1140,7 @@ const ReaderState = (function () {
 // HIGHLIGHT FEATURE — fixed: wraps per text-node, text never disappears
 // ══════════════════════════════════════════
 (function () {
-  const HL_KEY  = 'noegenesis-highlights-lam';
+  const HL_KEY  = 'noegenesis-highlights-light-as-meaning';
   const action  = document.getElementById('hl-action');
   const actBtn   = document.getElementById('hl-btn-highlight');
   const shareBtn = document.getElementById('hl-btn-share');
@@ -1432,7 +1432,7 @@ const ReaderState = (function () {
 // BOOKMARK — multi-page bookmarks with names and text previews
 // ══════════════════════════════════════════
 (function () {
-  const STORAGE_KEY = 'noegenesis-bookmarks-v2-lam';
+  const STORAGE_KEY = 'noegenesis-bookmarks-v2-light-as-meaning';
   const ribbon      = document.getElementById('bookmark-ribbon');
   const ribbonNum   = document.getElementById('bm-num');
   const bmMenu      = document.getElementById('bookmark-menu');
@@ -1452,7 +1452,7 @@ const ReaderState = (function () {
 
   // Migrate from old single-bookmark format
   (function migrate() {
-    const oldKey = 'noegenesis-bookmark-lam';
+    const oldKey = 'noegenesis-bookmark-light-as-meaning';
     const oldVal = localStorage.getItem(oldKey);
     if (oldVal && !localStorage.getItem(STORAGE_KEY)) {
       const p = parseInt(oldVal, 10);
@@ -1958,7 +1958,7 @@ document.getElementById('public-toggle').addEventListener('change', function () 
     const btn = document.getElementById('submit-btn');
 
     // ── Client-side limit: max 2 submissions per 24 hours per browser ──
-    const RL_KEY = 'noegenesis-form-submits-lam';
+    const RL_KEY = 'noegenesis-form-submits-light-as-meaning';
     const MAX = 2, WINDOW_MS = 24 * 3600 * 1000;
     let rl;
     try { rl = JSON.parse(localStorage.getItem(RL_KEY)) || { count: 0, resetAt: 0 }; } catch { rl = { count: 0, resetAt: 0 }; }
