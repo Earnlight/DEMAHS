@@ -610,7 +610,7 @@
     <div id="book">
 
       <!-- Bookmark ribbon lives INSIDE #book so it stays on the e-reader in normal and fullscreen modes -->
-      <div id="bookmark-ribbon" role="button" tabindex="0" aria-label="Go to bookmarked page" data-tip="Tap: navigate/bookmark · Double-tap: clear · Long-press: menu">
+      <div id="bookmark-ribbon" role="button" tabindex="0" aria-label="Go to bookmarked page" data-tip="Tap: navigate/bookmark · Double-tap: move bookmark here · Long-press: menu">
         <span class="bm-tick">✦</span>
         <span class="bm-num" id="bm-num"></span>
       </div>
@@ -1509,6 +1509,20 @@ const ReaderState = (function () {
     refresh();
     renderMenu();
   }
+  function relocateBookmark() {
+    const currentPage = ReaderState.getCurrent();
+    const arr = load();
+    const recent = getMostRecent(arr);
+    if (!recent) { addBookmark(currentPage); return; }
+    if (recent.page === currentPage) return; // already the current page
+    const filtered = arr.filter(b => b.id === recent.id || b.page !== currentPage);
+    const moved = filtered.find(b => b.id === recent.id);
+    moved.page = currentPage;
+    moved.addedAt = Date.now();
+    save(filtered);
+    refresh();
+    renderMenu();
+  }
   function updateName(id, name) {
     const arr = load();
     const b = arr.find(b => b.id === id);
@@ -1542,7 +1556,7 @@ const ReaderState = (function () {
 
   function openMenu() {
     if (bmMenu) bmMenu.classList.add('open');
-    switchTab(activeTab); // render whichever tab was last active
+    switchTab('bookmarks'); // long-press always surfaces the bookmarked pages first
   }
   function closeMenu() { if (bmMenu) bmMenu.classList.remove('open'); }
 
@@ -1619,7 +1633,7 @@ const ReaderState = (function () {
   if (tabBmBtn) tabBmBtn.addEventListener('click', e => { e.stopPropagation(); switchTab('bookmarks'); });
   if (tabHlBtn) tabHlBtn.addEventListener('click', e => { e.stopPropagation(); switchTab('highlights'); });
   document.addEventListener('click', e => {
-    if (bmMenu && !bmMenu.contains(e.target) && e.target !== ribbon) closeMenu();
+    if (bmMenu && !bmMenu.contains(e.target) && !ribbon.contains(e.target)) closeMenu();
   });
 
   // ── Long-press (touch + mouse) — opens the panel ──
@@ -1653,15 +1667,14 @@ const ReaderState = (function () {
   });
   ['mouseup','mouseleave'].forEach(ev => ribbon.addEventListener(ev, cancelLongPress));
 
-  // ── Tap: single = navigate to most recent; double = clear most recent bookmark ──
+  // ── Tap: single = navigate to most recent; double = relocate most recent bookmark here ──
   // 500ms window — generous enough for DuckDuckGo's slower click delivery
   ribbon.addEventListener('click', () => {
     if (longPressFired) { longPressFired = false; return; }
     if (tapTimer) {
-      // Double-tap → remove the most recent bookmark
+      // Double-tap → move the most recent bookmark to the current page
       clearTimeout(tapTimer); tapTimer = null;
-      const recent = getMostRecent(load());
-      if (recent) removeBookmark(recent.id);
+      relocateBookmark();
     } else {
       tapTimer = setTimeout(() => {
         tapTimer = null;
