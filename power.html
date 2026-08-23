@@ -1792,6 +1792,7 @@ const ReaderState = (function () {
     resultEl.textContent = ''; countEl.textContent = '';
     navEl.style.display = 'none';
     showClearBtn(false);
+    refreshSaveBtn();
   }
 
   function highlightAll(query) {
@@ -1849,10 +1850,13 @@ const ReaderState = (function () {
     } else {
       cur.el.scrollIntoView({ block: 'center' });
     }
+    refreshSaveBtn();
   }
 
-  // Search button always does a FRESH search — no "same term → advance" logic
-  function doSearch() {
+  // Search button always does a FRESH search — no "same term → advance" logic.
+  // preferredIndex lets a saved result jump straight back to the exact match
+  // it was saved from (falls back to the first match otherwise).
+  function doSearch(preferredIndex) {
     const query = input.value.trim();
     if (!query) { clearSearch(); return; }
     clearHighlights(); matches = []; matchIndex = 0;
@@ -1860,10 +1864,10 @@ const ReaderState = (function () {
     addRecent(query);
     highlightAll(query);
     showClearBtn(true);
-    if (!matches.length) { resultEl.textContent = 'Not found'; return; }
+    if (!matches.length) { resultEl.textContent = 'Not found'; refreshSaveBtn(); return; }
     resultEl.textContent = matches.length + (matches.length === 1 ? ' result' : ' results');
     navEl.style.display = 'flex';
-    goToMatch(0);
+    goToMatch(typeof preferredIndex === 'number' && preferredIndex < matches.length ? preferredIndex : 0);
   }
 
   btn.addEventListener('click', doSearch);
@@ -1916,32 +1920,68 @@ const ReaderState = (function () {
     if (!recentMenu.contains(e.target) && e.target !== recentBtn) recentMenu.classList.remove('open');
   });
 
-  // Saved searches — a persistent, user-managed list (distinct from the
-  // ephemeral "recent searches" above), living in the bookmark panel's
-  // Searches tab and functioning like bookmarks: explicit, named, deletable.
+  // Saved searches — saves the SPECIFIC MATCH currently in view (not the
+  // query as a whole), so a reader can save 3 of 5 hits and skip the rest.
+  // Persistent and user-managed, living in the bookmark panel's Searches tab
+  // and functioning like bookmarks: explicit, named, deletable.
   const SAVED_KEY = 'noegenesis-saved-searches-power';
   const saveBtn   = document.getElementById('search-save-btn');
 
   function getSavedSearches() { try { return JSON.parse(localStorage.getItem(SAVED_KEY)) || []; } catch { return []; } }
   function setSavedSearches(list) { localStorage.setItem(SAVED_KEY, JSON.stringify(list)); }
-  function isSearchSaved(q) { return getSavedSearches().some(s => s.query.toLowerCase() === q.toLowerCase()); }
+
+  // Exact character offset of a match's <mark> within its containing block,
+  // via Range (not indexOf) — indexOf would always find the FIRST occurrence
+  // of the query in that block, so two separate matches sharing a paragraph
+  // would be indistinguishable from each other. Range measures from the start
+  // of the container up to this specific mark, so each occurrence gets its
+  // own offset regardless of how many others share the same text.
+  function offsetForMatch(m) {
+    const container = m.el.closest('p') || m.el.closest('.page-body') || m.el.parentElement;
+    if (!container) return 0;
+    const range = document.createRange();
+    range.selectNodeContents(container);
+    range.setEnd(m.el, 0);
+    return range.toString().length;
+  }
+
+  function snippetForMatch(m) {
+    const container = m.el.closest('p') || m.el.closest('.page-body') || m.el.parentElement;
+    const rawText = container ? container.textContent : m.el.textContent;
+    const idx = offsetForMatch(m);
+    const start = Math.max(0, idx - 50);
+    const end   = Math.min(rawText.length, idx + m.el.textContent.length + 80);
+    return (start > 0 ? '…' : '') + rawText.slice(start, end).replace(/\s+/g, ' ').trim() + (end < rawText.length ? '…' : '');
+  }
+
+  function isCurrentMatchSaved() {
+    if (!matches.length) return false;
+    const cur = matches[matchIndex];
+    const q = input.value.trim().toLowerCase();
+    const offset = offsetForMatch(cur);
+    return getSavedSearches().some(s => s.page === cur.pageIndex && s.query.toLowerCase() === q && s.offset === offset);
+  }
 
   function refreshSaveBtn() {
     if (!saveBtn) return;
-    const q = input.value.trim();
-    const saved = !!q && isSearchSaved(q);
+    const saved = isCurrentMatchSaved();
     saveBtn.classList.toggle('saved', saved);
     saveBtn.textContent = saved ? '★' : '☆';
   }
 
   function toggleSaveCurrent() {
-    const q = input.value.trim();
-    if (!q) return;
+    if (!matches.length) return;
+    const cur = matches[matchIndex];
+    const query = input.value.trim();
+    if (!query) return;
+    const offset = offsetForMatch(cur);
+    const snippet = snippetForMatch(cur);
     let list = getSavedSearches();
-    if (isSearchSaved(q)) {
-      list = list.filter(s => s.query.toLowerCase() !== q.toLowerCase());
+    const already = list.find(s => s.page === cur.pageIndex && s.query.toLowerCase() === query.toLowerCase() && s.offset === offset);
+    if (already) {
+      list = list.filter(s => s.id !== already.id);
     } else {
-      list.unshift({ id: Date.now(), query: q, savedAt: Date.now() });
+      list.unshift({ id: Date.now() + Math.random(), query, page: cur.pageIndex, offset, snippet, matchIndex, savedAt: Date.now() });
     }
     setSavedSearches(list);
     refreshSaveBtn();
@@ -1949,14 +1989,13 @@ const ReaderState = (function () {
   }
 
   if (saveBtn) saveBtn.addEventListener('click', e => { e.stopPropagation(); toggleSaveCurrent(); });
-  input.addEventListener('input', refreshSaveBtn);
   refreshSaveBtn();
 
   window.__renderSavedSearchesInPanel = function (container) {
     const list = getSavedSearches().slice().sort((a, b) => b.savedAt - a.savedAt);
     container.innerHTML = '';
     if (!list.length) {
-      container.innerHTML = '<div class="bm-empty">No saved searches yet.<br>Tap ☆ next to the search bar to save one.</div>';
+      container.innerHTML = '<div class="bm-empty">No saved results yet.<br>While viewing a search match, tap ☆ next to the search bar to save it.</div>';
       return;
     }
     list.forEach(s => {
@@ -1964,12 +2003,12 @@ const ReaderState = (function () {
       item.className = 'bm-item';
 
       const top = document.createElement('div'); top.className = 'bm-item-top';
-      const tag = document.createElement('span'); tag.className = 'bm-pg'; tag.textContent = 'Find';
-      const label = document.createElement('span'); label.className = 'bm-ss-query'; label.textContent = s.query;
+      const tag = document.createElement('span'); tag.className = 'bm-pg'; tag.textContent = s.page === 0 ? 'Cover' : 'P. ' + s.page;
+      const label = document.createElement('span'); label.className = 'bm-ss-query'; label.textContent = 'Find: ' + s.query;
 
       const actions = document.createElement('div'); actions.className = 'bm-item-actions';
       const delBtn = document.createElement('button'); delBtn.className = 'bm-del'; delBtn.textContent = '✕';
-      delBtn.title = 'Remove saved search';
+      delBtn.title = 'Remove saved result';
       delBtn.addEventListener('click', e => {
         e.stopPropagation();
         actions.innerHTML = '';
@@ -1989,14 +2028,16 @@ const ReaderState = (function () {
       });
       actions.appendChild(delBtn);
 
+      const preview = document.createElement('div'); preview.className = 'bm-preview'; preview.innerHTML = s.snippet;
+
       top.appendChild(tag); top.appendChild(label); top.appendChild(actions);
       item.appendChild(top);
+      item.appendChild(preview);
       item.addEventListener('click', e => {
         if (e.target.closest('.bm-item-actions')) return;
         input.value = s.query;
-        refreshSaveBtn();
         if (window.__closeBookmarkMenu) window.__closeBookmarkMenu();
-        doSearch();
+        doSearch(s.matchIndex);
       });
       container.appendChild(item);
     });
