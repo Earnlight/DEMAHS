@@ -181,14 +181,17 @@
   }
 
   .ls-row {
-    display: block;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
     padding: 10px 16px;
-    text-decoration: none;
     border-bottom: 1px solid rgba(227, 193, 77, 0.12);
   }
 
   .ls-row:last-child { border-bottom: none; }
-  .ls-row:hover, .ls-row:focus { background: rgba(227, 193, 77, 0.08); }
+  .ls-row:hover, .ls-row:focus-within { background: rgba(227, 193, 77, 0.08); }
+
+  .ls-row-link { flex: 1; min-width: 0; text-decoration: none; }
 
   .ls-row-head {
     font-family: 'Cinzel', serif;
@@ -219,8 +222,8 @@
     color: rgba(227, 193, 77, 0.55);
   }
 
-  /* ── SAVE SEARCH BUTTON ── */
-  #ls-save-btn {
+  /* ── PER-RESULT SAVE BUTTON — saves this specific match, not the query ── */
+  .ls-row-save {
     background: none;
     border: none;
     color: rgba(227, 193, 77, 0.45);
@@ -232,8 +235,8 @@
     transition: color 0.2s, transform 0.2s;
   }
 
-  #ls-save-btn:hover { color: rgba(227, 193, 77, 0.8); transform: scale(1.1); }
-  #ls-save-btn.saved { color: var(--gold); }
+  .ls-row-save:hover { color: rgba(227, 193, 77, 0.8); transform: scale(1.1); }
+  .ls-row-save.saved { color: var(--gold); }
 
   /* ── SAVED SEARCHES PANEL ── */
   #ls-saved { margin-top: 10px; }
@@ -274,27 +277,42 @@
 
   .ls-saved-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 8px;
-    padding: 8px 12px;
+    padding: 10px 12px;
     border-bottom: 1px solid rgba(227, 193, 77, 0.10);
-    cursor: pointer;
     transition: background 0.15s;
   }
 
   .ls-saved-item:last-child { border-bottom: none; }
   .ls-saved-item:hover { background: rgba(227, 193, 77, 0.08); }
 
-  .ls-saved-query {
-    flex: 1;
-    min-width: 0;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.85rem;
-    color: rgba(245, 221, 140, 0.9);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .ls-saved-body { flex: 1; min-width: 0; cursor: pointer; }
+
+  .ls-saved-head {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    color: rgba(227, 193, 77, 0.75);
+    margin-bottom: 3px;
   }
+
+  .ls-saved-query-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.72rem;
+    color: rgba(227, 193, 77, 0.5);
+    margin-bottom: 3px;
+  }
+
+  .ls-saved-snippet {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: rgba(245, 221, 140, 0.75);
+  }
+
+  .ls-saved-snippet mark { background: transparent; color: var(--gold-light); font-weight: 600; }
 
   .ls-saved-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
@@ -725,7 +743,6 @@
     <div class="ls-bar">
       <span class="ls-icon">&#128269;</span>
       <input type="text" id="ls-input" placeholder="Search every chapter…" autocomplete="off" aria-label="Search every chapter">
-      <button id="ls-save-btn" aria-label="Save this search" title="Save this search">&#9734;</button>
       <span class="ls-status" id="ls-status"></span>
     </div>
     <div id="ls-results" class="ls-results" hidden></div>
@@ -1271,10 +1288,14 @@
         const end   = Math.min(unit.text.length, at + q.length + 80);
         let snippet = (start > 0 ? '…' : '') + unit.text.slice(start, end) + (end < unit.text.length ? '…' : '');
         snippet = snippet.replace(re, m => '<mark>' + m + '</mark>');
+        const href = unit.file + (unit.page ? '?page=' + unit.page : '');
 
-        const row = document.createElement('a');
+        const row = document.createElement('div');
         row.className = 'ls-row';
-        row.href = unit.file + (unit.page ? '?page=' + unit.page : '');
+
+        const link = document.createElement('a');
+        link.className = 'ls-row-link';
+        link.href = href;
 
         const head = document.createElement('div');
         head.className = 'ls-row-head';
@@ -1284,8 +1305,29 @@
         body.className = 'ls-row-snippet';
         body.innerHTML = snippet;
 
-        row.appendChild(head);
-        row.appendChild(body);
+        link.appendChild(head);
+        link.appendChild(body);
+
+        // Per-result save — saves THIS specific match, not the query, so a
+        // reader can save 3 of 5 hits and skip the rest.
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'ls-row-save';
+        saveBtn.setAttribute('aria-label', 'Save this result');
+        saveBtn.title = 'Save this result';
+        const matchSaved = isResultSaved(unit.file, unit.page, q, snippet);
+        saveBtn.classList.toggle('saved', matchSaved);
+        saveBtn.textContent = matchSaved ? '★' : '☆';
+        saveBtn.addEventListener('click', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleResultSaved({ file: unit.file, page: unit.page, title: unit.title, query: q, snippet });
+          const nowSaved = isResultSaved(unit.file, unit.page, q, snippet);
+          saveBtn.classList.toggle('saved', nowSaved);
+          saveBtn.textContent = nowSaved ? '★' : '☆';
+        });
+
+        row.appendChild(link);
+        row.appendChild(saveBtn);
         resultsEl.appendChild(row);
       });
     }
@@ -1295,7 +1337,6 @@
     input.addEventListener('input', () => {
       clearTimeout(debounceTimer);
       const query = input.value;
-      refreshSaveBtn();
       if (!query.trim()) { resultsEl.hidden = true; return; }
       debounceTimer = setTimeout(() => { buildIndex().then(() => renderResults(query)); }, 200);
     });
@@ -1303,10 +1344,10 @@
       if (!wrap.contains(e.target)) resultsEl.hidden = true;
     });
 
-    // ── Saved searches — a persistent, user-managed list (distinct from the
-    // transient in-progress typing above), functioning like the reader
-    // pages' bookmarks/highlights: explicitly saved, named, and deletable.
-    const saveBtn     = document.getElementById('ls-save-btn');
+    // ── Saved searches — saves a specific RESULT (one file+page+query hit),
+    // not the query itself, so a reader can save 3 of 5 matches and skip the
+    // rest. Persistent and user-managed, like the reader pages'
+    // bookmarks/highlights: explicit, named, deletable.
     const savedToggle = document.getElementById('ls-saved-toggle');
     const savedCount  = document.getElementById('ls-saved-count');
     const savedList   = document.getElementById('ls-saved-list');
@@ -1314,14 +1355,26 @@
 
     function getSavedSearches() { try { return JSON.parse(localStorage.getItem(SAVED_KEY)) || []; } catch { return []; } }
     function setSavedSearches(list) { localStorage.setItem(SAVED_KEY, JSON.stringify(list)); }
-    function isSearchSaved(q) { return getSavedSearches().some(s => s.query.toLowerCase() === q.toLowerCase()); }
+    // Identity includes the snippet, not just file+page+query: chapters whose
+    // text isn't paginated (the CHAPTER_TEXT auto-paginator format) index each
+    // paragraph as its own unit with page:null, so multiple distinct results
+    // from the same chapter would otherwise share an identical file+page+query
+    // key and collide. The snippet (each unit's own surrounding text) is what
+    // actually distinguishes one paragraph's hit from another's.
+    function isResultSaved(file, page, query, snippet) {
+      return getSavedSearches().some(s => s.file === file && s.page === page && s.query.toLowerCase() === query.toLowerCase() && s.snippet === snippet);
+    }
 
-    function refreshSaveBtn() {
-      if (!saveBtn) return;
-      const q = input.value.trim();
-      const saved = !!q && isSearchSaved(q);
-      saveBtn.classList.toggle('saved', saved);
-      saveBtn.textContent = saved ? '★' : '☆';
+    function toggleResultSaved(match) {
+      let list = getSavedSearches();
+      if (isResultSaved(match.file, match.page, match.query, match.snippet)) {
+        list = list.filter(s => !(s.file === match.file && s.page === match.page && s.query.toLowerCase() === match.query.toLowerCase() && s.snippet === match.snippet));
+      } else {
+        list.unshift({ id: Date.now() + Math.random(), file: match.file, page: match.page, title: match.title, query: match.query, snippet: match.snippet, savedAt: Date.now() });
+      }
+      setSavedSearches(list);
+      refreshSavedToggle();
+      if (savedList && !savedList.hidden) renderSavedList();
     }
 
     function refreshSavedToggle() {
@@ -1340,16 +1393,34 @@
         const item = document.createElement('div');
         item.className = 'ls-saved-item';
 
-        const q = document.createElement('span');
-        q.className = 'ls-saved-query';
-        q.textContent = s.query;
+        const body = document.createElement('div');
+        body.className = 'ls-saved-body';
+
+        const head = document.createElement('div');
+        head.className = 'ls-saved-head';
+        head.textContent = s.title + (s.page ? ' — page ' + s.page : '');
+
+        const label = document.createElement('div');
+        label.className = 'ls-saved-query-label';
+        label.textContent = 'Find: ' + s.query;
+
+        const snip = document.createElement('div');
+        snip.className = 'ls-saved-snippet';
+        snip.innerHTML = s.snippet;
+
+        body.appendChild(head);
+        body.appendChild(label);
+        body.appendChild(snip);
+        body.addEventListener('click', () => {
+          location.href = s.file + (s.page ? '?page=' + s.page : '');
+        });
 
         const actions = document.createElement('span');
         actions.className = 'ls-saved-actions';
         const del = document.createElement('button');
         del.className = 'ls-saved-del';
         del.textContent = '✕';
-        del.title = 'Remove saved search';
+        del.title = 'Remove saved result';
         del.addEventListener('click', e => {
           e.stopPropagation();
           actions.innerHTML = '';
@@ -1360,7 +1431,6 @@
           yes.addEventListener('click', ev => {
             ev.stopPropagation();
             setSavedSearches(getSavedSearches().filter(x => x.id !== s.id));
-            refreshSaveBtn();
             refreshSavedToggle();
             renderSavedList();
           });
@@ -1370,34 +1440,12 @@
         });
         actions.appendChild(del);
 
-        item.appendChild(q);
+        item.appendChild(body);
         item.appendChild(actions);
-        item.addEventListener('click', e => {
-          if (e.target.closest('.ls-saved-actions')) return;
-          input.value = s.query;
-          refreshSaveBtn();
-          buildIndex().then(() => renderResults(s.query));
-        });
         savedList.appendChild(item);
       });
     }
 
-    function toggleSaveCurrent() {
-      const q = input.value.trim();
-      if (!q) return;
-      let list = getSavedSearches();
-      if (isSearchSaved(q)) {
-        list = list.filter(s => s.query.toLowerCase() !== q.toLowerCase());
-      } else {
-        list.unshift({ id: Date.now(), query: q, savedAt: Date.now() });
-      }
-      setSavedSearches(list);
-      refreshSaveBtn();
-      refreshSavedToggle();
-      renderSavedList();
-    }
-
-    if (saveBtn) saveBtn.addEventListener('click', e => { e.stopPropagation(); toggleSaveCurrent(); });
     if (savedToggle) savedToggle.addEventListener('click', e => {
       e.stopPropagation();
       if (savedList) {
