@@ -158,9 +158,6 @@
   #search-clear:hover { background: var(--btn-hover); }
 
   #recent-btn { background: var(--btn-bg); border: 1px solid var(--border); color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.8rem; line-height: 1; padding: 3px 8px; border-radius: 3px; cursor: pointer; transition: background 0.2s; }
-  #search-save-btn { background: none; border: none; color: var(--text-dim); font-size: 0.95rem; line-height: 1; padding: 0 3px; cursor: pointer; transition: color 0.2s, transform 0.2s; }
-  #search-save-btn:hover { color: var(--gold); transform: scale(1.1); }
-  #search-save-btn.saved { color: var(--gold); }
   #recent-btn:hover { background: var(--btn-hover); }
   #recent-menu {
     display: none; position: absolute; top: calc(100% + 5px); right: 0;
@@ -478,10 +475,6 @@
   .bm-hl-item:last-child { border-bottom: none; }
   .bm-hl-text { flex: 1; font-family: 'Cormorant Garamond', serif; font-size: 0.78rem; color: var(--text); line-height: 1.4; font-style: italic; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-width: 0; }
 
-  /* ── SAVED SEARCHES SECTION inside bookmark panel — reuses .bm-item/.bm-del/.bm-confirm-* ── */
-  .bm-ss-list { overflow-y: auto; padding: 4px; max-height: 300px; }
-  .bm-ss-query { flex: 1; min-width: 0; font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.04em; color: var(--input-color); padding: 2px 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
   #definition-bubble { position: fixed; z-index: 9999; max-width: 260px; background: var(--menu-bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); display: none; pointer-events: none; }
   #definition-bubble::before { content: ''; position: absolute; bottom: -7px; left: 50%; width: 12px; height: 12px; background: var(--menu-bg); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); transform: translateX(-50%) rotate(45deg); }
   #def-word { font-family: 'Cinzel', serif; font-size: 0.72rem; color: var(--gold-light); letter-spacing: 0.1em; margin-bottom: 4px; }
@@ -531,7 +524,6 @@
   <input type="text" id="search-input" placeholder="Search text in the book…">
   <button id="search-btn" data-tip="Search the book">Search</button>
   <button id="search-clear" aria-label="Clear search" data-tip="Clear search">✕</button>
-  <button id="search-save-btn" aria-label="Save this search" data-tip="Save this search">☆</button>
   <button id="recent-btn" aria-label="Previous searches" data-tip="Recent searches">▾</button>
   <span id="search-result"></span>
   <div id="recent-menu"></div>
@@ -561,12 +553,10 @@
         <div class="bm-tabs">
           <button class="bm-tab active" id="bm-tab-bookmarks">Bookmarks</button>
           <button class="bm-tab" id="bm-tab-highlights">Highlights</button>
-          <button class="bm-tab" id="bm-tab-searches">Searches</button>
         </div>
         <button class="bm-add-btn" id="bm-add-btn">🔖 Bookmark this page</button>
         <div class="bm-list" id="bm-list"></div>
         <div class="bm-hl-list" id="bm-hl-list" style="display:none;"></div>
-        <div class="bm-ss-list" id="bm-ss-list" style="display:none;"></div>
       </div>
 
       <!-- PAGE 0: COVER -->
@@ -1402,38 +1392,23 @@ const ReaderState = (function () {
     activeTab = tab;
     const listEl  = document.getElementById('bm-list');
     const hlEl    = document.getElementById('bm-hl-list');
-    const ssEl    = document.getElementById('bm-ss-list');
     const addBtn  = document.getElementById('bm-add-btn');
     const tabBm   = document.getElementById('bm-tab-bookmarks');
     const tabHl   = document.getElementById('bm-tab-highlights');
-    const tabSs   = document.getElementById('bm-tab-searches');
     if (tab === 'bookmarks') {
       if (listEl)  listEl.style.display  = '';
       if (hlEl)    hlEl.style.display    = 'none';
-      if (ssEl)    ssEl.style.display    = 'none';
       if (addBtn)  addBtn.style.display  = '';
       if (tabBm)   tabBm.classList.add('active');
       if (tabHl)   tabHl.classList.remove('active');
-      if (tabSs)   tabSs.classList.remove('active');
       renderMenu();
-    } else if (tab === 'highlights') {
+    } else {
       if (listEl)  listEl.style.display  = 'none';
       if (hlEl)    hlEl.style.display    = '';
-      if (ssEl)    ssEl.style.display    = 'none';
       if (addBtn)  addBtn.style.display  = 'none';
       if (tabBm)   tabBm.classList.remove('active');
       if (tabHl)   tabHl.classList.add('active');
-      if (tabSs)   tabSs.classList.remove('active');
       if (hlEl && window.__renderHighlightsInPanel) window.__renderHighlightsInPanel(hlEl);
-    } else {
-      if (listEl)  listEl.style.display  = 'none';
-      if (hlEl)    hlEl.style.display    = 'none';
-      if (ssEl)    ssEl.style.display    = '';
-      if (addBtn)  addBtn.style.display  = 'none';
-      if (tabBm)   tabBm.classList.remove('active');
-      if (tabHl)   tabHl.classList.remove('active');
-      if (tabSs)   tabSs.classList.add('active');
-      if (ssEl && window.__renderSavedSearchesInPanel) window.__renderSavedSearchesInPanel(ssEl);
     }
   }
 
@@ -1442,11 +1417,6 @@ const ReaderState = (function () {
     switchTab(activeTab); // render whichever tab was last active
   }
   function closeMenu() { if (bmMenu) bmMenu.classList.remove('open'); }
-  window.__closeBookmarkMenu = closeMenu;
-  window.__refreshSavedSearchesPanel = function () {
-    const el = document.getElementById('bm-ss-list');
-    if (el && el.style.display !== 'none' && window.__renderSavedSearchesInPanel) window.__renderSavedSearchesInPanel(el);
-  };
 
   function renderMenu() {
     if (!bmList) return;
@@ -1518,10 +1488,8 @@ const ReaderState = (function () {
   if (bmClose) bmClose.addEventListener('click', e => { e.stopPropagation(); closeMenu(); });
   const tabBmBtn = document.getElementById('bm-tab-bookmarks');
   const tabHlBtn = document.getElementById('bm-tab-highlights');
-  const tabSsBtn = document.getElementById('bm-tab-searches');
   if (tabBmBtn) tabBmBtn.addEventListener('click', e => { e.stopPropagation(); switchTab('bookmarks'); });
   if (tabHlBtn) tabHlBtn.addEventListener('click', e => { e.stopPropagation(); switchTab('highlights'); });
-  if (tabSsBtn) tabSsBtn.addEventListener('click', e => { e.stopPropagation(); switchTab('searches'); });
   document.addEventListener('click', e => {
     if (bmMenu && !bmMenu.contains(e.target) && e.target !== ribbon) closeMenu();
   });
@@ -1656,7 +1624,6 @@ const ReaderState = (function () {
     resultEl.textContent = ''; countEl.textContent = '';
     navEl.style.display = 'none';
     showClearBtn(false);
-    refreshSaveBtn();
   }
 
   function highlightAll(query) {
@@ -1714,13 +1681,10 @@ const ReaderState = (function () {
     } else {
       cur.el.scrollIntoView({ block: 'center' });
     }
-    refreshSaveBtn();
   }
 
-  // Search button always does a FRESH search — no "same term → advance" logic.
-  // preferredIndex lets a saved result jump straight back to the exact match
-  // it was saved from (falls back to the first match otherwise).
-  function doSearch(preferredIndex) {
+  // Search button always does a FRESH search — no "same term → advance" logic
+  function doSearch() {
     const query = input.value.trim();
     if (!query) { clearSearch(); return; }
     clearHighlights(); matches = []; matchIndex = 0;
@@ -1728,10 +1692,10 @@ const ReaderState = (function () {
     addRecent(query);
     highlightAll(query);
     showClearBtn(true);
-    if (!matches.length) { resultEl.textContent = 'Not found'; refreshSaveBtn(); return; }
+    if (!matches.length) { resultEl.textContent = 'Not found'; return; }
     resultEl.textContent = matches.length + (matches.length === 1 ? ' result' : ' results');
     navEl.style.display = 'flex';
-    goToMatch(typeof preferredIndex === 'number' && preferredIndex < matches.length ? preferredIndex : 0);
+    goToMatch(0);
   }
 
   btn.addEventListener('click', doSearch);
@@ -1783,129 +1747,6 @@ const ReaderState = (function () {
   document.addEventListener('click', e => {
     if (!recentMenu.contains(e.target) && e.target !== recentBtn) recentMenu.classList.remove('open');
   });
-
-  // Saved searches — saves the SPECIFIC MATCH currently in view (not the
-  // query as a whole), so a reader can save 3 of 5 hits and skip the rest.
-  // Persistent and user-managed, living in the bookmark panel's Searches tab
-  // and functioning like bookmarks: explicit, named, deletable.
-  const SAVED_KEY = 'noegenesis-saved-searches-purity';
-  const saveBtn   = document.getElementById('search-save-btn');
-
-  function getSavedSearches() { try { return JSON.parse(localStorage.getItem(SAVED_KEY)) || []; } catch { return []; } }
-  function setSavedSearches(list) { localStorage.setItem(SAVED_KEY, JSON.stringify(list)); }
-
-  // Exact character offset of a match's <mark> within its containing block,
-  // via Range (not indexOf) — indexOf would always find the FIRST occurrence
-  // of the query in that block, so two separate matches sharing a paragraph
-  // would be indistinguishable from each other. Range measures from the start
-  // of the container up to this specific mark, so each occurrence gets its
-  // own offset regardless of how many others share the same text.
-  function offsetForMatch(m) {
-    const container = m.el.closest('p') || m.el.closest('.page-body') || m.el.parentElement;
-    if (!container) return 0;
-    const range = document.createRange();
-    range.selectNodeContents(container);
-    range.setEnd(m.el, 0);
-    return range.toString().length;
-  }
-
-  function snippetForMatch(m) {
-    const container = m.el.closest('p') || m.el.closest('.page-body') || m.el.parentElement;
-    const rawText = container ? container.textContent : m.el.textContent;
-    const idx = offsetForMatch(m);
-    const start = Math.max(0, idx - 50);
-    const end   = Math.min(rawText.length, idx + m.el.textContent.length + 80);
-    return (start > 0 ? '…' : '') + rawText.slice(start, end).replace(/\s+/g, ' ').trim() + (end < rawText.length ? '…' : '');
-  }
-
-  function isCurrentMatchSaved() {
-    if (!matches.length) return false;
-    const cur = matches[matchIndex];
-    const q = input.value.trim().toLowerCase();
-    const offset = offsetForMatch(cur);
-    return getSavedSearches().some(s => s.page === cur.pageIndex && s.query.toLowerCase() === q && s.offset === offset);
-  }
-
-  function refreshSaveBtn() {
-    if (!saveBtn) return;
-    const saved = isCurrentMatchSaved();
-    saveBtn.classList.toggle('saved', saved);
-    saveBtn.textContent = saved ? '★' : '☆';
-  }
-
-  function toggleSaveCurrent() {
-    if (!matches.length) return;
-    const cur = matches[matchIndex];
-    const query = input.value.trim();
-    if (!query) return;
-    const offset = offsetForMatch(cur);
-    const snippet = snippetForMatch(cur);
-    let list = getSavedSearches();
-    const already = list.find(s => s.page === cur.pageIndex && s.query.toLowerCase() === query.toLowerCase() && s.offset === offset);
-    if (already) {
-      list = list.filter(s => s.id !== already.id);
-    } else {
-      list.unshift({ id: Date.now() + Math.random(), query, page: cur.pageIndex, offset, snippet, matchIndex, savedAt: Date.now() });
-    }
-    setSavedSearches(list);
-    refreshSaveBtn();
-    if (window.__refreshSavedSearchesPanel) window.__refreshSavedSearchesPanel();
-  }
-
-  if (saveBtn) saveBtn.addEventListener('click', e => { e.stopPropagation(); toggleSaveCurrent(); });
-  refreshSaveBtn();
-
-  window.__renderSavedSearchesInPanel = function (container) {
-    const list = getSavedSearches().slice().sort((a, b) => b.savedAt - a.savedAt);
-    container.innerHTML = '';
-    if (!list.length) {
-      container.innerHTML = '<div class="bm-empty">No saved results yet.<br>While viewing a search match, tap ☆ next to the search bar to save it.</div>';
-      return;
-    }
-    list.forEach(s => {
-      const item = document.createElement('div');
-      item.className = 'bm-item';
-
-      const top = document.createElement('div'); top.className = 'bm-item-top';
-      const tag = document.createElement('span'); tag.className = 'bm-pg'; tag.textContent = s.page === 0 ? 'Cover' : 'P. ' + s.page;
-      const label = document.createElement('span'); label.className = 'bm-ss-query'; label.textContent = 'Find: ' + s.query;
-
-      const actions = document.createElement('div'); actions.className = 'bm-item-actions';
-      const delBtn = document.createElement('button'); delBtn.className = 'bm-del'; delBtn.textContent = '✕';
-      delBtn.title = 'Remove saved result';
-      delBtn.addEventListener('click', e => {
-        e.stopPropagation();
-        actions.innerHTML = '';
-        const wrap  = document.createElement('span'); wrap.className = 'bm-confirm-wrap';
-        const lbl   = document.createElement('span'); lbl.className = 'bm-confirm-label'; lbl.textContent = 'Delete?';
-        const yes   = document.createElement('button'); yes.className = 'bm-confirm-yes'; yes.textContent = 'Yes';
-        const no    = document.createElement('button'); no.className  = 'bm-confirm-no';  no.textContent  = 'No';
-        yes.addEventListener('click', ev => {
-          ev.stopPropagation();
-          setSavedSearches(getSavedSearches().filter(x => x.id !== s.id));
-          refreshSaveBtn();
-          window.__renderSavedSearchesInPanel(container);
-        });
-        no.addEventListener('click', ev => { ev.stopPropagation(); actions.innerHTML = ''; actions.appendChild(delBtn); });
-        wrap.appendChild(lbl); wrap.appendChild(yes); wrap.appendChild(no);
-        actions.appendChild(wrap);
-      });
-      actions.appendChild(delBtn);
-
-      const preview = document.createElement('div'); preview.className = 'bm-preview'; preview.innerHTML = s.snippet;
-
-      top.appendChild(tag); top.appendChild(label); top.appendChild(actions);
-      item.appendChild(top);
-      item.appendChild(preview);
-      item.addEventListener('click', e => {
-        if (e.target.closest('.bm-item-actions')) return;
-        input.value = s.query;
-        if (window.__closeBookmarkMenu) window.__closeBookmarkMenu();
-        doSearch(s.matchIndex);
-      });
-      container.appendChild(item);
-    });
-  };
 })();
 
 // ══════════════════════════════════════════
