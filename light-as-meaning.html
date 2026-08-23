@@ -1633,7 +1633,7 @@ const ReaderState = (function () {
   if (tabBmBtn) tabBmBtn.addEventListener('click', e => { e.stopPropagation(); switchTab('bookmarks'); });
   if (tabHlBtn) tabHlBtn.addEventListener('click', e => { e.stopPropagation(); switchTab('highlights'); });
   document.addEventListener('click', e => {
-    if (bmMenu && !bmMenu.contains(e.target) && e.target !== ribbon) closeMenu();
+    if (bmMenu && !bmMenu.contains(e.target) && !ribbon.contains(e.target)) closeMenu();
   });
 
   // ── Long-press (touch + mouse) — opens the panel ──
