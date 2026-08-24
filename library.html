@@ -537,44 +537,91 @@
     z-index: 1;
   }
 
+  /* ── THEMATIC LIBRARY SECTIONS — the 32 chapters grouped by function within
+     the philosophy (Foundations → Person → Knowledge → Expression →
+     Character → Power & Order → Destiny) rather than as one flat list ── */
+  .library-section { margin-bottom: clamp(48px, 8vw, 76px); }
+  .library-section:last-of-type { margin-bottom: 0; }
+
+  .section-divider {
+    width: min(340px, 65%);
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(227, 193, 77, 0.4), transparent);
+    margin: 0 auto clamp(40px, 7vw, 68px);
+  }
+
+  .section-header { text-align: center; margin-bottom: clamp(22px, 3.6vw, 34px); }
+
+  .section-part {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.48rem, 1vw, 0.58rem);
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: rgba(227, 193, 77, 0.48);
+    margin-bottom: 0.7em;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.3rem, 3.4vw, 1.9rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--gold-light);
+    text-shadow: 0 0 40px rgba(227, 193, 77, 0.18);
+    margin-bottom: 0.35em;
+  }
+
+  .section-tag {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+    color: var(--gold);
+    margin-bottom: 0.55em;
+  }
+
+  .section-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(0.85rem, 1.8vw, 1rem);
+    line-height: 1.65;
+    color: rgba(227, 193, 77, 0.68);
+    max-width: 50ch;
+    margin: 0 auto;
+  }
+
+  .section-crosslink {
+    text-align: center;
+    margin-top: clamp(16px, 2.6vw, 24px);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(0.8rem, 1.6vw, 0.9rem);
+    color: rgba(227, 193, 77, 0.55);
+  }
+
+  .section-crosslink a {
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(227, 193, 77, 0.35);
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .section-crosslink a:hover { color: var(--gold-light); border-color: var(--gold-light); }
+
   /* Staggered delays — front matter */
   .front-matter .book-btn:nth-child(1) { animation-delay: 0.05s; }
   .front-matter .book-btn:nth-child(2) { animation-delay: 0.10s; }
   .front-matter .book-btn:nth-child(3) { animation-delay: 0.15s; }
 
-  /* Staggered delays — main grid */
-  .grid .book-btn:nth-child(1)  { animation-delay: 0.20s; }
-  .grid .book-btn:nth-child(2)  { animation-delay: 0.25s; }
-  .grid .book-btn:nth-child(3)  { animation-delay: 0.30s; }
-  .grid .book-btn:nth-child(4)  { animation-delay: 0.35s; }
-  .grid .book-btn:nth-child(5)  { animation-delay: 0.40s; }
-  .grid .book-btn:nth-child(6)  { animation-delay: 0.45s; }
-  .grid .book-btn:nth-child(7)  { animation-delay: 0.50s; }
-  .grid .book-btn:nth-child(8)  { animation-delay: 0.55s; }
-  .grid .book-btn:nth-child(9)  { animation-delay: 0.60s; }
-  .grid .book-btn:nth-child(10) { animation-delay: 0.65s; }
-  .grid .book-btn:nth-child(11) { animation-delay: 0.70s; }
-  .grid .book-btn:nth-child(12) { animation-delay: 0.75s; }
-  .grid .book-btn:nth-child(13) { animation-delay: 0.80s; }
-  .grid .book-btn:nth-child(14) { animation-delay: 0.85s; }
-  .grid .book-btn:nth-child(15) { animation-delay: 0.90s; }
-  .grid .book-btn:nth-child(16) { animation-delay: 0.95s; }
-  .grid .book-btn:nth-child(17) { animation-delay: 1.00s; }
-  .grid .book-btn:nth-child(18) { animation-delay: 1.05s; }
-  .grid .book-btn:nth-child(19) { animation-delay: 1.10s; }
-  .grid .book-btn:nth-child(20) { animation-delay: 1.15s; }
-  .grid .book-btn:nth-child(21) { animation-delay: 1.20s; }
-  .grid .book-btn:nth-child(22) { animation-delay: 1.25s; }
-  .grid .book-btn:nth-child(23) { animation-delay: 1.30s; }
-  .grid .book-btn:nth-child(24) { animation-delay: 1.35s; }
-  .grid .book-btn:nth-child(25) { animation-delay: 1.40s; }
-  .grid .book-btn:nth-child(26) { animation-delay: 1.45s; }
-  .grid .book-btn:nth-child(27) { animation-delay: 1.50s; }
-  .grid .book-btn:nth-child(28) { animation-delay: 1.55s; }
-  .grid .book-btn:nth-child(29) { animation-delay: 1.60s; }
-  .grid .book-btn:nth-child(30) { animation-delay: 1.65s; }
-  .grid .book-btn:nth-child(31) { animation-delay: 1.70s; }
-  .grid .book-btn:nth-child(32) { animation-delay: 1.75s; }
+  /* Staggered delays — each section's grid restarts the count (largest section has 7 chapters) */
+  .library-section .grid .book-btn:nth-child(1) { animation-delay: 0.20s; }
+  .library-section .grid .book-btn:nth-child(2) { animation-delay: 0.26s; }
+  .library-section .grid .book-btn:nth-child(3) { animation-delay: 0.32s; }
+  .library-section .grid .book-btn:nth-child(4) { animation-delay: 0.38s; }
+  .library-section .grid .book-btn:nth-child(5) { animation-delay: 0.44s; }
+  .library-section .grid .book-btn:nth-child(6) { animation-delay: 0.50s; }
+  .library-section .grid .book-btn:nth-child(7) { animation-delay: 0.56s; }
 
   /* ── CONTACT ── */
   .contact {
@@ -811,211 +858,309 @@
   <div class="grid-divider"></div>
 
   <!-- MAIN CHAPTERS -->
-  <div class="grid">
+  <section class="library-section">
+    <div class="section-header">
+      <span class="section-part">Part I</span>
+      <h2 class="section-title">Foundations</h2>
+      <p class="section-tag">What Is</p>
+      <p class="section-subtitle">The nature and structure of existence, established before the human being enters it.</p>
+    </div>
 
-    <a href="light-as-meaning.html" class="book-btn">
-      <span class="btn-number">I</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Light as Meaning</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+    <div class="grid">
 
-    <a href="how-to-build-your-light.html" class="book-btn">
-      <span class="btn-number">II</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">How to Build Light</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="light-as-meaning.html" class="book-btn">
+        <span class="btn-number">I</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Light as Meaning</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-   <a href="purity.html" class="book-btn">
-      <span class="btn-number">III</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Purity</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-   
-   <a href="our-heart.html" class="book-btn">
-      <span class="btn-number">IV</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Our Heart</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="how-to-build-your-light.html" class="book-btn">
+        <span class="btn-number">II</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">How to Build Light</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-<a href="the-pen.html" class="book-btn">
-      <span class="btn-number">V</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">The Pen</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="purity.html" class="book-btn">
+        <span class="btn-number">III</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Purity</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-<a href="our-mind.html" class="book-btn">
-      <span class="btn-number">VI</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Our Mind</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="reality.html" class="book-btn">
+        <span class="btn-number">IV</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Reality</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-<a href="truth.html" class="book-btn">
-      <span class="btn-number">VII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Truth</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="the-unseen.html" class="book-btn">
+        <span class="btn-number">V</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">The Unseen</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-<a href="honour.html" class="book-btn">
-      <span class="btn-number">VIII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Honour</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="gravitation.html" class="book-btn">
+        <span class="btn-number">VI</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Gravitation</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-   <a href="understanding.html" class="book-btn">
-      <span class="btn-number">IX</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Understanding</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-   
-    <a href="advice.html" class="book-btn">
-      <span class="btn-number">X</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Advice</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="the-continuum.html" class="book-btn">
+        <span class="btn-number">VII</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">The Continuum</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-    <a href="the-continuum.html" class="book-btn">
-      <span class="btn-number">XI</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">The Continuum</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+    </div>
 
-    <a href="imagination.html" class="book-btn">
-      <span class="btn-number">XII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Imagination</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+  </section>
 
-    
+  <div class="section-divider"></div>
 
-    <a href="greatness.html" class="book-btn">
-      <span class="btn-number">XIII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Greatness</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+  <section class="library-section">
+    <div class="section-header">
+      <span class="section-part">Part II</span>
+      <h2 class="section-title">The Person</h2>
+      <p class="section-tag">What We Are</p>
+      <p class="section-subtitle">From existence in general to the particular phenomenon of a living, conscious being.</p>
+    </div>
 
-    
+    <div class="grid">
 
-    
+      <a href="the-nature-of-life.html" class="book-btn">
+        <span class="btn-number">VIII</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">The Nature of Life</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-    <a href="reality.html" class="book-btn">
-      <span class="btn-number">XIV</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Reality</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="our-heart.html" class="book-btn">
+        <span class="btn-number">IX</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Our Heart</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-    <a href="thoughts.html" class="book-btn">
-      <span class="btn-number">XV</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Thoughts</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="our-mind.html" class="book-btn">
+        <span class="btn-number">X</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Our Mind</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-    
+      <a href="thoughts.html" class="book-btn">
+        <span class="btn-number">XI</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Thoughts</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-    <a href="power.html" class="book-btn">
-      <span class="btn-number">XVI</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Power</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="the-conscience.html" class="book-btn">
+        <span class="btn-number">XII</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">The Conscience</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-    <a href="reason.html" class="book-btn">
-      <span class="btn-number">XVII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Reason</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="age-vs-evolution.html" class="book-btn">
+        <span class="btn-number">XIII</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Age vs Evolution</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-    <a href="belief.html" class="book-btn">
-      <span class="btn-number">XVIII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Belief</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+    </div>
 
-    <a href="pleasure.html" class="book-btn">
-      <span class="btn-number">XIX</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Pleasure</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+  </section>
 
-    
+  <div class="section-divider"></div>
 
-    <a href="morality.html" class="book-btn">
-      <span class="btn-number">XX</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Morality</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+  <section class="library-section">
+    <div class="section-header">
+      <span class="section-part">Part III</span>
+      <h2 class="section-title">Knowledge</h2>
+      <p class="section-tag">How We Encounter What Is</p>
+      <p class="section-subtitle">Encounter, reason, and belief — and the delusion that can follow either.</p>
+    </div>
 
-    <a href="the-unseen.html" class="book-btn">
-      <span class="btn-number">XXI</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">The Unseen</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+    <div class="grid">
 
-    <a href="age-vs-evolution.html" class="book-btn">
-      <span class="btn-number">XXII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Age vs Evolution</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="reading.html" class="book-btn">
+        <span class="btn-number">XIV</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Reading</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-    <a href="the-conscience.html" class="book-btn">
-      <span class="btn-number">XXIII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">The Conscience</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="understanding.html" class="book-btn">
+        <span class="btn-number">XV</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Understanding</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-    <a href="gravitation.html" class="book-btn">
-      <span class="btn-number">XXIV</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Gravitation</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="reason.html" class="book-btn">
+        <span class="btn-number">XVI</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Reason</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-    <a href="the-nature-of-life.html" class="book-btn">
-      <span class="btn-number">XXV</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">The Nature of Life</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="truth.html" class="book-btn">
+        <span class="btn-number">XVII</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Truth</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-    <a href="reading.html" class="book-btn">
-      <span class="btn-number">XXVI</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Reading</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="belief.html" class="book-btn">
+        <span class="btn-number">XVIII</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Belief</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-    <a href="delusion.html" class="book-btn">
-      <span class="btn-number">XXVII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Delusion</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+      <a href="delusion.html" class="book-btn">
+        <span class="btn-number">XIX</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Delusion</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
 
-    <a href="weakness.html" class="book-btn">
-      <span class="btn-number">XXVIII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Weakness</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+    </div>
 
-    <a href="weight.html" class="book-btn">
-      <span class="btn-number">XXIX</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Weight</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+  </section>
 
-    <a href="hierarchy.html" class="book-btn">
-      <span class="btn-number">XXX</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Hierarchy</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+  <div class="section-divider"></div>
 
-    <a href="the-finality.html" class="book-btn">
-      <span class="btn-number">XXXI</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">The Finality</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+  <section class="library-section">
+    <div class="section-header">
+      <span class="section-part">Part IV</span>
+      <h2 class="section-title">Expression</h2>
+      <p class="section-tag">How the Person Externalises the Inner World</p>
+      <p class="section-subtitle">What the inner world becomes once it moves outward — produced, communicated, felt.</p>
+    </div>
 
-    <a href="paradise.html" class="book-btn">
-      <span class="btn-number">XXXII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Paradise</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
+    <div class="grid">
 
-  </div>
+      <a href="the-pen.html" class="book-btn">
+        <span class="btn-number">XX</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">The Pen</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
+
+      <a href="imagination.html" class="book-btn">
+        <span class="btn-number">XXI</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Imagination</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
+
+      <a href="advice.html" class="book-btn">
+        <span class="btn-number">XXII</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Advice</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
+
+      <a href="pleasure.html" class="book-btn">
+        <span class="btn-number">XXIII</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Pleasure</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
+
+    </div>
+
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section class="library-section">
+    <div class="section-header">
+      <span class="section-part">Part V</span>
+      <h2 class="section-title">Character</h2>
+      <p class="section-tag">What We Become Through Action</p>
+      <p class="section-subtitle">What is embodied, what undermines it, and what is carried as a result.</p>
+    </div>
+
+    <div class="grid">
+
+      <a href="honour.html" class="book-btn">
+        <span class="btn-number">XXIV</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Honour</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
+
+      <a href="morality.html" class="book-btn">
+        <span class="btn-number">XXV</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Morality</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
+
+      <a href="weakness.html" class="book-btn">
+        <span class="btn-number">XXVI</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Weakness</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
+
+      <a href="weight.html" class="book-btn">
+        <span class="btn-number">XXVII</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Weight</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
+
+    </div>
+
+    <p class="section-crosslink">See also <a href="purity.html">Purity</a>, in Foundations — it belongs here in spirit too.</p>
+
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section class="library-section">
+    <div class="section-header">
+      <span class="section-part">Part VI</span>
+      <h2 class="section-title">Power &amp; Order</h2>
+      <p class="section-tag">How Things Relate</p>
+      <p class="section-subtitle">Capacity, magnitude, and the order that arises between them.</p>
+    </div>
+
+    <div class="grid">
+
+      <a href="power.html" class="book-btn">
+        <span class="btn-number">XXVIII</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Power</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
+
+      <a href="greatness.html" class="book-btn">
+        <span class="btn-number">XXIX</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Greatness</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
+
+      <a href="hierarchy.html" class="book-btn">
+        <span class="btn-number">XXX</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Hierarchy</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
+
+    </div>
+
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section class="library-section">
+    <div class="section-header">
+      <span class="section-part">Part VII</span>
+      <h2 class="section-title">Destiny</h2>
+      <p class="section-tag">Where Things Go</p>
+      <p class="section-subtitle">Where existence, having been lived, ultimately arrives.</p>
+    </div>
+
+    <div class="grid">
+
+      <a href="the-finality.html" class="book-btn">
+        <span class="btn-number">XXXI</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">The Finality</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
+
+      <a href="paradise.html" class="book-btn">
+        <span class="btn-number">XXXII</span><span class="btn-divider"></span>
+        <span class="btn-text"><span class="btn-title">Paradise</span></span>
+        <span class="btn-arrow">&rarr;</span>
+      </a>
+
+    </div>
+
+  </section>
 </main>
 
 <!-- CONTACT -->
