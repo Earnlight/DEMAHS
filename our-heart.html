@@ -110,15 +110,23 @@
   .bm-num  { position: relative; z-index: 2; font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.88rem; color: #1e1808; text-shadow: 0 1px 0 rgba(255,255,255,0.5); line-height: 1; letter-spacing: -0.01em; user-select: none; -webkit-user-select: none; }
 
   /* ── FULLSCREEN POP-UP BARS ── */
+  /* pointer-events: none on the bars themselves so their empty space (e.g. the
+     unused left two-thirds of #fs-topbar, which right-aligns just one button)
+     doesn't sit on top of and swallow clicks meant for the bookmark ribbon or
+     the page beneath -- only the actual chips re-enable pointer-events. */
   #fs-topbar, #fs-navbar {
     position: fixed; left: 0; right: 0; z-index: 1020; display: none;
     align-items: center; padding: 12px 16px; transition: opacity 0.35s;
+    pointer-events: none;
   }
   #fs-topbar { top: 0; justify-content: flex-end; background: linear-gradient(to bottom, rgba(15,12,5,0.94), transparent); }
   #fs-navbar { bottom: 0; justify-content: center; gap: 14px; background: linear-gradient(to top, rgba(15,12,5,0.94), transparent); }
   body.reader-fullscreen #fs-topbar, body.reader-fullscreen #fs-navbar { display: flex; }
   body.reader-fullscreen.chrome-hidden #fs-topbar,
   body.reader-fullscreen.chrome-hidden #fs-navbar { opacity: 0; pointer-events: none; }
+  #fs-topbar .fs-chip, #fs-navbar .fs-chip { pointer-events: auto; }
+  body.reader-fullscreen.chrome-hidden #fs-topbar .fs-chip,
+  body.reader-fullscreen.chrome-hidden #fs-navbar .fs-chip { pointer-events: none; }
   .fs-chip {
     background: rgba(20,16,6,0.74); border: 1px solid var(--border); color: var(--text);
     border-radius: 3px; padding: 7px 12px; cursor: pointer; font-family: 'Cinzel', serif;
