@@ -31,7 +31,7 @@ function rfc822(dateStr) {
 const items = entries.map(e => {
   const link = e.book
     ? `${SITE_URL}/${e.book}${e.page !== null && e.page !== undefined ? '?page=' + e.page : ''}`
-    : `${SITE_URL}/index.html`;
+    : `${SITE_URL}/library.html`;
   return [
     '  <item>',
     `    <title>${escapeXml(e.title)}</title>`,

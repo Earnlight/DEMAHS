@@ -6,1606 +6,349 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="manifest" href="/manifest.json">
 <link rel="alternate" type="application/rss+xml" title="The DEMAHS — Updates" href="/feed.xml">
-<meta name="theme-color" content="#1d1a0e">
+<meta name="theme-color" content="#0d0b05">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The DEMAHS — Hamza Earnlight</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<title>The DEMAHS — Welcome</title>
+<meta name="description" content="INPUT">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="The DEMAHS">
+<meta property="og:description" content="INPUT">
+<meta property="og:url" content="https://www.demahs.com/">
+<meta property="og:image" content="https://www.demahs.com/android-chrome-512x512.png">
+<meta property="og:site_name" content="The DEMAHS — Hamza Earnlight">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The DEMAHS">
+<meta name="twitter:description" content="INPUT">
+<meta name="twitter:image" content="https://www.demahs.com/android-chrome-512x512.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
+    --void: #0d0b05;
+    --bg: #1d1a0e;
     --gold: #e3c14d;
     --gold-light: #f5dd8c;
-    --gold-dim: rgba(227, 193, 77, 0.65);
-    --bg: #1d1a0e;
-    --surface: #3a3114;
-    --surface-2: #4a3d18;
+    --ember: #b9752e;
+    --ink-dim: rgba(227, 193, 77, 0.55);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   }
 
   html { scroll-behavior: smooth; }
 
   body {
     min-height: 100vh;
-    background: var(--bg);
-    background-image:
-      radial-gradient(ellipse 80% 60% at 50% 0%, #6b5520 0%, #3a2e10 45%, transparent 70%),
-      radial-gradient(ellipse 60% 40% at 80% 100%, #4a3b12 0%, transparent 60%);
+    background: var(--void);
     font-family: 'Cormorant Garamond', Georgia, serif;
     color: var(--gold-light);
     overflow-x: hidden;
   }
 
-  header {
-    text-align: center;
-    padding: clamp(48px, 10vw, 100px) 24px clamp(32px, 6vw, 64px);
+  /* ── HERO — the page opens on true darkness, then blooms into light ── */
+  .hero {
     position: relative;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: clamp(32px, 8vh, 80px) 24px;
+    background: var(--void);
+    animation: bloom 3.5s 0.2s ease-out both;
   }
 
-  header::after {
-    content: '';
-    display: block;
-    width: min(400px, 70%);
-    height: 1px;
-    background: linear-gradient(to right, transparent, var(--gold), transparent);
-    margin: 0 auto;
-    margin-top: clamp(24px, 4vw, 48px);
+  @keyframes bloom {
+    0%   { background: var(--void); }
+    100% {
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 8%, #6b5520 0%, #3a2e10 45%, transparent 72%),
+        radial-gradient(ellipse 60% 40% at 85% 95%, #4a3b12 0%, transparent 60%),
+        var(--bg);
+    }
   }
 
-  .header-ornament {
-    font-size: clamp(0.9rem, 2.5vw, 1.3rem);
-    color: var(--gold-dim);
-    letter-spacing: 0.5em;
-    margin-bottom: 0.8em;
-    animation: fadeDown 1s ease both;
+  .hero-ornament {
+    font-size: clamp(0.85rem, 2.4vw, 1.2rem);
+    color: var(--ink-dim);
+    letter-spacing: 0.55em;
+    margin-bottom: 1.1em;
+    opacity: 0;
+    animation: riseIn 1.1s 0.5s ease both;
   }
 
-  .header-title {
+  .hero-eyebrow {
     font-family: 'Cinzel', serif;
-    font-size: clamp(2rem, 7vw, 5rem);
-    font-weight: 700;
-    color: var(--gold-light);
-    line-height: 1.1;
-    letter-spacing: 0.04em;
-    text-shadow: 0 0 80px rgba(227, 193, 77, 0.35), 0 0 30px rgba(227, 193, 77, 0.15), 0 2px 20px rgba(0,0,0,0.6);
-    animation: fadeDown 1s 0.15s ease both;
+    font-size: clamp(0.55rem, 1.3vw, 0.7rem);
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--ember);
+    margin-bottom: 0.9em;
+    opacity: 0;
+    animation: riseIn 1.1s 0.7s ease both;
   }
 
-  .header-divider {
-    width: 40px;
+  .hero-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2.6rem, 9vw, 6.5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    color: var(--gold-light);
+    text-shadow: 0 0 90px rgba(227, 193, 77, 0.4), 0 0 30px rgba(227, 193, 77, 0.18), 0 2px 24px rgba(0,0,0,0.6);
+    opacity: 0;
+    animation: riseIn 1.2s 0.9s ease both;
+  }
+
+  .hero-divider {
+    width: 44px;
     height: 1px;
     background: var(--gold);
-    margin: 1.2em auto;
-    animation: fadeDown 1s 0.25s ease both;
+    margin: 1.3em auto 1.5em;
+    opacity: 0;
+    animation: riseIn 1s 1.15s ease both;
   }
 
-  .header-author {
-    font-size: clamp(0.9rem, 2vw, 1.2rem);
-    font-style: italic;
-    font-weight: 300;
-    color: var(--gold);
-    letter-spacing: 0.2em;
-    animation: fadeDown 1s 0.35s ease both;
-  }
-
-  .header-byline {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(0.5rem, 1.2vw, 0.7rem);
-    letter-spacing: 0.3em;
-    color: rgba(227, 193, 77, 0.6);
-    text-transform: uppercase;
-    margin-top: 0.6em;
-    animation: fadeDown 1s 0.45s ease both;
-  }
-
-  .reading-summary {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(0.5rem, 1.2vw, 0.65rem);
-    letter-spacing: 0.25em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-top: 1em;
-    animation: fadeDown 1s 0.55s ease both;
-  }
-
-  .library {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: clamp(32px, 6vw, 64px) clamp(20px, 5vw, 48px) clamp(64px, 10vw, 120px);
-  }
-
-  .section-label {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(0.5rem, 1.2vw, 0.65rem);
-    letter-spacing: 0.35em;
-    color: rgba(227, 193, 77, 0.55);
-    text-transform: uppercase;
-    text-align: center;
-    margin-bottom: clamp(20px, 3vw, 36px);
-    animation: fadeUp 1s 0.5s ease both;
-  }
-
-  /* ── LIBRARY SEARCH ── */
-  #library-search {
-    position: relative;
-    max-width: 520px;
-    margin: 0 auto clamp(28px, 4vw, 44px);
-  }
-
-  .ls-bar {
+  /* ── ACRONYM — D · E · M · A · H · S, each letter igniting in turn to spell out what the title means ── */
+  .acronym {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 16px;
-    background: rgba(42, 35, 10, 0.55);
-    border: 1px solid rgba(227, 193, 77, 0.28);
-    border-radius: 4px;
-    transition: border-color 0.3s;
-  }
-
-  .ls-bar:focus-within { border-color: rgba(227, 193, 77, 0.7); }
-
-  .ls-icon { font-size: 0.9rem; color: rgba(227, 193, 77, 0.55); flex-shrink: 0; }
-
-  #ls-input {
-    flex: 1;
-    min-width: 0;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: var(--gold-light);
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(0.85rem, 1.8vw, 0.95rem);
-  }
-
-  #ls-input::placeholder { color: rgba(227, 193, 77, 0.4); font-style: italic; }
-
-  .ls-status {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 0.72rem;
-    color: rgba(227, 193, 77, 0.5);
-    flex-shrink: 0;
-  }
-
-  .ls-results {
-    position: absolute;
-    left: 0; right: 0; top: calc(100% + 8px);
-    max-height: 60vh;
-    overflow-y: auto;
-    background: #241d0d;
-    border: 1px solid rgba(227, 193, 77, 0.32);
-    border-radius: 4px;
-    box-shadow: 0 12px 36px rgba(0,0,0,0.55);
-    z-index: 20;
-  }
-
-  .ls-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 10px 16px;
-    border-bottom: 1px solid rgba(227, 193, 77, 0.12);
-  }
-
-  .ls-row:last-child { border-bottom: none; }
-  .ls-row:hover, .ls-row:focus-within { background: rgba(227, 193, 77, 0.08); }
-
-  .ls-row-link { flex: 1; min-width: 0; text-decoration: none; }
-
-  .ls-row-head {
-    font-family: 'Cinzel', serif;
-    font-size: 0.66rem;
-    letter-spacing: 0.08em;
-    color: rgba(227, 193, 77, 0.75);
-    margin-bottom: 4px;
-  }
-
-  .ls-row-snippet {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.85rem;
-    line-height: 1.5;
-    color: rgba(245, 221, 140, 0.75);
-  }
-
-  .ls-row-snippet mark {
-    background: transparent;
-    color: var(--gold-light);
-    font-weight: 600;
-  }
-
-  .ls-empty {
-    padding: 14px 16px;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 0.82rem;
-    color: rgba(227, 193, 77, 0.55);
-  }
-
-  /* ── PER-RESULT SAVE BUTTON — saves this specific match, not the query ── */
-  .ls-row-save {
-    background: none;
-    border: none;
-    color: rgba(227, 193, 77, 0.45);
-    font-size: 1rem;
-    line-height: 1;
-    cursor: pointer;
-    flex-shrink: 0;
-    padding: 0 2px;
-    transition: color 0.2s, transform 0.2s;
-  }
-
-  .ls-row-save:hover { color: rgba(227, 193, 77, 0.8); transform: scale(1.1); }
-  .ls-row-save.saved { color: var(--gold); }
-
-  /* ── RESULTS PAGER ── */
-  .ls-pager {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 8px 16px;
-    border-top: 1px solid rgba(227, 193, 77, 0.18);
-  }
-
-  .ls-pager-btn {
-    background: none;
-    border: 1px solid rgba(227, 193, 77, 0.3);
-    color: rgba(227, 193, 77, 0.75);
-    font-family: 'Cinzel', serif;
-    font-size: 0.5rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 5px 10px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, color 0.2s;
-  }
-
-  .ls-pager-btn:hover:not(:disabled) { background: rgba(227, 193, 77, 0.12); border-color: rgba(227, 193, 77, 0.6); color: var(--gold); }
-  .ls-pager-btn:disabled { opacity: 0.3; cursor: default; }
-
-  .ls-pager-info {
-    font-family: 'Cinzel', serif;
-    font-size: 0.5rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(227, 193, 77, 0.5);
-    white-space: nowrap;
-  }
-
-  /* ── SAVED SEARCHES PANEL ── */
-  #ls-saved { margin-top: 10px; }
-
-  .ls-saved-toggle {
-    display: none;
-    background: none;
-    border: none;
-    font-family: 'Cinzel', serif;
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    color: rgba(227, 193, 77, 0.55);
-    text-transform: uppercase;
-    cursor: pointer;
-    padding: 4px 2px;
-    transition: color 0.2s;
-  }
-
-  .ls-saved-toggle:hover { color: var(--gold); }
-  .ls-saved-toggle.visible { display: inline-flex; align-items: center; gap: 5px; }
-
-  #ls-saved-count {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    text-transform: none;
-    letter-spacing: 0;
-    color: rgba(227, 193, 77, 0.4);
-  }
-
-  .ls-saved-list {
-    margin-top: 6px;
-    max-height: 40vh;
-    overflow-y: auto;
-    background: rgba(42, 35, 10, 0.55);
-    border: 1px solid rgba(227, 193, 77, 0.28);
-    border-radius: 4px;
-  }
-
-  .ls-saved-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 10px 12px;
-    border-bottom: 1px solid rgba(227, 193, 77, 0.10);
-    transition: background 0.15s;
-  }
-
-  .ls-saved-item:last-child { border-bottom: none; }
-  .ls-saved-item:hover { background: rgba(227, 193, 77, 0.08); }
-
-  .ls-saved-body { flex: 1; min-width: 0; cursor: pointer; }
-
-  .ls-saved-head {
-    font-family: 'Cinzel', serif;
-    font-size: 0.62rem;
-    letter-spacing: 0.06em;
-    color: rgba(227, 193, 77, 0.75);
-    margin-bottom: 3px;
-  }
-
-  .ls-saved-query-label {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 0.72rem;
-    color: rgba(227, 193, 77, 0.5);
-    margin-bottom: 3px;
-  }
-
-  .ls-saved-snippet {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.8rem;
-    line-height: 1.4;
-    color: rgba(245, 221, 140, 0.75);
-  }
-
-  .ls-saved-snippet mark { background: transparent; color: var(--gold-light); font-weight: 600; }
-
-  .ls-saved-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-
-  .ls-saved-del {
-    background: none;
-    border: none;
-    color: rgba(227, 193, 77, 0.4);
-    cursor: pointer;
-    font-size: 0.7rem;
-    line-height: 1;
-    padding: 2px;
-    flex-shrink: 0;
-    transition: color 0.2s;
-  }
-
-  .ls-saved-del:hover { color: var(--gold); }
-
-  .ls-saved-confirm {
-    display: flex; align-items: center; gap: 6px; flex-shrink: 0;
-  }
-
-  .ls-saved-confirm span {
-    font-family: 'Cinzel', serif;
-    font-size: 0.5rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(227, 193, 77, 0.5);
-    white-space: nowrap;
-  }
-
-  .ls-saved-confirm button {
-    background: none;
-    border: 1px solid rgba(227, 193, 77, 0.3);
-    font-family: 'Cinzel', serif;
-    font-size: 0.44rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 2px 7px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  .ls-saved-confirm .yes { color: #e07060; border-color: rgba(220,80,60,0.4); }
-  .ls-saved-confirm .yes:hover { background: rgba(220,80,60,0.2); }
-  .ls-saved-confirm .no  { color: rgba(227, 193, 77, 0.6); }
-  .ls-saved-confirm .no:hover { background: rgba(227, 193, 77, 0.12); }
-
-  /* ── FRONT MATTER: centred row ── */
-  .front-matter {
-    display: flex;
-    justify-content: center;
     flex-wrap: wrap;
-    gap: clamp(12px, 2vw, 20px);
-    margin-bottom: clamp(24px, 4vw, 40px);
+    justify-content: center;
+    align-items: flex-start;
+    gap: clamp(8px, 1.8vw, 18px);
+    margin-bottom: clamp(1.6em, 4vw, 2.2em);
   }
 
-  .front-matter .book-btn {
-    width: clamp(200px, 28vw, 300px);
-    flex-shrink: 0;
-  }
-
-  /* ── DIVIDER between front matter and chapters ── */
-  .grid-divider {
-    width: min(300px, 60%);
-    height: 1px;
-    background: linear-gradient(to right, transparent, rgba(227,193,77,0.45), transparent);
-    margin: 0 auto clamp(24px, 4vw, 40px);
-  }
-
-  /* ── MAIN GRID ── */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
-    gap: clamp(12px, 2vw, 20px);
-  }
-
-  /* ── BOOK BUTTON ── */
-  .book-btn {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: clamp(14px, 2.5vw, 20px) clamp(16px, 3vw, 24px);
-    background: linear-gradient(135deg, rgba(88, 70, 18, 0.7) 0%, rgba(42, 35, 10, 0.88) 100%);
-    border: 1px solid rgba(227, 193, 77, 0.30);
-    border-radius: 4px;
-    text-decoration: none;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s, transform 0.25s, box-shadow 0.3s;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(227,193,77,0.04);
-    opacity: 0;
-    animation: fadeUp 0.6s ease forwards;
-  }
-
-  .book-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(227, 193, 77, 0.12) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .book-btn::after {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom, transparent, var(--gold), transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .book-btn:hover {
-    border-color: rgba(227, 193, 77, 0.72);
-    transform: translateY(-2px) translateX(2px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(227,193,77,0.08), inset 0 1px 0 rgba(227, 193, 77, 0.15);
-  }
-
-  .book-btn:hover::before { opacity: 1; }
-  .book-btn:hover::after  { opacity: 1; }
-  .book-btn:hover .btn-number { color: var(--gold); }
-  .book-btn:hover .btn-title  { color: #fef6df; }
-
-  .btn-number {
+  .acr-letter {
     font-family: 'Cinzel', serif;
-    font-size: clamp(0.55rem, 1.2vw, 0.68rem);
-    color: rgba(227, 193, 77, 0.55);
-    letter-spacing: 0.1em;
-    min-width: 28px;
-    transition: color 0.3s;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-  }
-
-  .btn-divider {
-    width: 1px;
-    height: 28px;
-    background: linear-gradient(to bottom, transparent, rgba(227,193,77,0.42), transparent);
-    flex-shrink: 0;
-  }
-
-  .btn-text {
-    flex: 1;
-    position: relative;
-    z-index: 1;
-  }
-
-  .btn-title {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(0.7rem, 1.6vw, 0.9rem);
     font-weight: 600;
-    color: var(--gold-light);
-    letter-spacing: 0.06em;
-    line-height: 1.3;
-    transition: color 0.3s;
+    font-size: clamp(1.5rem, 4.2vw, 2.6rem);
+    color: var(--ember);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3em;
+    opacity: 0;
+    animation: ignite 0.7s var(--delay, 0s) ease both;
   }
 
-  .btn-arrow {
-    font-size: 0.7rem;
-    color: rgba(227, 193, 77, 0.32);
-    transition: color 0.3s, transform 0.3s;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-  }
+  .acr-letter.acr-self { margin-left: clamp(18px, 4vw, 38px); }
 
-  .book-btn:hover .btn-arrow { color: var(--gold); transform: translateX(3px); }
-
-  .btn-progress-label {
+  .acr-word {
     display: block;
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: clamp(0.6rem, 1.3vw, 0.7rem);
-    color: rgba(227, 193, 77, 0.55);
-    margin-top: 2px;
+    font-weight: 300;
+    font-size: clamp(0.6rem, 1.5vw, 0.78rem);
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+    opacity: 0;
+    animation: riseIn 0.7s calc(var(--delay, 0s) + 0.35s) ease both;
   }
 
-  .btn-progress-bar {
-    position: absolute;
-    left: 0; bottom: 0;
-    height: 2px;
-    background: linear-gradient(to right, rgba(227, 193, 77, 0.75), var(--gold-light));
-    z-index: 1;
-  }
-
-  /* Staggered delays — front matter */
-  .front-matter .book-btn:nth-child(1) { animation-delay: 0.05s; }
-  .front-matter .book-btn:nth-child(2) { animation-delay: 0.10s; }
-  .front-matter .book-btn:nth-child(3) { animation-delay: 0.15s; }
-
-  /* Staggered delays — main grid */
-  .grid .book-btn:nth-child(1)  { animation-delay: 0.20s; }
-  .grid .book-btn:nth-child(2)  { animation-delay: 0.25s; }
-  .grid .book-btn:nth-child(3)  { animation-delay: 0.30s; }
-  .grid .book-btn:nth-child(4)  { animation-delay: 0.35s; }
-  .grid .book-btn:nth-child(5)  { animation-delay: 0.40s; }
-  .grid .book-btn:nth-child(6)  { animation-delay: 0.45s; }
-  .grid .book-btn:nth-child(7)  { animation-delay: 0.50s; }
-  .grid .book-btn:nth-child(8)  { animation-delay: 0.55s; }
-  .grid .book-btn:nth-child(9)  { animation-delay: 0.60s; }
-  .grid .book-btn:nth-child(10) { animation-delay: 0.65s; }
-  .grid .book-btn:nth-child(11) { animation-delay: 0.70s; }
-  .grid .book-btn:nth-child(12) { animation-delay: 0.75s; }
-  .grid .book-btn:nth-child(13) { animation-delay: 0.80s; }
-  .grid .book-btn:nth-child(14) { animation-delay: 0.85s; }
-  .grid .book-btn:nth-child(15) { animation-delay: 0.90s; }
-  .grid .book-btn:nth-child(16) { animation-delay: 0.95s; }
-  .grid .book-btn:nth-child(17) { animation-delay: 1.00s; }
-  .grid .book-btn:nth-child(18) { animation-delay: 1.05s; }
-  .grid .book-btn:nth-child(19) { animation-delay: 1.10s; }
-  .grid .book-btn:nth-child(20) { animation-delay: 1.15s; }
-  .grid .book-btn:nth-child(21) { animation-delay: 1.20s; }
-  .grid .book-btn:nth-child(22) { animation-delay: 1.25s; }
-  .grid .book-btn:nth-child(23) { animation-delay: 1.30s; }
-  .grid .book-btn:nth-child(24) { animation-delay: 1.35s; }
-  .grid .book-btn:nth-child(25) { animation-delay: 1.40s; }
-  .grid .book-btn:nth-child(26) { animation-delay: 1.45s; }
-  .grid .book-btn:nth-child(27) { animation-delay: 1.50s; }
-  .grid .book-btn:nth-child(28) { animation-delay: 1.55s; }
-  .grid .book-btn:nth-child(29) { animation-delay: 1.60s; }
-  .grid .book-btn:nth-child(30) { animation-delay: 1.65s; }
-  .grid .book-btn:nth-child(31) { animation-delay: 1.70s; }
-  .grid .book-btn:nth-child(32) { animation-delay: 1.75s; }
-
-  /* ── CONTACT ── */
-  .contact {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: clamp(48px, 8vw, 80px) clamp(20px, 5vw, 48px) clamp(48px, 8vw, 80px);
-    border-top: 1px solid rgba(227, 193, 77, 0.12);
-    text-align: center;
-  }
-
-  .contact-label {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(0.5rem, 1.2vw, 0.65rem);
-    letter-spacing: 0.35em;
-    color: rgba(227, 193, 77, 0.55);
-    text-transform: uppercase;
-    margin-bottom: clamp(20px, 4vw, 36px);
-  }
-
-  .contact-links {
+  /* Arrows read the chain left to right: Discovery leads to Expression, to Media, to Artistry, to Heightened.
+     Self stands apart (see .acr-self above) -- it's the result, not another link. */
+  .acr-arrow {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: clamp(10px, 2vw, 16px);
+    gap: 0.3em;
+    font-size: clamp(1.5rem, 4.2vw, 2.6rem);
+    color: var(--ink-dim);
+    opacity: 0;
+    animation: riseIn 0.7s var(--delay, 0s) ease both;
   }
 
-  .contact-btn {
+  .acr-arrow-spacer {
+    visibility: hidden;
+  }
+
+  .acr-arrow-glyph {
+    font-size: clamp(0.6rem, 1.5vw, 0.78rem);
+  }
+
+  @keyframes ignite {
+    0%   { opacity: 0; transform: translateY(10px) scale(0.9); color: var(--ember); text-shadow: none; }
+    60%  { color: var(--gold-light); text-shadow: 0 0 24px rgba(245, 221, 140, 0.8); }
+    100% { opacity: 1; transform: translateY(0) scale(1); color: var(--gold-light); text-shadow: 0 0 16px rgba(227, 193, 77, 0.35); }
+  }
+
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-tagline {
+    max-width: 46ch;
+    font-size: clamp(1.05rem, 2.6vw, 1.35rem);
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.55;
+    color: var(--gold-light);
+    opacity: 0;
+    animation: riseIn 1.1s 2.35s ease both;
+  }
+
+  .hero-author {
+    font-size: clamp(0.85rem, 1.9vw, 1.05rem);
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    margin-top: 1.3em;
+    opacity: 0;
+    animation: riseIn 1s 2.55s ease both;
+  }
+
+  .hero-cta {
+    margin-top: clamp(2em, 5vw, 2.8em);
+    opacity: 0;
+    animation: riseIn 1s 2.75s ease both;
+  }
+
+  .cta-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: clamp(10px, 2vw, 14px) clamp(16px, 3vw, 24px);
-    background: linear-gradient(135deg, rgba(58, 49, 20, 0.5), rgba(29, 26, 14, 0.7));
-    border: 1px solid rgba(227, 193, 77, 0.32);
-    border-radius: 4px;
-    color: rgba(227, 193, 77, 0.82);
+    gap: 14px;
     font-family: 'Cinzel', serif;
-    font-size: clamp(0.5rem, 1.2vw, 0.65rem);
-    letter-spacing: 0.15em;
-    text-decoration: none;
+    font-size: clamp(0.72rem, 1.6vw, 0.85rem);
+    letter-spacing: 0.28em;
     text-transform: uppercase;
-    transition: color 0.25s, border-color 0.25s, background 0.25s, transform 0.2s;
+    color: var(--void);
+    background: linear-gradient(135deg, var(--gold-light), var(--gold) 60%, var(--ember));
+    padding: 1em 1.8em;
+    border-radius: 3px;
+    text-decoration: none;
+    box-shadow: 0 10px 34px rgba(0,0,0,0.5), 0 0 24px rgba(227,193,77,0.2);
+    transition: transform 0.25s, box-shadow 0.3s;
   }
 
-  .contact-btn:hover {
-    color: var(--gold-light);
-    border-color: rgba(227, 193, 77, 0.72);
-    background: linear-gradient(135deg, rgba(58, 49, 20, 0.8), rgba(29, 26, 14, 0.9));
-    transform: translateY(-2px);
+  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(0,0,0,0.55), 0 0 34px rgba(227,193,77,0.35); }
+  .cta-btn .arrow { transition: transform 0.25s; }
+  .cta-btn:hover .arrow { transform: translateX(5px); }
+
+  .scroll-cue {
+    position: absolute;
+    bottom: clamp(20px, 4vh, 36px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.2rem;
+    color: var(--ink-dim);
+    opacity: 0;
+    animation: riseIn 1s 3s ease both, bob 2.4s 4s ease-in-out infinite;
   }
 
-  .contact-btn .icon { font-size: 1em; opacity: 0.7; }
+  @keyframes bob {
+    0%, 100% { transform: translate(-50%, 0); }
+    50%      { transform: translate(-50%, 8px); }
+  }
 
-  /* ── RECENT UPDATES ── */
-  .updates {
-    max-width: 900px; margin: 0 auto;
-    padding: clamp(40px, 7vw, 64px) clamp(20px, 5vw, 48px) 0;
+  /* ── ABOUT — a quieter second act, placeholder copy for the author to replace ── */
+  .about {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: clamp(72px, 12vw, 140px) 24px clamp(56px, 9vw, 100px);
     text-align: center;
   }
-  .updates-list {
-    display: flex; flex-direction: column; gap: 10px;
-    margin-top: clamp(20px, 3vw, 32px); text-align: left;
+
+  .about-label {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.5rem, 1.2vw, 0.62rem);
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--ember);
+    margin-bottom: 1.4em;
   }
-  .update-card {
-    display: flex; align-items: center; gap: 16px;
-    padding: clamp(14px, 2.2vw, 18px) clamp(16px, 3vw, 22px);
-    background: linear-gradient(135deg, rgba(88, 70, 18, 0.5) 0%, rgba(29, 26, 14, 0.75) 100%);
-    border: 1px solid rgba(227, 193, 77, 0.26); border-left: 2px solid var(--gold);
-    border-radius: 4px; text-decoration: none;
-    transition: border-color 0.25s, transform 0.2s, background 0.25s;
+
+  .about p {
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    font-weight: 300;
+    line-height: 1.75;
+    color: rgba(245, 221, 140, 0.82);
+    font-style: italic;
   }
-  .update-card:hover {
-    border-color: rgba(227, 193, 77, 0.6); transform: translateX(3px);
-    background: linear-gradient(135deg, rgba(88, 70, 18, 0.65) 0%, rgba(29, 26, 14, 0.85) 100%);
-  }
-  .update-date {
-    font-family: 'Cinzel', serif; font-size: clamp(0.44rem, 1.1vw, 0.55rem);
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-dim);
-    white-space: nowrap; flex-shrink: 0; min-width: 82px;
-  }
-  .update-body { flex: 1; min-width: 0; }
-  .update-title {
-    font-family: 'Cinzel', serif; font-size: clamp(0.62rem, 1.4vw, 0.74rem);
-    letter-spacing: 0.05em; color: var(--gold-light); margin-bottom: 3px;
-  }
-  .update-note {
-    font-family: 'Cormorant Garamond', serif; font-style: italic;
-    font-size: clamp(0.8rem, 1.7vw, 0.92rem); color: rgba(227, 193, 77, 0.75); line-height: 1.4;
-  }
-  .update-arrow {
-    font-size: 0.9rem; color: rgba(227, 193, 77, 0.4); flex-shrink: 0;
-    transition: color 0.25s, transform 0.25s;
-  }
-  .update-card:hover .update-arrow { color: var(--gold); transform: translateX(3px); }
-  .updates-empty {
-    font-family: 'Cormorant Garamond', serif; font-style: italic;
-    color: rgba(227, 193, 77, 0.5); font-size: 0.95rem; padding: 10px 0 4px;
+
+  .about p + p { margin-top: 1.3em; }
+
+  .about .placeholder-note {
+    display: block;
+    margin-top: 2.4em;
+    font-family: 'Cinzel', serif;
+    font-style: normal;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(227, 193, 77, 0.35);
   }
 
   footer {
     text-align: center;
-    padding: 24px 24px 40px;
-    border-top: 1px solid rgba(227, 193, 77, 0.14);
+    padding: clamp(24px, 5vw, 40px) 24px clamp(40px, 7vw, 64px);
+    border-top: 1px solid rgba(227, 193, 77, 0.12);
   }
 
   footer p {
     font-family: 'Cinzel', serif;
-    font-size: clamp(0.45rem, 1.1vw, 0.6rem);
-    color: rgba(227, 193, 77, 0.32);
-    letter-spacing: 0.3em;
+    font-size: clamp(0.5rem, 1.1vw, 0.6rem);
+    letter-spacing: 0.2em;
     text-transform: uppercase;
+    color: rgba(227, 193, 77, 0.4);
   }
 
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-16px); }
-    to   { opacity: 1; transform: translateY(0); }
+  @media (max-width: 480px) {
+    .acronym { gap: 14px; }
   }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  @media (max-width: 600px) {
-    .front-matter { flex-direction: column; align-items: stretch; }
-    .front-matter .book-btn { width: 100%; }
-    .grid { grid-template-columns: 1fr; }
-    .contact-links { flex-direction: column; align-items: stretch; }
-    .contact-btn { justify-content: center; }
-    .update-card { flex-wrap: wrap; }
-    .update-date { min-width: 0; }
-  }
-
-  /* ── CONTINUE READING — shown only when a saved reading position exists ── */
-  #continue-reading, #start-reading { max-width: 1100px; margin: 0 auto clamp(28px, 4vw, 44px); padding: 0 clamp(20px, 5vw, 48px); }
-  .continue-btn {
-    display: flex; align-items: center; gap: 18px;
-    padding: clamp(16px, 2.6vw, 22px) clamp(20px, 3.4vw, 28px);
-    background: linear-gradient(135deg, rgba(227,193,77,0.16) 0%, rgba(88,70,18,0.55) 60%, rgba(29,26,14,0.75) 100%);
-    border: 1px solid rgba(227,193,77,0.5); border-radius: 5px; text-decoration: none;
-    position: relative; overflow: hidden;
-    box-shadow: 0 6px 26px rgba(0,0,0,0.45), 0 0 0 1px rgba(227,193,77,0.06);
-    transition: border-color 0.3s, transform 0.25s, box-shadow 0.3s;
-  }
-  .continue-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(120deg, rgba(255,255,255,0.08), transparent 40%); pointer-events: none; }
-  .continue-btn:hover { border-color: rgba(227,193,77,0.85); transform: translateY(-2px); box-shadow: 0 10px 34px rgba(0,0,0,0.5), 0 0 24px rgba(227,193,77,0.15); }
-  .cr-icon { font-size: clamp(1.1rem, 2.6vw, 1.5rem); color: var(--gold); flex-shrink: 0; position: relative; z-index: 1; }
-  .cr-text { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; position: relative; z-index: 1; }
-  .cr-label { font-family: 'Cinzel', serif; font-size: clamp(0.46rem, 1.1vw, 0.58rem); letter-spacing: 0.3em; text-transform: uppercase; color: rgba(227,193,77,0.65); }
-  .cr-title { font-family: 'Cinzel', serif; font-size: clamp(0.95rem, 2.4vw, 1.25rem); font-weight: 600; color: var(--gold-light); letter-spacing: 0.03em; }
-  .cr-progress { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(0.72rem, 1.6vw, 0.85rem); color: rgba(227,193,77,0.6); }
-  .cr-arrow { font-size: 1.1rem; color: var(--gold); flex-shrink: 0; transition: transform 0.25s; position: relative; z-index: 1; }
-  .continue-btn:hover .cr-arrow { transform: translateX(5px); }
-  .cr-bar { position: absolute; left: 0; bottom: 0; height: 3px; background: linear-gradient(to right, rgba(227,193,77,0.85), var(--gold-light)); z-index: 1; }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="header-ornament">&#10022; &#10022; &#10022;</div>
-  <h1 class="header-title">The DEMAHS</h1>
-  <div class="header-divider"></div>
-  <div class="header-author">Hamza Earnlight</div>
-  <div class="header-byline">An ongoing work intended for reading pleasure</div>
- <div class="header-byline">Discovery leads me to Express through a Medium, my Artistry, facilitating a Heightened Self</div>
-  <div class="reading-summary" id="reading-summary" style="display:none"></div>
-</header>
+<section class="hero">
+  <div class="hero-ornament">&#10022; &#10022; &#10022;</div>
+  <p class="hero-eyebrow">Welcome to</p>
+  <h1 class="hero-title">The DEMAHS</h1>
+  <div class="hero-divider"></div>
 
-<!-- Continue Reading — populated by JS below only when a saved position exists -->
-<div id="continue-reading" style="display:none">
-  <a href="#" id="continue-reading-link" class="continue-btn">
-    <span class="cr-icon">&#10022;</span>
-    <span class="cr-text">
-      <span class="cr-label" id="continue-reading-label">Continue Reading</span>
-      <span class="cr-title" id="continue-reading-title"></span>
-      <span class="cr-progress" id="continue-reading-progress"></span>
-    </span>
-    <span class="cr-arrow">&rarr;</span>
-    <div class="cr-bar" id="continue-reading-bar"></div>
-  </a>
-</div>
-
-<!-- Start Reading — shown by JS below only when no saved position exists yet.
-     Progresses Introduction → Foreword → Author's Notes → Chapter I as each is read. -->
-<div id="start-reading" style="display:none">
-  <a href="introduction.html" id="start-reading-link" class="continue-btn">
-    <span class="cr-icon">&#10022;</span>
-    <span class="cr-text">
-      <span class="cr-label">New Here?</span>
-      <span class="cr-title">Start Reading</span>
-      <span class="cr-progress" id="start-reading-progress">Introduction</span>
-    </span>
-    <span class="cr-arrow">&rarr;</span>
-  </a>
-</div>
-
-<main class="library">
-  <!-- SITE-WIDE SEARCH — indexes every chapter on first use, searched client-side -->
-  <div id="library-search">
-    <div class="ls-bar">
-      <span class="ls-icon">&#128269;</span>
-      <input type="text" id="ls-input" placeholder="Search every chapter…" autocomplete="off" aria-label="Search every chapter">
-      <span class="ls-status" id="ls-status"></span>
-    </div>
-    <div id="ls-results" class="ls-results" hidden></div>
-    <div id="ls-saved">
-      <button id="ls-saved-toggle" class="ls-saved-toggle">&#9734; Saved Searches <span id="ls-saved-count"></span></button>
-      <div id="ls-saved-list" class="ls-saved-list" hidden></div>
-    </div>
+  <div class="acronym">
+    <div class="acr-letter" style="--delay:0.05s">D<span class="acr-word">Discovery</span></div>
+    <div class="acr-arrow" style="--delay:0.15s"><span class="acr-arrow-spacer">&nbsp;</span><span class="acr-arrow-glyph">&rarr;</span></div>
+    <div class="acr-letter" style="--delay:0.25s">E<span class="acr-word">Expression</span></div>
+    <div class="acr-arrow" style="--delay:0.35s"><span class="acr-arrow-spacer">&nbsp;</span><span class="acr-arrow-glyph">&rarr;</span></div>
+    <div class="acr-letter" style="--delay:0.45s">M<span class="acr-word">Media</span></div>
+    <div class="acr-arrow" style="--delay:0.55s"><span class="acr-arrow-spacer">&nbsp;</span><span class="acr-arrow-glyph">&rarr;</span></div>
+    <div class="acr-letter" style="--delay:0.65s">A<span class="acr-word">Artistry</span></div>
+    <div class="acr-arrow" style="--delay:0.75s"><span class="acr-arrow-spacer">&nbsp;</span><span class="acr-arrow-glyph">&rarr;</span></div>
+    <div class="acr-letter" style="--delay:0.85s">H<span class="acr-word">Heightened</span></div>
+    <div class="acr-letter acr-self" style="--delay:1.05s">S<span class="acr-word">Self</span></div>
   </div>
 
-  <p class="section-label">Select a chapter to begin reading</p>
+  <p class="hero-tagline">[Placeholder — one or two sentences that invite a first-time reader in: what this work is, and why it's worth their time.]</p>
+  <p class="hero-author">Hamza Earnlight</p>
 
-  <!-- FRONT MATTER (centred) -->
-  <div class="front-matter">
-
-    <a href="introduction.html" class="book-btn">
-      <span class="btn-text"><span class="btn-title">Introduction</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="foreword.html" class="book-btn">
-      <span class="btn-text"><span class="btn-title">Foreword</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="authors-notes.html" class="book-btn">
-      <span class="btn-text"><span class="btn-title">Author's Notes</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
+  <div class="hero-cta">
+    <a href="library.html" class="cta-btn">Enter <span class="arrow">&rarr;</span></a>
   </div>
 
-  <div class="grid-divider"></div>
-
-  <!-- MAIN CHAPTERS -->
-  <div class="grid">
-
-    <a href="light-as-meaning.html" class="book-btn">
-      <span class="btn-number">I</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Light as Meaning</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="how-to-build-your-light.html" class="book-btn">
-      <span class="btn-number">II</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">How to Build Light</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-   <a href="purity.html" class="book-btn">
-      <span class="btn-number">III</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Purity</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-   
-   <a href="our-heart.html" class="book-btn">
-      <span class="btn-number">IV</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Our Heart</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-<a href="the-pen.html" class="book-btn">
-      <span class="btn-number">V</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">The Pen</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-<a href="our-mind.html" class="book-btn">
-      <span class="btn-number">VI</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Our Mind</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-<a href="truth.html" class="book-btn">
-      <span class="btn-number">VII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Truth</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-<a href="honour.html" class="book-btn">
-      <span class="btn-number">VIII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Honour</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-   <a href="understanding.html" class="book-btn">
-      <span class="btn-number">IX</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Understanding</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-   
-    <a href="advice.html" class="book-btn">
-      <span class="btn-number">X</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Advice</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="the-continuum.html" class="book-btn">
-      <span class="btn-number">XI</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">The Continuum</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="imagination.html" class="book-btn">
-      <span class="btn-number">XII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Imagination</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    
-
-    <a href="greatness.html" class="book-btn">
-      <span class="btn-number">XIII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Greatness</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    
-
-    
-
-    <a href="reality.html" class="book-btn">
-      <span class="btn-number">XIV</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Reality</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="thoughts.html" class="book-btn">
-      <span class="btn-number">XV</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Thoughts</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    
-
-    <a href="power.html" class="book-btn">
-      <span class="btn-number">XVI</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Power</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="reason.html" class="book-btn">
-      <span class="btn-number">XVII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Reason</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="belief.html" class="book-btn">
-      <span class="btn-number">XVIII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Belief</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="pleasure.html" class="book-btn">
-      <span class="btn-number">XIX</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Pleasure</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    
-
-    <a href="morality.html" class="book-btn">
-      <span class="btn-number">XX</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Morality</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="the-unseen.html" class="book-btn">
-      <span class="btn-number">XXI</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">The Unseen</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="age-vs-evolution.html" class="book-btn">
-      <span class="btn-number">XXII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Age vs Evolution</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="the-conscience.html" class="book-btn">
-      <span class="btn-number">XXIII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">The Conscience</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="gravitation.html" class="book-btn">
-      <span class="btn-number">XXIV</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Gravitation</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="the-nature-of-life.html" class="book-btn">
-      <span class="btn-number">XXV</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">The Nature of Life</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="reading.html" class="book-btn">
-      <span class="btn-number">XXVI</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Reading</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="delusion.html" class="book-btn">
-      <span class="btn-number">XXVII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Delusion</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="weakness.html" class="book-btn">
-      <span class="btn-number">XXVIII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Weakness</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="weight.html" class="book-btn">
-      <span class="btn-number">XXIX</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Weight</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="hierarchy.html" class="book-btn">
-      <span class="btn-number">XXX</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Hierarchy</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="the-finality.html" class="book-btn">
-      <span class="btn-number">XXXI</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">The Finality</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-    <a href="paradise.html" class="book-btn">
-      <span class="btn-number">XXXII</span><span class="btn-divider"></span>
-      <span class="btn-text"><span class="btn-title">Paradise</span></span>
-      <span class="btn-arrow">&rarr;</span>
-    </a>
-
-  </div>
-</main>
-
-<!-- CONTACT -->
-<section class="contact">
-  <p class="contact-label">Get in touch</p>
-  <div class="contact-links">
-
-    <a href="mailto:demahs@demahs.com" class="contact-btn">
-      <span class="icon">&#x2709;</span> Email
-    </a>
-
-    <a href="https://twitter.com/earnlight" target="_blank" rel="noopener" class="contact-btn">
-      <span class="icon">&#120143;</span> Twitter
-    </a>
-
-    <a href="https://bsky.app/profile/mynoegenesis.com" target="_blank" rel="noopener" class="contact-btn">
-      <span class="icon">&#9729;</span> Bluesky
-    </a>
-
-    <a href="https://substack.com/@earnlight" target="_blank" rel="noopener" class="contact-btn">
-      <span class="icon">&#10022;</span> Substack
-    </a>
-
-    <a href="/feed.xml" class="contact-btn">
-      <span class="icon">&#128225;</span> RSS
-    </a>
-
-  </div>
+  <div class="scroll-cue">&#8595;</div>
 </section>
 
-<!-- SUPPORT -->
-<section class="contact">
-  <p class="contact-label">Support This Work</p>
-  <div class="contact-links">
-
-    <a href="https://ko-fi.com/earnlight" target="_blank" rel="noopener" class="contact-btn">
-      <span class="icon">&#9829;</span> Ko-fi
-    </a>
-
-    <a href="https://buymeacoffee.com/Earnlight" target="_blank" rel="noopener" class="contact-btn">
-      <span class="icon">&#9749;</span> Buy Me a Coffee
-    </a>
-
-  </div>
-</section>
-
-<!-- RECENT UPDATES — populated from updates.js -->
-<section class="updates">
-  <p class="contact-label">Recent Updates</p>
-  <div class="updates-list" id="updates-list"></div>
+<section class="about">
+  <p class="about-label">About This Work</p>
+  <p>[Placeholder — a short paragraph introducing the DEMAHS as a body of work: what it explores, how it's organized, who it's for.]</p>
+  <p>[Placeholder — a second paragraph, more personal in tone: why this was written, what the reader can expect from spending time here.]</p>
+  <span class="placeholder-note">Replace this section's copy before publishing</span>
 </section>
 
 <footer>
   <p>The DEMAHS &nbsp;&middot;&nbsp; Hamza Earnlight &nbsp;&middot;&nbsp; All rights reserved</p>
 </footer>
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js');
-  }
-</script>
-
-<script>
-  // Shared: extracts a book's real text from its raw HTML. Used by both the
-  // site-wide search index and the "X min read" estimate on the Start
-  // Reading card, so there's exactly one place that knows how to read a
-  // chapter's content — some readers ("auto paginator" chapters) hold their
-  // real text in a CHAPTER_TEXT JS variable that overwrites the static .page
-  // divs at runtime, a script DOMParser never executes, so it never sees
-  // that content otherwise. Prefer it when present, since the static divs
-  // are then just inert fallback markup the visitor never actually sees.
-  function noegenesisExtractUnits(html) {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    const units = [];
-
-    for (const script of doc.querySelectorAll('script')) {
-      const src = script.textContent;
-      if (!src || src.indexOf('CHAPTER_TEXT') === -1) continue;
-      const m = src.match(/const CHAPTER_TEXT\s*=\s*`([\s\S]*?)`\s*;/);
-      if (!m) continue;
-      const raw = m[1].trim();
-      if (!raw) break; // empty → falls through to the manual page divs below
-      raw.split(/\n{2,}/).map(s => s.replace(/\s+/g, ' ').trim()).filter(Boolean)
-        .forEach(text => units.push({ page: null, text }));
-      return units;
-    }
-
-    const pages = doc.querySelectorAll('.page[data-page]');
-    if (pages.length) {
-      pages.forEach(p => {
-        const n = parseInt(p.getAttribute('data-page'), 10);
-        if (isNaN(n) || n <= 0) return; // skip the cover
-        const body = p.querySelector('.page-body') || p;
-        const text = body.textContent.replace(/\s+/g, ' ').trim();
-        if (text) units.push({ page: n, text });
-      });
-    } else {
-      const man = doc.querySelector('.manuscript') || doc.querySelector('main');
-      if (man) {
-        const text = man.textContent.replace(/\s+/g, ' ').trim();
-        if (text) units.push({ page: null, text });
-      }
-    }
-    return units;
-  }
-
-  function noegenesisMinutesRead(units) {
-    const words = units.reduce((n, u) => n + (u.text.match(/\S+/g) || []).length, 0);
-    return words > 0 ? Math.max(1, Math.round(words / 220)) : null;
-  }
-</script>
-
-<script>
-  (function () {
-    let rec;
-    try { rec = JSON.parse(localStorage.getItem('noegenesis-lastread')); } catch { rec = null; }
-    if (!rec || !rec.file || !(rec.page > 0)) {
-      const startRow  = document.getElementById('start-reading');
-      const startLink = document.getElementById('start-reading-link');
-      const startProg = document.getElementById('start-reading-progress');
-      if (startRow && startLink && startProg) {
-        let fm;
-        try { fm = JSON.parse(localStorage.getItem('noegenesis-frontmatter-read')) || {}; } catch { fm = {}; }
-        const FRONT_MATTER = [
-          { file: 'introduction.html',  label: 'Introduction' },
-          { file: 'foreword.html',      label: 'Foreword' },
-          { file: 'authors-notes.html', label: "Author's Notes" },
-        ];
-        const next = FRONT_MATTER.find(f => !fm[f.file]);
-        const targetFile  = next ? next.file : 'light-as-meaning.html';
-        const targetLabel = next ? next.label : 'Chapter I — Light as Meaning';
-        startLink.href = targetFile;
-        startProg.textContent = targetLabel;
-        startRow.style.display = 'block';
-
-        // Fill in "X min read" once fetched — kept separate from the label
-        // above so the card shows something useful immediately, not blank
-        // while the fetch is in flight.
-        fetch(targetFile, { cache: 'no-store' })
-          .then(r => (r.ok ? r.text() : ''))
-          .then(html => {
-            if (!html) return;
-            const minutes = noegenesisMinutesRead(noegenesisExtractUnits(html));
-            if (minutes) startProg.textContent = targetLabel + ' · ' + minutes + ' min read';
-          })
-          .catch(() => {});
-      }
-      return;
-    }
-
-    const row   = document.getElementById('continue-reading');
-    const link  = document.getElementById('continue-reading-link');
-    const label = document.getElementById('continue-reading-label');
-    const title = document.getElementById('continue-reading-title');
-    const prog  = document.getElementById('continue-reading-progress');
-    const bar   = document.getElementById('continue-reading-bar');
-    if (!row || !link || !label || !title || !prog || !bar) return;
-
-    const pct = rec.total > 0 ? Math.min(100, Math.round((rec.page / rec.total) * 100)) : 0;
-
-    // Finished the book — point to whatever comes next in the library's
-    // reading order instead of just resuming the last page again.
-    if (pct >= 100) {
-      const order = Array.from(document.querySelectorAll('.book-btn')).map(btn => ({
-        file: btn.getAttribute('href'),
-        title: (btn.querySelector('.btn-title') || {}).textContent || btn.getAttribute('href'),
-      }));
-      const idx  = order.findIndex(b => b.file === rec.file);
-      const next = (idx !== -1 && idx + 1 < order.length) ? order[idx + 1] : null;
-
-      if (next) {
-        link.href = next.file;
-        label.textContent = 'Up Next';
-        title.textContent = next.title;
-        prog.textContent = '';
-        bar.style.width = '0%';
-        row.style.display = 'block';
-        return;
-      }
-    }
-
-    link.href = rec.file + '?resume=1';
-    label.textContent = 'Continue Reading';
-    title.textContent = rec.title || rec.file;
-    if (rec.total > 0) {
-      prog.textContent = 'Page ' + rec.page + ' of ' + rec.total + ' — ' + pct + '% read';
-      bar.style.width = pct + '%';
-    } else {
-      prog.textContent = 'Page ' + rec.page;
-    }
-    row.style.display = 'block';
-  })();
-</script>
-
-<script>
-  (function () {
-    let all;
-    try { all = JSON.parse(localStorage.getItem('noegenesis-progress')) || {}; } catch { all = {}; }
-
-    document.querySelectorAll('.book-btn').forEach(btn => {
-      const p = all[btn.getAttribute('href')];
-      if (!p || !(p.total > 0) || !(p.page > 0)) return;
-      const pct = Math.min(100, Math.round((p.page / p.total) * 100));
-
-      const label = document.createElement('span');
-      label.className = 'btn-progress-label';
-      label.textContent = pct >= 100 ? 'Finished' : pct + '% read';
-      const textEl = btn.querySelector('.btn-text');
-      if (textEl) textEl.appendChild(label);
-
-      const bar = document.createElement('div');
-      bar.className = 'btn-progress-bar';
-      bar.style.width = pct + '%';
-      btn.appendChild(bar);
-    });
-
-    // Overall reading-journey summary in the header — only shown once the
-    // visitor has actually finished at least one chapter, so a brand-new
-    // visitor doesn't see a discouraging "0 of 32" on their first visit.
-    const total    = document.querySelectorAll('.grid .book-btn').length;
-    const finished = Object.values(all).filter(p => p.total > 0 && p.page >= p.total).length;
-    if (finished > 0 && total > 0) {
-      const summary = document.getElementById('reading-summary');
-      if (summary) {
-        summary.textContent = finished + ' of ' + total + ' chapters read';
-        summary.style.display = 'block';
-      }
-    }
-  })();
-</script>
-
-<script>
-  // Site-wide search — no backend, so it fetches every chapter's HTML on first
-  // use, extracts each page's text client-side, and searches that in-memory index.
-  (function () {
-    const input     = document.getElementById('ls-input');
-    const status    = document.getElementById('ls-status');
-    const resultsEl = document.getElementById('ls-results');
-    const wrap      = document.getElementById('library-search');
-    if (!input || !status || !resultsEl || !wrap) return;
-
-    const books = Array.from(document.querySelectorAll('.book-btn')).map(btn => ({
-      file: btn.getAttribute('href'),
-      title: (btn.querySelector('.btn-title') || {}).textContent || btn.getAttribute('href'),
-    }));
-
-    let index = null;
-    let indexPromise = null;
-
-    function buildIndex() {
-      if (index) return Promise.resolve(index);
-      if (indexPromise) return indexPromise;
-      status.textContent = 'Indexing…';
-      let failCount = 0;
-      const indexNonce = Date.now();
-      indexPromise = Promise.all(books.map(b =>
-        // Cache-busting query param: `no-store` only stops the browser reusing its own
-        // cache — it can't force a CDN/edge cache in front of the site to skip a hit on
-        // the exact same URL. A unique URL per index build sidesteps that layer too.
-        fetch(b.file + '?_sw=' + indexNonce, { cache: 'no-store' })
-          .then(r => {
-            if (!r.ok) { failCount++; console.error('[search] ' + b.file + ' returned HTTP ' + r.status); return ''; }
-            return r.text();
-          })
-          .then(html => (html ? noegenesisExtractUnits(html).map(u => ({ file: b.file, title: b.title, page: u.page, text: u.text })) : []))
-          .catch(err => { failCount++; console.error('[search] failed to fetch/parse ' + b.file, err); return []; })
-      )).then(lists => {
-        index = lists.flat();
-        status.textContent = failCount > 0
-          ? failCount + ' of ' + books.length + ' chapters failed to load — see console (F12)'
-          : (index.length === 0 ? 'Index built but found no searchable text — see console (F12)' : '');
-        if (failCount > 0 || index.length === 0) {
-          console.warn('[search] index built with ' + index.length + ' searchable page(s) across ' + (books.length - failCount) + '/' + books.length + ' chapters.');
-        }
-        return index;
-      });
-      return indexPromise;
-    }
-
-    function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
-
-    // Results are paginated client-side (no re-search on Prev/Next) —
-    // renderResults() computes the full match list once per query and resets
-    // to page 1; renderResultsPage() just slices and (re)draws the current page.
-    const RESULTS_PAGE_SIZE = 7;
-    let lastMatches = [];
-    let lastQuery = '';
-    let resultsPage = 0;
-
-    function renderResults(query) {
-      const q = query.trim();
-      if (q.length < 2) { resultsEl.hidden = true; resultsEl.innerHTML = ''; return; }
-
-      const needle = q.toLowerCase();
-      const matches = [];
-      for (const unit of index) {
-        const at = unit.text.toLowerCase().indexOf(needle);
-        if (at === -1) continue;
-        matches.push({ unit, at });
-      }
-
-      lastMatches = matches;
-      lastQuery = q;
-      resultsPage = 0;
-      renderResultsPage();
-    }
-
-    function renderResultsPage() {
-      resultsEl.innerHTML = '';
-      resultsEl.hidden = false;
-
-      if (!lastMatches.length) {
-        const empty = document.createElement('div');
-        empty.className = 'ls-empty';
-        empty.textContent = 'No matches found.';
-        resultsEl.appendChild(empty);
-        return;
-      }
-
-      const q = lastQuery;
-      const re = new RegExp(escapeRegExp(q), 'i');
-      const totalPages = Math.ceil(lastMatches.length / RESULTS_PAGE_SIZE);
-      const pageStart  = resultsPage * RESULTS_PAGE_SIZE;
-      const pageItems  = lastMatches.slice(pageStart, pageStart + RESULTS_PAGE_SIZE);
-
-      pageItems.forEach(({ unit, at }, iOnPage) => {
-        const i = pageStart + iOnPage;
-        const start = Math.max(0, at - 50);
-        const end   = Math.min(unit.text.length, at + q.length + 80);
-        let snippet = (start > 0 ? '…' : '') + unit.text.slice(start, end) + (end < unit.text.length ? '…' : '');
-        snippet = snippet.replace(re, m => '<mark>' + m + '</mark>');
-        const href = unit.file + (unit.page ? '?page=' + unit.page : '');
-
-        const row = document.createElement('div');
-        row.className = 'ls-row';
-
-        const link = document.createElement('a');
-        link.className = 'ls-row-link';
-        link.href = href;
-
-        const head = document.createElement('div');
-        head.className = 'ls-row-head';
-        head.textContent = (i + 1) + '. ' + unit.title + (unit.page ? ' — page ' + unit.page : '');
-
-        const body = document.createElement('div');
-        body.className = 'ls-row-snippet';
-        body.innerHTML = snippet;
-
-        link.appendChild(head);
-        link.appendChild(body);
-
-        // Per-result save — saves THIS specific match, not the query, so a
-        // reader can save 3 of 5 hits and skip the rest.
-        const saveBtn = document.createElement('button');
-        saveBtn.className = 'ls-row-save';
-        saveBtn.setAttribute('aria-label', 'Save this result');
-        saveBtn.title = 'Save this result';
-        const matchSaved = isResultSaved(unit.file, unit.page, q, snippet);
-        saveBtn.classList.toggle('saved', matchSaved);
-        saveBtn.textContent = matchSaved ? '★' : '☆';
-        saveBtn.addEventListener('click', e => {
-          e.preventDefault();
-          e.stopPropagation();
-          toggleResultSaved({ file: unit.file, page: unit.page, title: unit.title, query: q, snippet });
-          const nowSaved = isResultSaved(unit.file, unit.page, q, snippet);
-          saveBtn.classList.toggle('saved', nowSaved);
-          saveBtn.textContent = nowSaved ? '★' : '☆';
-        });
-
-        row.appendChild(link);
-        row.appendChild(saveBtn);
-        resultsEl.appendChild(row);
-      });
-
-      if (totalPages > 1) {
-        const pager = document.createElement('div');
-        pager.className = 'ls-pager';
-
-        const prevBtn = document.createElement('button');
-        prevBtn.className = 'ls-pager-btn';
-        prevBtn.textContent = '← Prev';
-        prevBtn.disabled = resultsPage === 0;
-        prevBtn.addEventListener('click', e => {
-          e.preventDefault(); e.stopPropagation();
-          if (resultsPage > 0) { resultsPage--; renderResultsPage(); }
-        });
-
-        const info = document.createElement('span');
-        info.className = 'ls-pager-info';
-        info.textContent = 'Page ' + (resultsPage + 1) + ' of ' + totalPages;
-
-        const nextBtn = document.createElement('button');
-        nextBtn.className = 'ls-pager-btn';
-        nextBtn.textContent = 'Next →';
-        nextBtn.disabled = resultsPage >= totalPages - 1;
-        nextBtn.addEventListener('click', e => {
-          e.preventDefault(); e.stopPropagation();
-          if (resultsPage < totalPages - 1) { resultsPage++; renderResultsPage(); }
-        });
-
-        pager.appendChild(prevBtn);
-        pager.appendChild(info);
-        pager.appendChild(nextBtn);
-        resultsEl.appendChild(pager);
-      }
-    }
-
-    let debounceTimer;
-    input.addEventListener('focus', () => { buildIndex(); });
-    input.addEventListener('input', () => {
-      clearTimeout(debounceTimer);
-      const query = input.value;
-      if (!query.trim()) { resultsEl.hidden = true; return; }
-      debounceTimer = setTimeout(() => { buildIndex().then(() => renderResults(query)); }, 200);
-    });
-    document.addEventListener('click', e => {
-      if (!wrap.contains(e.target)) resultsEl.hidden = true;
-    });
-
-    // ── Saved searches — saves a specific RESULT (one file+page+query hit),
-    // not the query itself, so a reader can save 3 of 5 matches and skip the
-    // rest. Persistent and user-managed, like the reader pages'
-    // bookmarks/highlights: explicit, named, deletable.
-    const savedToggle = document.getElementById('ls-saved-toggle');
-    const savedCount  = document.getElementById('ls-saved-count');
-    const savedList   = document.getElementById('ls-saved-list');
-    const SAVED_KEY   = 'noegenesis-saved-searches';
-
-    function getSavedSearches() { try { return JSON.parse(localStorage.getItem(SAVED_KEY)) || []; } catch { return []; } }
-    function setSavedSearches(list) { localStorage.setItem(SAVED_KEY, JSON.stringify(list)); }
-    // Identity includes the snippet, not just file+page+query: chapters whose
-    // text isn't paginated (the CHAPTER_TEXT auto-paginator format) index each
-    // paragraph as its own unit with page:null, so multiple distinct results
-    // from the same chapter would otherwise share an identical file+page+query
-    // key and collide. The snippet (each unit's own surrounding text) is what
-    // actually distinguishes one paragraph's hit from another's.
-    function isResultSaved(file, page, query, snippet) {
-      return getSavedSearches().some(s => s.file === file && s.page === page && s.query.toLowerCase() === query.toLowerCase() && s.snippet === snippet);
-    }
-
-    function toggleResultSaved(match) {
-      let list = getSavedSearches();
-      if (isResultSaved(match.file, match.page, match.query, match.snippet)) {
-        list = list.filter(s => !(s.file === match.file && s.page === match.page && s.query.toLowerCase() === match.query.toLowerCase() && s.snippet === match.snippet));
-      } else {
-        list.unshift({ id: Date.now() + Math.random(), file: match.file, page: match.page, title: match.title, query: match.query, snippet: match.snippet, savedAt: Date.now() });
-      }
-      setSavedSearches(list);
-      refreshSavedToggle();
-      if (savedList && !savedList.hidden) renderSavedList();
-    }
-
-    function refreshSavedToggle() {
-      if (!savedToggle || !savedCount) return;
-      const list = getSavedSearches();
-      savedToggle.classList.toggle('visible', list.length > 0);
-      savedCount.textContent = list.length ? '(' + list.length + ')' : '';
-      if (!list.length && savedList) savedList.hidden = true;
-    }
-
-    function renderSavedList() {
-      if (!savedList) return;
-      const list = getSavedSearches().slice().sort((a, b) => b.savedAt - a.savedAt);
-      savedList.innerHTML = '';
-      list.forEach(s => {
-        const item = document.createElement('div');
-        item.className = 'ls-saved-item';
-
-        const body = document.createElement('div');
-        body.className = 'ls-saved-body';
-
-        const head = document.createElement('div');
-        head.className = 'ls-saved-head';
-        head.textContent = s.title + (s.page ? ' — page ' + s.page : '');
-
-        const label = document.createElement('div');
-        label.className = 'ls-saved-query-label';
-        label.textContent = 'Find: ' + s.query;
-
-        const snip = document.createElement('div');
-        snip.className = 'ls-saved-snippet';
-        snip.innerHTML = s.snippet;
-
-        body.appendChild(head);
-        body.appendChild(label);
-        body.appendChild(snip);
-        body.addEventListener('click', () => {
-          location.href = s.file + (s.page ? '?page=' + s.page : '');
-        });
-
-        const actions = document.createElement('span');
-        actions.className = 'ls-saved-actions';
-        const del = document.createElement('button');
-        del.className = 'ls-saved-del';
-        del.textContent = '✕';
-        del.title = 'Remove saved result';
-        del.addEventListener('click', e => {
-          e.stopPropagation();
-          actions.innerHTML = '';
-          const confirmWrap = document.createElement('span'); confirmWrap.className = 'ls-saved-confirm';
-          const lbl = document.createElement('span'); lbl.textContent = 'Delete?';
-          const yes = document.createElement('button'); yes.className = 'yes'; yes.textContent = 'Yes';
-          const no  = document.createElement('button'); no.className  = 'no';  no.textContent  = 'No';
-          yes.addEventListener('click', ev => {
-            ev.stopPropagation();
-            setSavedSearches(getSavedSearches().filter(x => x.id !== s.id));
-            refreshSavedToggle();
-            renderSavedList();
-          });
-          no.addEventListener('click', ev => { ev.stopPropagation(); actions.innerHTML = ''; actions.appendChild(del); });
-          confirmWrap.appendChild(lbl); confirmWrap.appendChild(yes); confirmWrap.appendChild(no);
-          actions.appendChild(confirmWrap);
-        });
-        actions.appendChild(del);
-
-        item.appendChild(body);
-        item.appendChild(actions);
-        savedList.appendChild(item);
-      });
-    }
-
-    if (savedToggle) savedToggle.addEventListener('click', e => {
-      e.stopPropagation();
-      if (savedList) {
-        savedList.hidden = !savedList.hidden;
-        if (!savedList.hidden) renderSavedList();
-      }
-    });
-
-    refreshSavedToggle();
-  })();
-</script>
-
-<script src="updates.js"></script>
-<script>
-  (function () {
-    const list = document.getElementById('updates-list');
-    if (!list) return;
-
-    const entries = (typeof SITE_UPDATES !== 'undefined' ? SITE_UPDATES : []).slice();
-    if (!entries.length) {
-      const empty = document.createElement('p');
-      empty.className = 'updates-empty';
-      empty.textContent = 'Nothing new yet — check back soon.';
-      list.appendChild(empty);
-      return;
-    }
-
-    entries.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
-
-    const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-    entries.forEach(entry => {
-      const isLink = !!entry.book;
-      const card = document.createElement(isLink ? 'a' : 'div');
-      card.className = 'update-card';
-      if (isLink) {
-        card.href = entry.book + (entry.page !== null && entry.page !== undefined ? '?page=' + entry.page : '');
-      }
-
-      const dateEl = document.createElement('span');
-      dateEl.className = 'update-date';
-      const d = new Date(entry.date + 'T00:00:00');
-      dateEl.textContent = isNaN(d) ? entry.date : dateFmt.format(d);
-
-      const body = document.createElement('span');
-      body.className = 'update-body';
-      const titleEl = document.createElement('span');
-      titleEl.className = 'update-title';
-      titleEl.textContent = entry.title || entry.book || '';
-      const noteEl = document.createElement('span');
-      noteEl.className = 'update-note';
-      noteEl.textContent = entry.note || '';
-      body.appendChild(titleEl);
-      body.appendChild(document.createElement('br'));
-      body.appendChild(noteEl);
-
-      card.appendChild(dateEl);
-      card.appendChild(body);
-
-      if (isLink) {
-        const arrow = document.createElement('span');
-        arrow.className = 'update-arrow';
-        arrow.textContent = '→';
-        card.appendChild(arrow);
-      }
-
-      list.appendChild(card);
-    });
-  })();
-</script>
 
 </body>
 </html>

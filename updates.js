@@ -4,7 +4,7 @@
 // This list is maintained by hand (this is a static site with no backend or
 // build step, so nothing can detect content changes on its own) — add one
 // entry here each time a paragraph, page, or chapter is added or changed,
-// newest entry first. index.html reads this file directly and renders it.
+// newest entry first. library.html reads this file directly and renders it.
 //
 // After editing, run `node scripts/generate-feed.js` to regenerate feed.xml
 // (the RSS feed at /feed.xml) so it matches this list.

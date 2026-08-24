@@ -1,12 +1,13 @@
 // My Noegenesis — Service Worker
 // Caches all pages for offline use and fast loading
 
-const CACHE_NAME = 'noegenesis-v4';
+const CACHE_NAME = 'noegenesis-v5';
 
 // List every file in your site here
 const ASSETS = [
   '/',
   '/index.html',
+  '/library.html',
   '/foreword.html',
   '/authors-notes.html',
   '/introduction.html',
