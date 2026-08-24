@@ -119,15 +119,22 @@
     animation: riseIn 1s 1.15s ease both;
   }
 
-  /* ── ACRONYM — D · E · M · A · H · S, each letter igniting in turn to spell out what the title means ── */
+  /* ── ACRONYM — D · E · M · A · H · S, each letter igniting in turn to spell out what the title means ──
+     Never wraps: on narrow phones it shrinks to fit one row (see the mobile
+     media query below); overflow-x is a safety net, not the intended path. */
   .acronym {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: center;
     align-items: flex-start;
     gap: clamp(8px, 1.8vw, 18px);
     margin-bottom: clamp(1.6em, 4vw, 2.2em);
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
+
+  .acronym::-webkit-scrollbar { display: none; }
 
   .acr-letter {
     font-family: 'Cinzel', serif;
@@ -303,8 +310,11 @@
     color: rgba(227, 193, 77, 0.4);
   }
 
-  @media (max-width: 480px) {
-    .acronym { gap: 14px; }
+  @media (max-width: 600px) {
+    .acronym { gap: 5px; }
+    .acr-letter, .acr-arrow { font-size: clamp(1rem, 5.6vw, 1.35rem); }
+    .acr-word, .acr-arrow-glyph { font-size: clamp(0.46rem, 2.3vw, 0.58rem); }
+    .acr-letter.acr-self { margin-left: 9px; }
   }
 </style>
 </head>
