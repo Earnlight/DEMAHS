@@ -358,10 +358,28 @@
   #highlights-menu .hl-empty { padding: 14px 10px; font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--text-dim); font-size: 0.85rem; text-align: center; line-height: 1.5; }
   #highlights-menu .hl-page { font-family: 'Cinzel', serif; font-size: 0.48rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); opacity: 0.9; min-width: 32px; text-align: center; padding-top: 3px; flex-shrink: 0; border-right: 1px solid var(--border); margin-right: 2px; padding-right: 8px; }
 
-  .flipping { animation: flipForward 0.5s cubic-bezier(0.645,0.045,0.355,1.000) forwards; }
-  .flipping-back { animation: flipBack 0.5s cubic-bezier(0.645,0.045,0.355,1.000) forwards; }
-  @keyframes flipForward { 0%{opacity:1;transform:perspective(1000px) rotateY(0deg)} 49%{opacity:1;transform:perspective(1000px) rotateY(-90deg);z-index:100} 50%{opacity:0} 100%{opacity:0;transform:perspective(1000px) rotateY(-180deg)} }
-  @keyframes flipBack { 0%{opacity:0;transform:perspective(1000px) rotateY(-180deg)} 50%{opacity:0} 51%{opacity:1;transform:perspective(1000px) rotateY(-90deg);z-index:100} 100%{opacity:1;transform:perspective(1000px) rotateY(0deg)} }
+  /* transform-origin pivots the whole page on its bound (left) edge like a
+     real hinge, instead of spinning around its own center. The destination
+     page is shown immediately underneath (see goTo()) so nothing goes
+     blank once this page rotates past edge-on and disappears via
+     backface-visibility. */
+  .flipping, .flipping-back {
+    transform-origin: left center;
+    backface-visibility: hidden;
+    z-index: 100;
+  }
+  .flipping { animation: flipForward 0.62s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  .flipping-back { animation: flipBack 0.62s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  @keyframes flipForward {
+    0%   { transform: perspective(1200px) rotateY(0deg); filter: brightness(1); box-shadow: 0 0 0 rgba(0,0,0,0); }
+    50%  { transform: perspective(1200px) rotateY(-90deg); filter: brightness(0.5); box-shadow: -40px 0 70px rgba(0,0,0,0.5); }
+    100% { transform: perspective(1200px) rotateY(-180deg); filter: brightness(1); box-shadow: 0 0 0 rgba(0,0,0,0); }
+  }
+  @keyframes flipBack {
+    0%   { transform: perspective(1200px) rotateY(-180deg); filter: brightness(1); box-shadow: 0 0 0 rgba(0,0,0,0); }
+    50%  { transform: perspective(1200px) rotateY(-90deg); filter: brightness(0.5); box-shadow: -40px 0 70px rgba(0,0,0,0.5); }
+    100% { transform: perspective(1200px) rotateY(0deg); filter: brightness(1); box-shadow: 0 0 0 rgba(0,0,0,0); }
+  }
 
   /* Nav buttons in the page bar — styled as proper buttons */
   .page-nav-btn { background: var(--btn-bg); border: 1px solid var(--border); color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.52rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 14px; border-radius: 3px; cursor: pointer; transition: background 0.2s, border-color 0.2s, opacity 0.2s; flex-shrink: 0; white-space: nowrap; }
@@ -847,14 +865,26 @@ const ReaderState = (function () {
     const leaving   = pages[current];
     const arriving  = pages[index];
     const animClass = direction === 'next' ? 'flipping' : 'flipping-back';
+
+    // Show the destination page immediately (inline style, not the `active`
+    // class) so it's already there the instant this page rotates past
+    // edge-on and disappears via backface-visibility -- no blank gap.
+    // Left off the `active` class until the very end since other code (the
+    // reading-progress MutationObserver) relies on exactly one .page
+    // carrying `active` at a time.
+    arriving.style.opacity = '1';
+    arriving.style.pointerEvents = 'none';
     leaving.classList.add(animClass);
+
     setTimeout(() => {
       leaving.classList.remove('active', animClass);
+      arriving.style.opacity = '';
+      arriving.style.pointerEvents = '';
       arriving.classList.add('active');
       current = index;
       updateUI();
       animating = false;
-    }, 500);
+    }, 620);
   }
 
   function jumpToPage(n) {
