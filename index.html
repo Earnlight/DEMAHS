@@ -313,6 +313,12 @@
     color: rgba(227, 193, 77, 0.4);
   }
 
+  footer p.visit-counter {
+    margin-top: 0.8em;
+    font-size: clamp(0.44rem, 1vw, 0.54rem);
+    color: rgba(227, 193, 77, 0.28);
+  }
+
   @media (max-width: 600px) {
     .acronym { gap: 5px; }
     .acr-letter, .acr-arrow { font-size: clamp(1rem, 5.6vw, 1.35rem); }
@@ -377,6 +383,7 @@
 
 <footer>
   <p>The DEMAHS &nbsp;&middot;&nbsp; EARNLIGHT &nbsp;&middot;&nbsp; All rights reserved</p>
+  <p class="visit-counter" id="visit-counter" hidden>&#10022;&nbsp; <span id="visit-count"></span> visits &nbsp;&#10022;</p>
 </footer>
 
 <script>
@@ -477,6 +484,28 @@
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
   targets.forEach(t => io.observe(t));
+})();
+
+// ── SITE VISIT COUNTER — a free, no-signup hit-counter API (abacus by
+// Jason Cameron) tracks and returns a running total; this is a static
+// site with no backend of its own to do that itself. Stays hidden if the
+// service is unreachable or slow, rather than ever showing a broken or
+// blank count. ──
+(function () {
+  const wrap  = document.getElementById('visit-counter');
+  const countEl = document.getElementById('visit-count');
+  if (!wrap || !countEl) return;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+  fetch('https://abacus.jasoncameron.dev/hit/demahs.com/homepage', { signal: controller.signal })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(data => {
+      if (typeof data.value !== 'number') return Promise.reject();
+      countEl.textContent = data.value.toLocaleString();
+      wrap.hidden = false;
+    })
+    .catch(() => {})
+    .finally(() => clearTimeout(timeout));
 })();
 </script>
 </body>
