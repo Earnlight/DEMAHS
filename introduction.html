@@ -169,6 +169,22 @@
   }
   .back-link:hover { color: var(--gold); }
 
+  /* ── Closing reveal — same gentle fade-up as the manuscript paragraphs,
+     for the closing ornament and continue-to-next-chapter button. Placed
+     after the rules above so it wins the cascade for opacity/transition on
+     .closing-ornament and .back-link, which already declare those. ── */
+  .closing-ornament, .continue-row, .back-link {
+    opacity: 0; transform: translateY(18px); transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .closing-ornament.visible, .continue-row.visible, .back-link.visible {
+    opacity: 1; transform: translateY(0);
+  }
+  .closing-ornament.visible { opacity: 0.7; }
+  @media (prefers-reduced-motion: reduce) {
+    .closing-ornament, .continue-row, .back-link { opacity: 1; transform: none; transition: none; }
+    .closing-ornament { opacity: 0.7; }
+  }
+
   @media (max-width: 600px) {
     .dropcap { font-size: 3.6em; }
   }
@@ -256,9 +272,10 @@
     update();
   })();
 
-  // Gentle reveal of paragraphs and section breaks as they enter the viewport.
+  // Gentle reveal of paragraphs, section breaks, and the closing
+  // ornament/continue button/back-link as they enter the viewport.
   (function () {
-    const targets = document.querySelectorAll('.manuscript p, .section-break');
+    const targets = document.querySelectorAll('.manuscript p, .section-break, .closing-ornament, .continue-row, .back-link');
     if (!('IntersectionObserver' in window) || !targets.length) {
       targets.forEach(t => t.classList.add('visible'));
       return;

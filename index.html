@@ -296,6 +296,20 @@
     color: rgba(227, 193, 77, 0.35);
   }
 
+  /* Below-the-fold content fades up into place as the reader scrolls to
+     it, the same reveal used throughout the site (see introduction.html's
+     .manuscript p) -- the hero above already fades in on load since it's
+     visible from the first frame. */
+  .about-label, .about p, .about .placeholder-note, footer {
+    opacity: 0; transform: translateY(18px); transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .about-label.visible, .about p.visible, .about .placeholder-note.visible, footer.visible {
+    opacity: 1; transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .about-label, .about p, .about .placeholder-note, footer { opacity: 1; transform: none; transition: none; }
+  }
+
   footer {
     text-align: center;
     padding: clamp(24px, 5vw, 40px) 24px clamp(40px, 7vw, 64px);
@@ -510,6 +524,26 @@
   resize();
   window.addEventListener('resize', resize);
   requestAnimationFrame(draw);
+})();
+
+// ── SCROLL REVEAL — below-the-fold content (the About section, footer)
+// fades up into view as the reader scrolls to it, the same reveal used
+// throughout the site (see introduction.html's .manuscript p). ──
+(function () {
+  const targets = document.querySelectorAll('.about-label, .about p, .about .placeholder-note, footer');
+  if (!('IntersectionObserver' in window) || !targets.length) {
+    targets.forEach(t => t.classList.add('visible'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+  targets.forEach(t => io.observe(t));
 })();
 </script>
 </body>
