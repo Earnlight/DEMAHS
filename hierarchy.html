@@ -288,6 +288,18 @@
   @media (prefers-reduced-motion: reduce) {
     .page-body p { opacity: 1; transform: none; transition: none; }
   }
+
+  /* Cover fades up the same way, on load rather than on a page turn. */
+  .cover-ornament, .cover-title, .cover-divider, .cover-author, .cover-summary p {
+    opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .cover-ornament.visible, .cover-title.visible, .cover-divider.visible,
+  .cover-author.visible, .cover-summary p.visible { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .cover-ornament, .cover-title, .cover-divider, .cover-author, .cover-summary p {
+      opacity: 1; transform: none; transition: none;
+    }
+  }
   .page-body strong, .page-body b { font-weight: 600; }
   .page-body em, .page-body i { font-style: italic; }
   .page-body strong em, .page-body em strong,
@@ -1063,33 +1075,45 @@ const ReaderState = (function () {
   // triggered by scrolling a paragraph into view; here, since a page's text
   // is already all on screen at once, turning to the page is the trigger.
   function revealParagraphs(pageEl) {
-    const paras = pageEl.querySelectorAll('.page-body p');
-    paras.forEach((p, i) => {
-      p.classList.remove('visible');
-      void p.offsetWidth; // restart the transition even on a page seen before
-      setTimeout(() => p.classList.add('visible'), 70 + i * 90);
+    const items = pageEl.classList.contains('page-cover')
+      ? pageEl.querySelectorAll('.cover-ornament, .cover-title, .cover-divider, .cover-author, .cover-summary p')
+      : pageEl.querySelectorAll('.page-body p');
+    items.forEach((el, i) => {
+      el.classList.remove('visible');
+      void el.offsetWidth; // restart the transition even on a page seen before
+      setTimeout(() => el.classList.add('visible'), 70 + i * 90);
     });
   }
 
   function goTo(index, direction) {
     if (animating || index === current || index < 0 || index >= total) return;
     animating = true;
-    const leaving   = pages[current];
-    const arriving  = pages[index];
-    const animClass = direction === 'next' ? 'flipping' : 'flipping-back';
+    const leaving  = pages[current];
+    const arriving = pages[index];
+    const forward  = direction === 'next';
 
     // Show the destination page immediately (inline style, not the `active`
-    // class) so it's already there the instant this page rotates past
-    // edge-on and disappears via backface-visibility -- no blank gap.
-    // Left off the `active` class until the very end since other code (the
+    // class) so it's already there the instant it's needed. Left off the
+    // `active` class until the very end since other code (the
     // reading-progress MutationObserver) relies on exactly one .page
     // carrying `active` at a time.
     arriving.style.opacity = '1';
     arriving.style.pointerEvents = 'none';
-    leaving.classList.add(animClass);
+
+    // Forward: the current page rotates away (flipForward: 0deg -> -180deg),
+    // revealing the next page waiting beneath it. Backward: the previous
+    // page rotates back into view (flipBack: -180deg -> 0deg), covering the
+    // current page, which just sits still beneath it. Animating `leaving`
+    // for both directions (as this used to) meant a 'prev' turn started the
+    // flipBack animation from leaving's resting 0deg transform against a
+    // keyframe range starting at -180deg -- an instant snap that flashed
+    // the old page back into view before the turn had even finished.
+    const animated  = forward ? leaving : arriving;
+    animated.classList.add(forward ? 'flipping' : 'flipping-back');
 
     setTimeout(() => {
-      leaving.classList.remove('active', animClass);
+      leaving.classList.remove('active', 'flipping');
+      arriving.classList.remove('flipping-back');
       arriving.style.opacity = '';
       arriving.style.pointerEvents = '';
       arriving.classList.add('active');
@@ -1168,6 +1192,9 @@ const ReaderState = (function () {
   }, { passive: true });
 
   updateUI();
+  // Cover starts active without ever passing through goTo() -- reveal it now.
+  revealParagraphs(pages[0]);
+
   return { goTo, jumpToPage, pages, total, getCurrent: () => current };
 })();
 
