@@ -290,9 +290,8 @@
   /* FIX: user-highlight stays as inline text, never becomes a block/image */
   .user-highlight {
     display: inline;
-    background: linear-gradient(180deg, rgba(255,226,150,0.65), rgba(227,193,77,0.52));
+    background: rgba(227,193,77,0.24);
     color: inherit; border-radius: 2px; padding: 0 1px;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 0 7px rgba(227,193,77,0.45);
     cursor: grab;
   }
   .user-highlight:active { cursor: grabbing; }
@@ -565,9 +564,67 @@
     #search-bar { width: 88vw; }
     #comment-section, #comments-display { width: 88vw; }
   }
+
+  /* ── COSMIC ATMOSPHERE ── drifting golden nebula clouds and a twinkling
+     starfield behind the reader. Pure decoration: fixed, non-interactive,
+     always behind real content. ── */
+  .cosmic-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .nebula-blob {
+    position: absolute;
+    width: 70vmax;
+    height: 70vmax;
+    border-radius: 50%;
+    filter: blur(48px);
+    opacity: 0.55;
+    mix-blend-mode: screen;
+  }
+
+  .nebula-blob.n1 {
+    top: -22%; left: -18%;
+    background: radial-gradient(circle, rgba(245, 221, 140, 0.55), transparent 70%);
+    animation: driftA 70s ease-in-out infinite alternate;
+  }
+
+  .nebula-blob.n2 {
+    width: 60vmax; height: 60vmax;
+    bottom: -24%; right: -12%;
+    background: radial-gradient(circle, rgba(185, 117, 46, 0.5), transparent 70%);
+    animation: driftB 90s ease-in-out infinite alternate;
+  }
+
+  .nebula-blob.n3 {
+    width: 52vmax; height: 52vmax;
+    top: 28%; right: 18%;
+    background: radial-gradient(circle, rgba(120, 55, 20, 0.45), transparent 70%);
+    animation: driftC 55s ease-in-out infinite alternate;
+  }
+
+  @keyframes driftA { from { transform: translate(0, 0) scale(1); }   to { transform: translate(6vw, 8vh) scale(1.08); } }
+  @keyframes driftB { from { transform: translate(0, 0) scale(1); }   to { transform: translate(-8vw, -5vh) scale(1.05); } }
+  @keyframes driftC { from { transform: translate(0, 0) scale(1); }   to { transform: translate(4vw, -6vh) scale(0.95); } }
+
+  #starfield { position: absolute; inset: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nebula-blob { animation: none; }
+  }
 </style>
 </head>
 <body>
+
+<div class="cosmic-bg" aria-hidden="true">
+  <div class="nebula-blob n1"></div>
+  <div class="nebula-blob n2"></div>
+  <div class="nebula-blob n3"></div>
+  <canvas id="starfield"></canvas>
+</div>
 
 <!-- Persistent thin reading-progress line at the very top of the viewport -->
 <div id="reading-progress-bar" role="progressbar" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
@@ -725,10 +782,10 @@
 
 <!-- Next chapter — closing call-to-action -->
 <div id="next-chapter-row">
-  <a href="the-unseen.html" id="next-chapter-btn" data-tip="Continue to The Unseen">
+  <a href="weakness.html" id="next-chapter-btn" data-tip="Continue to Weakness">
     <span class="ncb-text">
       <span class="ncb-label">Next Chapter</span>
-      <span class="ncb-title">The Unseen</span>
+      <span class="ncb-title">Weakness</span>
     </span>
     <span class="ncb-arrow">→</span>
   </a>
@@ -1171,7 +1228,7 @@ const ReaderState = (function () {
   let dtTime = 0, dtX = 0, dtY = 0;
 
   book.addEventListener('click', e => {
-    if (e.target.closest('button, a, input, [role="button"]')) return;
+    if (e.target.closest('button, a, input, [role="button"], .page-body p')) return;
     const now = Date.now();
     if (now - dtTime < 500 && Math.abs(e.clientX - dtX) < 50 && Math.abs(e.clientY - dtY) < 50) {
       dtTime = 0;
@@ -1249,6 +1306,17 @@ const ReaderState = (function () {
     return spans;
   }
 
+  // Shared by addFromSelection() and the tap-a-paragraph shortcut below.
+  function addHighlight(range, pageIndex, text) {
+    const id = nextId++;
+    const spans = highlightRangeSafe(range, id, text);
+    if (!spans.length) return null;
+    const h = { id, pageIndex, text, spans };
+    highlights.push(h);
+    persist();
+    return h;
+  }
+
   function addFromSelection() {
     const sel = window.getSelection();
     if (!sel || sel.isCollapsed) return;
@@ -1260,11 +1328,7 @@ const ReaderState = (function () {
     const pageEl = node.closest ? node.closest('.page') : null;
     if (!pageEl) return;
     const pageIndex = parseInt(pageEl.getAttribute('data-page'), 10);
-    const id = nextId++;
-    const spans = highlightRangeSafe(range, id, text);
-    if (!spans.length) { hideAction(); return; }
-    highlights.push({ id, pageIndex, text, spans });
-    persist();
+    if (!addHighlight(range, pageIndex, text)) { hideAction(); return; }
     sel.removeAllRanges();
     hideAction();
   }
@@ -1370,6 +1434,32 @@ const ReaderState = (function () {
     highlights = highlights.filter(x => x !== h);
     persist();
   }
+
+  // -- Tap a paragraph to highlight it whole -- a quicker alternative to
+  // selecting text by hand, especially on touch. Tapping an already
+  // highlighted paragraph removes that highlight (toggle). Only fires on
+  // a plain tap with no active text selection, so it never interferes
+  // with the existing drag-to-select flow.
+  function toggleParagraphHighlight(p) {
+    const covering = highlights.find(h => (h.spans || []).some(s => p.contains(s)));
+    if (covering) { removeHighlight(covering); return; }
+    const pageEl = p.closest('.page');
+    if (!pageEl) return;
+    const pageIndex = parseInt(pageEl.getAttribute('data-page'), 10);
+    const text = p.textContent.trim();
+    if (!text) return;
+    const range = document.createRange();
+    range.selectNodeContents(p);
+    addHighlight(range, pageIndex, text);
+  }
+  document.addEventListener('click', e => {
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed && sel.toString().trim()) return; // a real selection is being made
+    if (e.target.closest('button, a, input, [role="button"]')) return;
+    const p = e.target.closest('.page-body p');
+    if (p) toggleParagraphHighlight(p);
+  });
+
   function renderMenu() {
     menu.innerHTML = '';
     const title = document.createElement('div');
@@ -2196,6 +2286,77 @@ document.getElementById('public-toggle').addEventListener('change', function () 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js');
   }
+</script>
+<script>
+// -- COSMIC ATMOSPHERE -- twinkling starfield with occasional shooting stars (see .cosmic-bg in <style>) --
+(function () {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canvas = document.getElementById('starfield');
+  if (!canvas || !canvas.getContext) return;
+  const ctx = canvas.getContext('2d');
+  let w, h, dpr, stars, shootingStar = null;
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = canvas.width = window.innerWidth * dpr;
+    h = canvas.height = window.innerHeight * dpr;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    const count = Math.round((window.innerWidth * window.innerHeight) / 8000);
+    stars = Array.from({ length: count }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: (Math.random() * 1.2 + 0.3) * dpr,
+      base: Math.random() * 0.5 + 0.35,
+      phase: Math.random() * Math.PI * 2,
+      speed: Math.random() * 0.6 + 0.2,
+    }));
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, w, h);
+    for (const s of stars) {
+      const a = reduceMotion ? s.base : s.base + Math.sin(t / 1000 * s.speed + s.phase) * 0.3;
+      ctx.globalAlpha = Math.max(0, Math.min(1, a));
+      ctx.fillStyle = '#f5dd8c';
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (!reduceMotion) {
+      if (!shootingStar && Math.random() < 0.0025) {
+        shootingStar = {
+          x: Math.random() * w * 0.6,
+          y: Math.random() * h * 0.3,
+          vx: (Math.random() * 6 + 6) * dpr,
+          vy: (Math.random() * 3 + 2) * dpr,
+          life: 0,
+        };
+      }
+      if (shootingStar) {
+        const s = shootingStar;
+        s.x += s.vx; s.y += s.vy; s.life++;
+        ctx.globalAlpha = Math.max(0, 1 - s.life / 40);
+        const grad = ctx.createLinearGradient(s.x, s.y, s.x - s.vx * 4, s.y - s.vy * 4);
+        grad.addColorStop(0, 'rgba(245,221,140,0.9)');
+        grad.addColorStop(1, 'rgba(245,221,140,0)');
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.5 * dpr;
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y);
+        ctx.lineTo(s.x - s.vx * 4, s.y - s.vy * 4);
+        ctx.stroke();
+        if (s.life > 40 || s.x > w || s.y > h) shootingStar = null;
+      }
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  requestAnimationFrame(draw);
+})();
 </script>
 </body>
 </html>
