@@ -280,6 +280,14 @@
   .page-header { font-family: 'Cinzel', serif; font-size: max(0.5rem, 2.1cqi); letter-spacing: 0.2em; color: var(--ink-light); text-transform: uppercase; border-bottom: 1px solid var(--paper-dark); padding-bottom: 0.6em; margin-bottom: 1.2em; text-align: center; }
   .page-body { flex: 1; font-size: calc(max(0.72rem, 2.5cqi) * var(--reader-font-scale)); line-height: 1.72; color: var(--ink); font-weight: 300; text-align: justify; hyphens: auto; overflow-y: auto; }
   .page-body p + p { margin-top: 0.9em; text-indent: 1.5em; }
+
+  /* Paragraphs fade up into place as the page is turned to, matching the
+     reveal on the introduction/foreword/author's-notes pages. */
+  .page-body p { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .page-body p.visible { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .page-body p { opacity: 1; transform: none; transition: none; }
+  }
   .page-body strong, .page-body b { font-weight: 600; }
   .page-body em, .page-body i { font-style: italic; }
   .page-body strong em, .page-body em strong,
@@ -1040,6 +1048,19 @@ const ReaderState = (function () {
     if (rtPct) rtPct.textContent = pct + '%';
   }
 
+  // Reveal a page's paragraphs one after another, the same gentle fade-up
+  // used on the introduction/foreword/author's-notes pages -- there it's
+  // triggered by scrolling a paragraph into view; here, since a page's text
+  // is already all on screen at once, turning to the page is the trigger.
+  function revealParagraphs(pageEl) {
+    const paras = pageEl.querySelectorAll('.page-body p');
+    paras.forEach((p, i) => {
+      p.classList.remove('visible');
+      void p.offsetWidth; // restart the transition even on a page seen before
+      setTimeout(() => p.classList.add('visible'), 70 + i * 90);
+    });
+  }
+
   function goTo(index, direction) {
     if (animating || index === current || index < 0 || index >= total) return;
     animating = true;
@@ -1062,6 +1083,7 @@ const ReaderState = (function () {
       arriving.style.opacity = '';
       arriving.style.pointerEvents = '';
       arriving.classList.add('active');
+      revealParagraphs(arriving);
       current = index;
       updateUI();
       animating = false;

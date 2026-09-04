@@ -419,11 +419,21 @@
     margin: 0 auto clamp(24px, 4vw, 40px);
   }
 
-  /* ── MAIN GRID ── */
+  /* ── MAIN GRID ──
+     Flexbox (not CSS Grid) is deliberate: grid's justify-content only
+     centers the shared column-track set, so a lone card left over in an
+     incomplete last row stays pinned to the first column. Flex-wrap centers
+     each row's leftover space independently, so a short last row (e.g. a
+     3-chapter section, or one stray chapter after a full row) centers too. */
   .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: clamp(12px, 2vw, 20px);
+  }
+  .grid .book-btn {
+    flex: 1 1 280px;
+    max-width: 300px;
   }
 
   /* ── BOOK BUTTON ── */
@@ -748,7 +758,7 @@
   @media (max-width: 600px) {
     .front-matter { flex-direction: column; align-items: stretch; }
     .front-matter .book-btn { width: 100%; }
-    .grid { grid-template-columns: 1fr; }
+    .grid .book-btn { flex-basis: 100%; max-width: none; }
     .contact-links { flex-direction: column; align-items: stretch; }
     .contact-btn { justify-content: center; }
     .update-card { flex-wrap: wrap; }
