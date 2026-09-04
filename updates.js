@@ -22,6 +22,13 @@
 // ══════════════════════════════════════════════════════════════════════════
 const SITE_UPDATES = [
   {
+    date: '2026-09-04',
+    book: 'hellfire.html',
+    title: 'Hellfire',
+    page: 0,
+    note: 'New chapter added to the library, in Destiny.',
+  },
+  {
     date: '2026-08-13',
     book: 'introduction.html',
     title: 'Introduction, Foreword & Author’s Notes',
