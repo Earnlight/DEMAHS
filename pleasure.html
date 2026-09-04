@@ -246,7 +246,7 @@
   @media (max-width: 600px) { #reader-toolbar { width: 88vw; gap: 10px 16px; } }
 
   /* ── BOOK ── */
-  #book-container { position: relative; width: min(640px, 88vw); margin-top: 16px; overflow: visible; }
+  #book-container { position: relative; width: min(640px, 88vw); margin-top: 16px; overflow: visible; opacity: 0; animation: fadeDownIn 1s 0.3s ease both; }
   #book-scene { width: 100%; perspective: 2500px; }
   #book { position: relative; width: 100%; padding-top: min(150%, 90vh); transform-style: preserve-3d; touch-action: manipulation; }
 
@@ -522,7 +522,7 @@
   #next-chapter-btn:hover .ncb-arrow { transform: translateX(6px); }
   @media (max-width: 600px) { #next-chapter-row { width: 88vw; } }
   @media (prefers-reduced-motion: reduce) {
-    #search-bar, #reader-toolbar, #comment-section, #next-chapter-row { opacity: 1; transform: none; transition: none; animation: none; }
+    #search-bar, #reader-toolbar, #comment-section, #next-chapter-row, #book-container { opacity: 1; transform: none; transition: none; animation: none; }
   }
 
   /* ── LATEST ADDITIONS ── */
