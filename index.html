@@ -474,15 +474,22 @@
     h = canvas.height = window.innerHeight * dpr;
     canvas.style.width = window.innerWidth + 'px';
     canvas.style.height = window.innerHeight + 'px';
-    const count = Math.round((window.innerWidth * window.innerHeight) / 8000);
-    stars = Array.from({ length: count }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      r: (Math.random() * 1.2 + 0.3) * dpr,
-      base: Math.random() * 0.5 + 0.35,
-      phase: Math.random() * Math.PI * 2,
-      speed: Math.random() * 0.6 + 0.2,
-    }));
+    // Positions are stored as fractions of the viewport, not pixels, and the
+    // star field itself is only ever generated once -- so a resize (including
+    // the spurious ones mobile browsers fire mid-bounce when overscrolling
+    // past the top/bottom, or when the address bar shows/hides) rescales the
+    // existing stars instead of reshuffling them into new random positions.
+    if (!stars) {
+      const count = Math.round((window.innerWidth * window.innerHeight) / 8000);
+      stars = Array.from({ length: count }, () => ({
+        xFrac: Math.random(),
+        yFrac: Math.random(),
+        r: (Math.random() * 1.2 + 0.3) * dpr,
+        base: Math.random() * 0.5 + 0.35,
+        phase: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.6 + 0.2,
+      }));
+    }
   }
 
   function draw(t) {
@@ -492,7 +499,7 @@
       ctx.globalAlpha = Math.max(0, Math.min(1, a));
       ctx.fillStyle = '#f5dd8c';
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.arc(s.xFrac * w, s.yFrac * h, s.r, 0, Math.PI * 2);
       ctx.fill();
     }
     if (!reduceMotion) {

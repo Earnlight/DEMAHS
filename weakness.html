@@ -169,10 +169,12 @@
   #home-btn:hover { color: var(--gold); border-color: var(--gold); background: var(--btn-hover); }
 
   /* ── SEARCH BAR ── */
+  @keyframes fadeDownIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
   #search-bar {
     position: relative; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;
     background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
     padding: 4px 10px; width: min(640px, 88vw);
+    opacity: 0; animation: fadeDownIn 0.8s 0.1s ease both;
   }
   #search-bar label { font-family: 'Cinzel', serif; font-size: clamp(0.45rem, 1.2vw, 0.6rem); color: var(--label-color); letter-spacing: 0.15em; white-space: nowrap; text-transform: uppercase; }
   #search-input { flex: 1; background: transparent; border: none; border-bottom: 1px solid var(--border); color: var(--input-color); font-family: 'Cormorant Garamond', serif; font-size: clamp(0.7rem, 1.5vw, 0.85rem); outline: none; padding: 2px 4px; }
@@ -222,6 +224,7 @@
     display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center;
     background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
     padding: 7px 14px; width: min(640px, 88vw); margin-bottom: 12px;
+    opacity: 0; animation: fadeDownIn 0.8s 0.2s ease both;
   }
   .rt-item { display: flex; align-items: center; gap: 6px; font-family: 'Cinzel', serif; font-size: clamp(0.46rem, 1.15vw, 0.6rem); letter-spacing: 0.1em; color: var(--text); text-transform: uppercase; white-space: nowrap; }
   .rt-icon { color: var(--gold); font-size: 0.95em; }
@@ -464,7 +467,11 @@
 
   #book-shadow { position: absolute; bottom: -16px; left: 5%; right: 5%; height: 24px; background: radial-gradient(ellipse, rgba(0,0,0,0.55) 0%, transparent 70%); filter: blur(6px); pointer-events: none; }
 
-  #comment-section { width: min(640px, 88vw); margin-top: 32px; background: var(--form-bg); border: 1px solid var(--form-border); border-radius: 4px; padding: clamp(20px, 5%, 36px); }
+  #comment-section {
+    width: min(640px, 88vw); margin-top: 32px; background: var(--form-bg); border: 1px solid var(--form-border); border-radius: 4px; padding: clamp(20px, 5%, 36px);
+    opacity: 0; transform: translateY(18px); transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  #comment-section.visible { opacity: 1; transform: translateY(0); }
   .comment-heading { font-family: 'Cinzel', serif; font-size: clamp(0.55rem, 1.4vw, 0.72rem); letter-spacing: 0.25em; color: var(--form-heading); text-transform: uppercase; text-align: center; margin-bottom: 20px; }
   .comment-heading::before, .comment-heading::after { content: ' ✦ '; opacity: 0.5; }
   .form-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
@@ -495,7 +502,11 @@
   .comment-card .cc-msg { font-family: 'Cormorant Garamond', serif; font-size: clamp(0.8rem, 1.8vw, 0.95rem); color: var(--text); line-height: 1.65; }
 
   /* ── NEXT CHAPTER — closing call-to-action, bottom-right of the page ── */
-  #next-chapter-row { width: min(640px, 88vw); margin: 26px auto 0; display: flex; justify-content: flex-end; }
+  #next-chapter-row {
+    width: min(640px, 88vw); margin: 26px auto 0; display: flex; justify-content: flex-end;
+    opacity: 0; transform: translateY(18px); transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  #next-chapter-row.visible { opacity: 1; transform: translateY(0); }
   #next-chapter-btn {
     display: inline-flex; align-items: center; gap: 16px; text-decoration: none;
     background: linear-gradient(135deg, rgba(227,193,77,0.16), rgba(227,193,77,0.05));
@@ -510,6 +521,9 @@
   .ncb-arrow { font-size: 1.25rem; line-height: 1; color: var(--gold); transition: transform 0.25s; flex-shrink: 0; }
   #next-chapter-btn:hover .ncb-arrow { transform: translateX(6px); }
   @media (max-width: 600px) { #next-chapter-row { width: 88vw; } }
+  @media (prefers-reduced-motion: reduce) {
+    #search-bar, #reader-toolbar, #comment-section, #next-chapter-row { opacity: 1; transform: none; transition: none; animation: none; }
+  }
 
   /* ── LATEST ADDITIONS ── */
   #latest-additions { width: min(640px, 88vw); margin-top: 28px; }
@@ -2332,6 +2346,27 @@ document.getElementById('public-toggle').addEventListener('change', function () 
 })();
 </script>
 <script>
+  // Comment section and next-chapter button fade up as the reader scrolls
+  // to them, matching the reveal used throughout the site.
+  (function () {
+    const targets = document.querySelectorAll('#comment-section, #next-chapter-row');
+    if (!targets.length) return;
+    if (!('IntersectionObserver' in window)) {
+      targets.forEach(t => t.classList.add('visible'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    targets.forEach(t => io.observe(t));
+  })();
+</script>
+<script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js');
   }
@@ -2351,15 +2386,22 @@ document.getElementById('public-toggle').addEventListener('change', function () 
     h = canvas.height = window.innerHeight * dpr;
     canvas.style.width = window.innerWidth + 'px';
     canvas.style.height = window.innerHeight + 'px';
-    const count = Math.round((window.innerWidth * window.innerHeight) / 8000);
-    stars = Array.from({ length: count }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      r: (Math.random() * 1.2 + 0.3) * dpr,
-      base: Math.random() * 0.5 + 0.35,
-      phase: Math.random() * Math.PI * 2,
-      speed: Math.random() * 0.6 + 0.2,
-    }));
+    // Positions are stored as fractions of the viewport, not pixels, and the
+    // star field itself is only ever generated once -- so a resize (including
+    // the spurious ones mobile browsers fire mid-bounce when overscrolling
+    // past the top/bottom, or when the address bar shows/hides) rescales the
+    // existing stars instead of reshuffling them into new random positions.
+    if (!stars) {
+      const count = Math.round((window.innerWidth * window.innerHeight) / 8000);
+      stars = Array.from({ length: count }, () => ({
+        xFrac: Math.random(),
+        yFrac: Math.random(),
+        r: (Math.random() * 1.2 + 0.3) * dpr,
+        base: Math.random() * 0.5 + 0.35,
+        phase: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.6 + 0.2,
+      }));
+    }
   }
 
   function draw(t) {
@@ -2369,7 +2411,7 @@ document.getElementById('public-toggle').addEventListener('change', function () 
       ctx.globalAlpha = Math.max(0, Math.min(1, a));
       ctx.fillStyle = '#f5dd8c';
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.arc(s.xFrac * w, s.yFrac * h, s.r, 0, Math.PI * 2);
       ctx.fill();
     }
     if (!reduceMotion) {
