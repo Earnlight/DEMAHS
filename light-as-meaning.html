@@ -1283,10 +1283,16 @@ const ReaderState = (function () {
   let dtTime = 0, dtX = 0, dtY = 0;
 
   book.addEventListener('click', e => {
-    if (e.target.closest('button, a, input, [role="button"], .page-body p')) return;
+    if (e.target.closest('button, a, input, [role="button"]')) return;
     const now = Date.now();
     if (now - dtTime < 500 && Math.abs(e.clientX - dtX) < 50 && Math.abs(e.clientY - dtY) < 50) {
       dtTime = 0;
+      // Confirmed double-tap: toggle fullscreen. If this landed on paragraph
+      // text, the first tap already toggled its highlight (see the
+      // paragraph-tap handler below) -- mark the event so that handler skips
+      // this second tap instead of immediately undoing the highlight, which
+      // would flicker it on and off.
+      e.__dblTapFullscreen = true;
       if (isFS) exit(); else enter();
     } else {
       dtTime = now; dtX = e.clientX; dtY = e.clientY;
@@ -1508,6 +1514,7 @@ const ReaderState = (function () {
     addHighlight(range, pageIndex, text);
   }
   document.addEventListener('click', e => {
+    if (e.__dblTapFullscreen) return; // handled as a double-tap-to-fullscreen above
     const sel = window.getSelection();
     if (sel && !sel.isCollapsed && sel.toString().trim()) return; // a real selection is being made
     if (e.target.closest('button, a, input, [role="button"]')) return;
@@ -2437,7 +2444,7 @@ document.getElementById('public-toggle').addEventListener('change', function () 
       ctx.fill();
     }
     if (!reduceMotion) {
-      if (!shootingStar && Math.random() < 0.0025) {
+      if (!shootingStar && Math.random() < 0.0075) {
         shootingStar = {
           x: Math.random() * w * 0.6,
           y: Math.random() * h * 0.3,
