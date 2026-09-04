@@ -18,7 +18,7 @@
 <meta property="og:description" content="INPUT">
 <meta property="og:url" content="https://www.demahs.com/">
 <meta property="og:image" content="https://www.demahs.com/android-chrome-512x512.png">
-<meta property="og:site_name" content="The DEMAHS — Hamza Earnlight">
+<meta property="og:site_name" content="The DEMAHS — EARNLIGHT">
 <meta property="og:locale" content="en_US">
 
 <!-- Twitter Card -->
@@ -54,7 +54,8 @@
     overflow-x: hidden;
   }
 
-  /* ── HERO — the page opens on true darkness, then blooms into light ── */
+  /* ── HERO — no glow of its own; the starfield behind it (see .cosmic-bg)
+     is the only background. ── */
   .hero {
     position: relative;
     min-height: 100svh;
@@ -64,22 +65,6 @@
     justify-content: center;
     text-align: center;
     padding: clamp(32px, 8vh, 80px) 24px;
-    animation: bloom 3.5s 0.2s ease-out both;
-  }
-
-  /* Both keyframes stay transparent past their gradients (no opaque
-     var(--bg)/var(--void) fill) so the fixed starfield behind the hero
-     (see .cosmic-bg) stays visible through the bloom, the same way it
-     already shows through every other section of the page -- an opaque
-     fill here would paint in front of that fixed, negative-z-index canvas
-     and hide it for the entire first screen. */
-  @keyframes bloom {
-    0%   { background: transparent; }
-    100% {
-      background:
-        radial-gradient(ellipse 80% 60% at 50% 8%, #6b5520 0%, #3a2e10 45%, transparent 72%),
-        radial-gradient(ellipse 60% 40% at 85% 95%, #4a3b12 0%, transparent 60%);
-    }
   }
 
   .hero-ornament {
@@ -335,10 +320,8 @@
     .acr-letter.acr-self { margin-left: 9px; }
   }
 
-  /* ── COSMIC ATMOSPHERE — drifting golden nebula clouds, a twinkling
-     starfield, and a warm highlight that leans toward the reader's
-     cursor/touch. Pure decoration: fixed, non-interactive, always behind
-     real content. ── */
+  /* ── COSMIC ATMOSPHERE — a twinkling starfield, the only background.
+     Pure decoration: fixed, non-interactive, always behind real content. ── */
   .cosmic-bg {
     position: fixed;
     inset: 0;
@@ -347,62 +330,13 @@
     pointer-events: none;
   }
 
-  .nebula-blob {
-    position: absolute;
-    width: 70vmax;
-    height: 70vmax;
-    border-radius: 50%;
-    filter: blur(48px);
-    opacity: 0.55;
-    mix-blend-mode: screen;
-  }
-
-  .nebula-blob.n1 {
-    top: -22%; left: -18%;
-    background: radial-gradient(circle, rgba(245, 221, 140, 0.55), transparent 70%);
-    animation: driftA 70s ease-in-out infinite alternate;
-  }
-
-  .nebula-blob.n2 {
-    width: 60vmax; height: 60vmax;
-    bottom: -24%; right: -12%;
-    background: radial-gradient(circle, rgba(185, 117, 46, 0.5), transparent 70%);
-    animation: driftB 90s ease-in-out infinite alternate;
-  }
-
-  .nebula-blob.n3 {
-    width: 52vmax; height: 52vmax;
-    top: 28%; right: 18%;
-    background: radial-gradient(circle, rgba(120, 55, 20, 0.45), transparent 70%);
-    animation: driftC 55s ease-in-out infinite alternate;
-  }
-
-  @keyframes driftA { from { transform: translate(0, 0) scale(1); }   to { transform: translate(6vw, 8vh) scale(1.08); } }
-  @keyframes driftB { from { transform: translate(0, 0) scale(1); }   to { transform: translate(-8vw, -5vh) scale(1.05); } }
-  @keyframes driftC { from { transform: translate(0, 0) scale(1); }   to { transform: translate(4vw, -6vh) scale(0.95); } }
-
   #starfield { position: absolute; inset: 0; }
-
-  .cursor-glow {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle 42vmax at var(--mx, 50%) var(--my, 32%), rgba(255, 241, 189, 0.24), transparent 65%);
-    mix-blend-mode: screen;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .nebula-blob { animation: none; }
-  }
 </style>
 </head>
 <body>
 
 <div class="cosmic-bg" aria-hidden="true">
-  <div class="nebula-blob n1"></div>
-  <div class="nebula-blob n2"></div>
-  <div class="nebula-blob n3"></div>
   <canvas id="starfield"></canvas>
-  <div class="cursor-glow"></div>
 </div>
 
 <section class="hero">
@@ -425,7 +359,7 @@
   </div>
 
   <p class="hero-tagline">[Placeholder — one or two sentences that invite a first-time reader in: what this work is, and why it's worth their time.]</p>
-  <p class="hero-author">Hamza Earnlight</p>
+  <p class="hero-author">EARNLIGHT</p>
 
   <div class="hero-cta">
     <a href="library.html" class="cta-btn">Enter <span class="arrow">&rarr;</span></a>
@@ -442,25 +376,13 @@
 </section>
 
 <footer>
-  <p>The DEMAHS &nbsp;&middot;&nbsp; Hamza Earnlight &nbsp;&middot;&nbsp; All rights reserved</p>
+  <p>The DEMAHS &nbsp;&middot;&nbsp; EARNLIGHT &nbsp;&middot;&nbsp; All rights reserved</p>
 </footer>
 
 <script>
-// ── COSMIC ATMOSPHERE — starfield + cursor-reactive glow (see .cosmic-bg in <style>) ──
+// ── COSMIC ATMOSPHERE — twinkling starfield (see .cosmic-bg in <style>) ──
 (function () {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // Cursor/touch-reactive glow
-  let raf = null;
-  function setLight(x, y) {
-    if (raf) return;
-    raf = requestAnimationFrame(() => {
-      document.documentElement.style.setProperty('--mx', (x / window.innerWidth * 100) + '%');
-      document.documentElement.style.setProperty('--my', (y / window.innerHeight * 100) + '%');
-      raf = null;
-    });
-  }
-  window.addEventListener('pointermove', e => setLight(e.clientX, e.clientY), { passive: true });
 
   // Twinkling starfield with occasional shooting stars
   const canvas = document.getElementById('starfield');

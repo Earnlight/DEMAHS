@@ -47,7 +47,7 @@ const feed = [
   '<?xml version="1.0" encoding="UTF-8"?>',
   '<rss version="2.0">',
   '<channel>',
-  '  <title>The DEMAHS — Hamza Earnlight</title>',
+  '  <title>The DEMAHS — EARNLIGHT</title>',
   `  <link>${SITE_URL}/index.html</link>`,
   '  <description>Recent updates to the DEMAHS library.</description>',
   '  <language>en-us</language>',

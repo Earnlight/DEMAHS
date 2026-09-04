@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#1d1a0e">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The DEMAHS — Hamza Earnlight</title>
+<title>The DEMAHS — EARNLIGHT</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -128,6 +128,13 @@
   /* ── LIBRARY SEARCH ── */
   #library-search {
     position: relative;
+    /* Establishes a stacking context so the results dropdown below (which
+       has its own z-index) actually ranks above the chapter grid that
+       follows it in the DOM -- without this, z-index:20 on .ls-results
+       only ordered it against its OWN siblings inside #library-search, not
+       against the grid's cards, which paint later in document order and
+       so covered the dropdown despite its higher z-index. */
+    z-index: 40;
     max-width: 520px;
     margin: 0 auto clamp(28px, 4vw, 44px);
     opacity: 0;
@@ -856,13 +863,6 @@
 
   #starfield { position: absolute; inset: 0; }
 
-  .cursor-glow {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle 42vmax at var(--mx, 50%) var(--my, 32%), rgba(255, 241, 189, 0.24), transparent 65%);
-    mix-blend-mode: screen;
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .nebula-blob { animation: none; }
   }
@@ -887,14 +887,13 @@
   <div class="nebula-blob n2"></div>
   <div class="nebula-blob n3"></div>
   <canvas id="starfield"></canvas>
-  <div class="cursor-glow"></div>
 </div>
 
 <header>
   <div class="header-ornament">&#10022; &#10022; &#10022;</div>
   <h1 class="header-title">The DEMAHS</h1>
   <div class="header-divider"></div>
-  <div class="header-author">Hamza Earnlight</div>
+  <div class="header-author">EARNLIGHT</div>
   <div class="header-byline">An ongoing work intended for reading pleasure</div>
  <div class="header-byline">Discovery leads me to Express through a Medium, my Artistry, facilitating a Heightened Self</div>
   <div class="reading-summary" id="reading-summary" style="display:none"></div>
@@ -1330,7 +1329,7 @@
 </section>
 
 <footer>
-  <p>The DEMAHS &nbsp;&middot;&nbsp; Hamza Earnlight &nbsp;&middot;&nbsp; All rights reserved</p>
+  <p>The DEMAHS &nbsp;&middot;&nbsp; EARNLIGHT &nbsp;&middot;&nbsp; All rights reserved</p>
 </footer>
 <script>
   if ('serviceWorker' in navigator) {
@@ -1869,21 +1868,9 @@
 </script>
 
 <script>
-// ── COSMIC ATMOSPHERE — starfield + cursor-reactive glow (see .cosmic-bg in <style>) ──
+// ── COSMIC ATMOSPHERE — twinkling starfield (see .cosmic-bg in <style>) ──
 (function () {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // Cursor/touch-reactive glow
-  let raf = null;
-  function setLight(x, y) {
-    if (raf) return;
-    raf = requestAnimationFrame(() => {
-      document.documentElement.style.setProperty('--mx', (x / window.innerWidth * 100) + '%');
-      document.documentElement.style.setProperty('--my', (y / window.innerHeight * 100) + '%');
-      raf = null;
-    });
-  }
-  window.addEventListener('pointermove', e => setLight(e.clientX, e.clientY), { passive: true });
 
   // Twinkling starfield with occasional shooting stars
   const canvas = document.getElementById('starfield');
