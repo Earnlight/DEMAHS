@@ -130,6 +130,8 @@
     position: relative;
     max-width: 520px;
     margin: 0 auto clamp(28px, 4vw, 44px);
+    opacity: 0;
+    animation: fadeUp 1s 0.6s ease both;
   }
 
   .ls-bar {
@@ -448,10 +450,17 @@
     text-decoration: none;
     position: relative;
     overflow: hidden;
-    transition: border-color 0.3s, transform 0.25s, box-shadow 0.3s;
+    /* `translate` (not `transform`) carries the reveal offset so it composes
+       independently of the hover lift below -- both can transition on their
+       own timing without one silently overriding the other's duration. */
+    transition: border-color 0.3s, transform 0.25s, box-shadow 0.3s, opacity 0.6s ease, translate 0.6s ease;
     box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(227,193,77,0.04);
     opacity: 0;
-    animation: fadeUp 0.6s ease forwards;
+    translate: 0 16px;
+  }
+  .book-btn.visible { opacity: 1; translate: 0 0; }
+  @media (prefers-reduced-motion: reduce) {
+    .book-btn { opacity: 1; translate: 0 0; }
   }
 
   .book-btn::before {
@@ -619,19 +628,27 @@
 
   .section-crosslink a:hover { color: var(--gold-light); border-color: var(--gold-light); }
 
-  /* Staggered delays — front matter */
-  .front-matter .book-btn:nth-child(1) { animation-delay: 0.05s; }
-  .front-matter .book-btn:nth-child(2) { animation-delay: 0.10s; }
-  .front-matter .book-btn:nth-child(3) { animation-delay: 0.15s; }
-
-  /* Staggered delays — each section's grid restarts the count (largest section has 7 chapters) */
-  .library-section .grid .book-btn:nth-child(1) { animation-delay: 0.20s; }
-  .library-section .grid .book-btn:nth-child(2) { animation-delay: 0.26s; }
-  .library-section .grid .book-btn:nth-child(3) { animation-delay: 0.32s; }
-  .library-section .grid .book-btn:nth-child(4) { animation-delay: 0.38s; }
-  .library-section .grid .book-btn:nth-child(5) { animation-delay: 0.44s; }
-  .library-section .grid .book-btn:nth-child(6) { animation-delay: 0.50s; }
-  .library-section .grid .book-btn:nth-child(7) { animation-delay: 0.56s; }
+  /* ── SCROLL REVEAL — section headers, dividers, and chapter cards fade up
+     into place as the reader scrolls to them, the same reveal used
+     throughout the site (see introduction.html's .manuscript p). Cards are
+     staggered by the JS below rather than by CSS transition-delay, since a
+     shared transition-delay would also slow down .book-btn's hover
+     transform/border/shadow transitions on whichever cards received one. */
+  .section-header, .section-divider, .grid-divider, .section-crosslink,
+  .contact, .updates, footer {
+    opacity: 0;
+    translate: 0 16px;
+    transition: opacity 0.7s ease, translate 0.7s ease;
+  }
+  .section-header.visible, .section-divider.visible, .grid-divider.visible,
+  .section-crosslink.visible, .contact.visible, .updates.visible, footer.visible {
+    opacity: 1;
+    translate: 0 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .section-header, .section-divider, .grid-divider, .section-crosslink,
+    .contact, .updates, footer { opacity: 1; translate: 0 0; transition: none; }
+  }
 
   /* ── CONTACT ── */
   .contact {
@@ -766,7 +783,11 @@
   }
 
   /* ── CONTINUE READING — shown only when a saved reading position exists ── */
-  #continue-reading, #start-reading { max-width: 1100px; margin: 0 auto clamp(28px, 4vw, 44px); padding: 0 clamp(20px, 5vw, 48px); }
+  #continue-reading, #start-reading {
+    max-width: 1100px; margin: 0 auto clamp(28px, 4vw, 44px); padding: 0 clamp(20px, 5vw, 48px);
+    opacity: 0;
+    animation: fadeUp 1s 0.65s ease both;
+  }
   .continue-btn {
     display: flex; align-items: center; gap: 18px;
     padding: clamp(16px, 2.6vw, 22px) clamp(20px, 3.4vw, 28px);
@@ -1948,6 +1969,39 @@
       card.style.setProperty('--ry', '0deg');
     });
   });
+})();
+
+// ── SCROLL REVEAL — section headers, dividers, and chapter cards fade up
+// into view as the reader scrolls to them, the same reveal used throughout
+// the site (see introduction.html's .manuscript p / weight.html's cover
+// and page-turn reveal). Cards within a row are staggered here rather than
+// via CSS transition-delay, since a shared transition-delay would also
+// slow down that card's hover transitions.
+(function () {
+  const targets = document.querySelectorAll(
+    '.book-btn, .section-header, .section-divider, .grid-divider, .section-crosslink, .contact, .updates, footer'
+  );
+  if (!targets.length) return;
+
+  if (!('IntersectionObserver' in window)) {
+    targets.forEach(t => t.classList.add('visible'));
+    return;
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      io.unobserve(entry.target);
+      const el = entry.target;
+      if (el.classList.contains('book-btn')) {
+        const siblings = Array.from(el.parentElement.children);
+        setTimeout(() => el.classList.add('visible'), siblings.indexOf(el) * 70);
+      } else {
+        el.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+  targets.forEach(t => io.observe(t));
 })();
 </script>
 
