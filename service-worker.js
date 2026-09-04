@@ -1,7 +1,7 @@
 // My Noegenesis — Service Worker
 // Caches all pages for offline use and fast loading
 
-const CACHE_NAME = 'noegenesis-v5';
+const CACHE_NAME = 'noegenesis-v6';
 
 // List every file in your site here
 const ASSETS = [
@@ -43,6 +43,7 @@ const ASSETS = [
   '/hierarchy.html',
   '/the-finality.html',
   '/paradise.html',
+  '/hellfire.html',
   '/manifest.json',
   '/updates.js',
   '/android-chrome-192x192.png',
