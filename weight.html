@@ -290,9 +290,8 @@
   /* FIX: user-highlight stays as inline text, never becomes a block/image */
   .user-highlight {
     display: inline;
-    background: linear-gradient(180deg, rgba(255,226,150,0.65), rgba(227,193,77,0.52));
+    background: rgba(227,193,77,0.24);
     color: inherit; border-radius: 2px; padding: 0 1px;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 0 7px rgba(227,193,77,0.45);
     cursor: grab;
   }
   .user-highlight:active { cursor: grabbing; }
@@ -566,10 +565,9 @@
     #comment-section, #comments-display { width: 88vw; }
   }
 
-  /* ── COSMIC ATMOSPHERE — drifting golden nebula clouds, a twinkling
-     starfield, and a warm highlight that leans toward the reader's
-     cursor/touch. Pure decoration: fixed, non-interactive, always behind
-     real content. ── */
+  /* ── COSMIC ATMOSPHERE — drifting golden nebula clouds and a twinkling
+     starfield behind the reader. Pure decoration: fixed, non-interactive,
+     always behind real content. ── */
   .cosmic-bg {
     position: fixed;
     inset: 0;
@@ -614,13 +612,6 @@
 
   #starfield { position: absolute; inset: 0; }
 
-  .cursor-glow {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle 42vmax at var(--mx, 50%) var(--my, 32%), rgba(255, 241, 189, 0.24), transparent 65%);
-    mix-blend-mode: screen;
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .nebula-blob { animation: none; }
   }
@@ -633,7 +624,6 @@
   <div class="nebula-blob n2"></div>
   <div class="nebula-blob n3"></div>
   <canvas id="starfield"></canvas>
-  <div class="cursor-glow"></div>
 </div>
 
 <!-- Persistent thin reading-progress line at the very top of the viewport -->
@@ -792,10 +782,10 @@
 
 <!-- Next chapter — closing call-to-action -->
 <div id="next-chapter-row">
-  <a href="hierarchy.html" id="next-chapter-btn" data-tip="Continue to Hierarchy">
+  <a href="power.html" id="next-chapter-btn" data-tip="Continue to Power">
     <span class="ncb-text">
       <span class="ncb-label">Next Chapter</span>
-      <span class="ncb-title">Hierarchy</span>
+      <span class="ncb-title">Power</span>
     </span>
     <span class="ncb-arrow">→</span>
   </a>
@@ -1238,7 +1228,7 @@ const ReaderState = (function () {
   let dtTime = 0, dtX = 0, dtY = 0;
 
   book.addEventListener('click', e => {
-    if (e.target.closest('button, a, input, [role="button"]')) return;
+    if (e.target.closest('button, a, input, [role="button"], .page-body p')) return;
     const now = Date.now();
     if (now - dtTime < 500 && Math.abs(e.clientX - dtX) < 50 && Math.abs(e.clientY - dtY) < 50) {
       dtTime = 0;
@@ -1316,6 +1306,17 @@ const ReaderState = (function () {
     return spans;
   }
 
+  // Shared by addFromSelection() and the tap-a-paragraph shortcut below.
+  function addHighlight(range, pageIndex, text) {
+    const id = nextId++;
+    const spans = highlightRangeSafe(range, id, text);
+    if (!spans.length) return null;
+    const h = { id, pageIndex, text, spans };
+    highlights.push(h);
+    persist();
+    return h;
+  }
+
   function addFromSelection() {
     const sel = window.getSelection();
     if (!sel || sel.isCollapsed) return;
@@ -1327,11 +1328,7 @@ const ReaderState = (function () {
     const pageEl = node.closest ? node.closest('.page') : null;
     if (!pageEl) return;
     const pageIndex = parseInt(pageEl.getAttribute('data-page'), 10);
-    const id = nextId++;
-    const spans = highlightRangeSafe(range, id, text);
-    if (!spans.length) { hideAction(); return; }
-    highlights.push({ id, pageIndex, text, spans });
-    persist();
+    if (!addHighlight(range, pageIndex, text)) { hideAction(); return; }
     sel.removeAllRanges();
     hideAction();
   }
@@ -1437,6 +1434,32 @@ const ReaderState = (function () {
     highlights = highlights.filter(x => x !== h);
     persist();
   }
+
+  // ── Tap a paragraph to highlight it whole — a quicker alternative to
+  // selecting text by hand, especially on touch. Tapping an already
+  // highlighted paragraph removes that highlight (toggle). Only fires on
+  // a plain tap with no active text selection, so it never interferes
+  // with the existing drag-to-select flow.
+  function toggleParagraphHighlight(p) {
+    const covering = highlights.find(h => (h.spans || []).some(s => p.contains(s)));
+    if (covering) { removeHighlight(covering); return; }
+    const pageEl = p.closest('.page');
+    if (!pageEl) return;
+    const pageIndex = parseInt(pageEl.getAttribute('data-page'), 10);
+    const text = p.textContent.trim();
+    if (!text) return;
+    const range = document.createRange();
+    range.selectNodeContents(p);
+    addHighlight(range, pageIndex, text);
+  }
+  document.addEventListener('click', e => {
+    const sel = window.getSelection();
+    if (sel && !sel.isCollapsed && sel.toString().trim()) return; // a real selection is being made
+    if (e.target.closest('button, a, input, [role="button"]')) return;
+    const p = e.target.closest('.page-body p');
+    if (p) toggleParagraphHighlight(p);
+  });
+
   function renderMenu() {
     menu.innerHTML = '';
     const title = document.createElement('div');
@@ -2265,23 +2288,9 @@ document.getElementById('public-toggle').addEventListener('change', function () 
   }
 </script>
 <script>
-// ── COSMIC ATMOSPHERE — starfield + cursor-reactive glow (see .cosmic-bg in <style>) ──
+// ── COSMIC ATMOSPHERE — twinkling starfield with occasional shooting stars (see .cosmic-bg in <style>) ──
 (function () {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // Cursor/touch-reactive glow
-  let raf = null;
-  function setLight(x, y) {
-    if (raf) return;
-    raf = requestAnimationFrame(() => {
-      document.documentElement.style.setProperty('--mx', (x / window.innerWidth * 100) + '%');
-      document.documentElement.style.setProperty('--my', (y / window.innerHeight * 100) + '%');
-      raf = null;
-    });
-  }
-  window.addEventListener('pointermove', e => setLight(e.clientX, e.clientY), { passive: true });
-
-  // Twinkling starfield with occasional shooting stars
   const canvas = document.getElementById('starfield');
   if (!canvas || !canvas.getContext) return;
   const ctx = canvas.getContext('2d');
