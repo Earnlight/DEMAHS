@@ -4,6 +4,7 @@ from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
 import re
+import json
 import subprocess
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -36,8 +37,9 @@ class Content(HTMLParser):
         if tag == 'a':
             self.links[tuple(sorted(attrs))] += 1
         if tag in ('meta', 'link'):
-            # Every original metadata field and stylesheet destination is retained.
-            self.metadata[(tag, tuple(sorted(attrs)))] += 1
+            # The sole leaf-green appearance intentionally replaces the browser chrome colour.
+            if not (tag == 'meta' and attributes.get('name') == 'theme-color'):
+                self.metadata[(tag, tuple(sorted(attrs)))] += 1
         if tag in ('form', 'input', 'textarea', 'button', 'select'):
             self.controls[(tag, tuple(sorted(attrs)))] += 1
         if 'id' in attributes:
@@ -62,11 +64,19 @@ def verify():
         before_bytes = git('show', f'{BASELINE}:{filename}')
         after_bytes = path.read_bytes()
         if not filename.endswith('.html'):
-            if filename != 'service-worker.js':
+            if filename == 'manifest.json':
+                before_manifest, after_manifest = json.loads(before_bytes), json.loads(after_bytes)
+                for key in ('background_color', 'theme_color'):
+                    assert after_manifest.pop(key) == '#101f14'
+                    before_manifest.pop(key)
+                assert before_manifest == after_manifest, 'Non-colour manifest fields changed'
+            elif filename != 'service-worker.js':
                 assert before_bytes == after_bytes, f'Original data/asset changed: {filename}'
             continue
         before, after = before_bytes.decode(), after_bytes.decode()
         original, current = Content(before), Content(after)
+        assert '<html lang="en" data-appearance="dark">' in after, filename
+        assert '<meta name="theme-color" content="#101f14">' in after, filename
         # Keep literal paragraphs/text fragments, including original placeholder copy.
         text = normalize(''.join(current.text))
         for fragment in original.text:
@@ -90,7 +100,7 @@ def verify():
         script_count += len([s for s in original_scripts if s.strip()])
     print(f'PASS: all {len(files)} original files remain; all {checked_pages} pages preserve text, URLs, metadata, controls and IDs.')
     print(f'PASS: all {script_count} original inline scripts (including chapter text) are unchanged.')
-    print('PASS: RSS, updates, manifest, sitemap, robots, custom domain, icons and feed generator are unchanged.')
+    print('PASS: RSS, updates, sitemap, robots, custom domain, icons and feed generator are unchanged; only manifest colours changed.')
 
 
 if __name__ == '__main__':

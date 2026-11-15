@@ -1,6 +1,6 @@
 # DEMAHS redesign handoff
 
-The redesign keeps the existing static GitHub Pages architecture and all 38 original URLs. It introduces a shared celestial visual system, a reference-inspired illustrated homepage, parchment reading surfaces, local fonts, responsive navigation, persistent light/dark appearance, and a keyboard-accessible global search. No backend, build system, paid service, runtime framework, or package installation is required.
+The redesign keeps the existing static GitHub Pages architecture and all 38 original URLs. It introduces a shared celestial visual system, a reference-inspired illustrated homepage, leaf-green night reading surfaces, local fonts, responsive navigation, a single leaf-green night appearance, and a keyboard-accessible global search. No backend, build system, paid service, runtime framework, or package installation is required.
 
 ## Audit and content preservation
 
@@ -39,9 +39,9 @@ Unchanged data and deployment files include `updates.js`, `feed.xml`, `manifest.
 
 ## Design and implementation
 
-`assets/styles/realm.css` is the shared theme loaded after the original styles. It supplies design tokens, licensed local Cinzel and Cormorant Garamond faces, parchment and dusk palettes, the panoramic homepage, illustrated cards, responsive layouts, focus treatments, restrained animation and reduced-motion/print support. The cards link to real content: The Library, Foundations, The Person and Destiny.
+`assets/styles/realm.css` is the shared theme loaded after the original styles. It supplies design tokens, licensed local Cinzel and Cormorant Garamond faces, a leaf-green night palette, the panoramic homepage, illustrated cards, responsive layouts, focus treatments, restrained animation and reduced-motion/print support. The cards link to real content: The Library, Foundations, The Person and Destiny.
 
-`assets/scripts/appearance.js` applies `data-appearance` before paint. This uses a new `demahs-appearance` preference so it does not overwrite the original reader's data or depend on its legacy `data-theme` setting. `assets/scripts/realm.js` renders the shared header/footer, accessible native dropdowns, mobile navigation, a native search dialog with focus restoration, and frontmatter text-size controls. Global search indexes the actual chapter sources on demand, so there is no generated search index to become stale. All old storage records keep their original names and formats.
+`assets/scripts/appearance.js` applies the sole dark appearance before paint and clears the retired `demahs-appearance` preference. HTML and CSS also default to this palette with JavaScript disabled; OS light-mode preferences do not change it. The appearance switch has been removed. The original reader's data and legacy `data-theme` setting are retained. `assets/scripts/realm.js` renders the shared header/footer, accessible native dropdowns, mobile navigation, a native search dialog with focus restoration, and frontmatter text-size controls. Global search indexes the actual chapter sources on demand, so there is no generated search index to become stale. All old storage records keep their original names and formats.
 
 All pages have a main landmark, skip navigation and a single H1; reader cover titles and manuscript text remain unchanged. The header adapts at 960px and cards stack at 700px. New ornamental effects use CSS/SVG; reduced motion disables animations without leaving content hidden. Native cross-document view transitions progressively enhance supported browsers.
 
@@ -72,7 +72,7 @@ Verified in actual headless Chromium:
 - All 38 page routes and all local link/asset destinations, plus exact content/metadata/control/script preservation against the original revision.
 - Parsing of all 148 JavaScript sources; RSS generation in a temporary copy matches the original feed exactly.
 - Every page at desktop 1440×960, tablet 820×1180, mobile 390×844 and narrow-phone 320×740, with no horizontal overflow.
-- Homepage artwork, responsive menus, keyboard skip link/dropdowns/Escape, search-dialog focus and pagination, light/dark persistence, original search and saved results.
+- Homepage artwork, responsive menus, keyboard skip link/dropdowns/Escape, search-dialog focus and pagination, sole dark appearance despite saved light/OS preferences, original search and saved results.
 - Reader navigation/resume, text-size persistence, named bookmarks, persistent highlights, in-reader search/recent searches, fullscreen, and frontmatter size controls.
 - Dictionary UI against a mocked API, selection copy using the real browser clipboard, and share-to-clipboard fallback.
 - Comment consent, success state and rate limits against an intercepted mock response. No real message was submitted and the public counter was not incremented.
@@ -87,12 +87,12 @@ Runtime additions are vanilla CSS/JavaScript, generated local artwork and local 
 
 Existing optional integrations retain their exact destinations: Google Fonts, dictionaryapi.dev, Formspree and the public Abacus counter. Tests intercept these requests to avoid external side effects. Live availability/authorization/delivery has not been asserted. The current cloud network policy may block these services; local fonts and the core reading workflow continue to work. The repository does not contain `comments.json`; reader code already tolerates its absence. No approved comments or credentials were invented. Existing placeholder passages, empty chapters, original literal Markdown markers and incomplete SEO descriptions remain exactly as supplied.
 
-## Deployment — only after explicit approval
+## Deployment
 
-No changes have been committed, pushed or deployed. To deploy after approval:
+The site publishes automatically from `main` through GitHub Pages. The user has authorized committing and publishing requested changes automatically. For each update:
 
 1. Review the diff and rerun the checks above.
-2. Commit all changed HTML, `service-worker.js` and the complete new `assets` directory together. Keep the existing `CNAME` (`www.demahs.com`) and `.nojekyll`.
+2. Commit the reviewed changes and push to `main`. Keep the existing `CNAME` (`www.demahs.com`) and `.nojekyll`.
 3. Publish through the repository's existing GitHub Pages branch/root configuration. No build command, framework migration, environment secrets or server component is needed.
 4. Verify the custom domain, representative pages, reader state and new worker installation over HTTPS. Already-open tabs may need a refresh after the worker upgrade. Confirm external integrations separately if required.
 

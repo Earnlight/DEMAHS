@@ -1,4 +1,4 @@
-/* Shared navigation, appearance and search. The existing chapter readers remain independent. */
+/* Shared navigation and search. The existing chapter readers remain independent. */
 (() => {
   'use strict';
   const root = document.documentElement;
@@ -10,8 +10,6 @@
     crown: '<svg class="realm-crown" viewBox="0 0 56 46" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"><path d="M7 34 3 12l14 11L28 4l11 19 14-11-4 22Z"/><path d="m8 30 41 0M10 36h36v5H10ZM8 26l11 4 9-17 9 17 12-4M15 27l-1-9m28 9 1-9"/><path d="m28 0 1.8 3.5L33 5l-3.2 1.5L28 10l-1.8-3.5L23 5l3.2-1.5Z" fill="currentColor"/><circle cx="3" cy="11" r="2"/><circle cx="53" cy="11" r="2"/><circle cx="17" cy="19" r="1.7"/><circle cx="39" cy="19" r="1.7"/><path d="m14 38 2-2 2 2-2 2Zm12 0 2-2 2 2-2 2Zm12 0 2-2 2 2-2 2Z" fill="currentColor"/></g></svg>',
     chevron: '<svg class="realm-chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="m2 4 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>',
     search: '<svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="11.5" cy="11.5" r="8"/><path d="m17.5 17.5 7 7"/></svg>',
-    sun: '<svg class="realm-theme-sun" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="5"/><path d="M14 1v4m0 18v4M1 14h4m18 0h4M4.8 4.8l2.8 2.8m12.8 12.8 2.8 2.8M4.8 23.2l2.8-2.8M20.4 7.6l2.8-2.8"/></svg>',
-    moon: '<svg class="realm-theme-moon" viewBox="0 0 28 28" aria-hidden="true"><path d="M23.5 16.5A10.5 10.5 0 0 1 11.5 3a10.5 10.5 0 1 0 12 13.5Z"/></svg>',
     menu: '<svg viewBox="0 0 28 28" aria-hidden="true"><path d="M4 7h20M4 14h20M4 21h20"/></svg>',
     close: '<svg viewBox="0 0 28 28" aria-hidden="true"><path d="m7 7 14 14M21 7 7 21"/></svg>',
   };
@@ -32,27 +30,10 @@
       </nav>
       <div class="realm-header-actions">
         <button type="button" class="realm-icon-button" id="realm-search-open" aria-label="Search the library">${icons.search}</button>
-        <button type="button" class="realm-icon-button" id="realm-theme-toggle" aria-label="Switch to dark appearance" aria-pressed="false">${icons.sun}${icons.moon}</button>
         <a class="realm-enter" href="introduction.html">Enter the Light <span aria-hidden="true">✧</span></a>
         <button type="button" class="realm-icon-button realm-menu-toggle" id="realm-menu-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="realm-menu">${icons.menu}</button>
       </div>
     </header>`;
-
-  const themeButton = document.getElementById('realm-theme-toggle');
-  function applyAppearance(appearance) {
-    root.dataset.appearance = appearance;
-    themeButton.setAttribute('aria-pressed', String(appearance === 'dark'));
-    themeButton.setAttribute('aria-label', `Switch to ${appearance === 'dark' ? 'light' : 'dark'} appearance`);
-  }
-  applyAppearance(root.dataset.appearance || 'light');
-  themeButton.addEventListener('click', () => {
-    const next = root.dataset.appearance === 'dark' ? 'light' : 'dark';
-    applyAppearance(next);
-    try { localStorage.setItem('demahs-appearance', next); } catch (_) {}
-  });
-  window.addEventListener('storage', event => {
-    if (event.key === 'demahs-appearance') applyAppearance(event.newValue === 'dark' ? 'dark' : 'light');
-  });
 
   const menu = document.getElementById('realm-menu');
   const menuButton = document.getElementById('realm-menu-toggle');

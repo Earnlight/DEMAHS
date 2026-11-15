@@ -116,11 +116,18 @@ with sync_playwright() as p:
     expect(page.locator('.realm-skip')).to_be_focused()
     page.keyboard.press('Enter')
     expect(page.locator('#main-content')).to_be_focused()
-    page.locator('#realm-theme-toggle').click()
+    expect(page.locator('#realm-theme-toggle')).to_have_count(0)
     assert page.locator('html').get_attribute('data-appearance') == 'dark'
+    assert page.evaluate('getComputedStyle(document.documentElement).colorScheme') == 'dark'
+    # A previously saved light choice and a light OS preference cannot restore light mode.
+    page.evaluate("localStorage.setItem('demahs-appearance', 'light')")
+    page.emulate_media(color_scheme='light')
     page.reload(wait_until='networkidle')
     assert page.locator('html').get_attribute('data-appearance') == 'dark'
-    page.locator('#realm-theme-toggle').click()
+    assert page.evaluate('getComputedStyle(document.body).backgroundColor') == 'rgb(16, 31, 20)'
+    assert page.evaluate("localStorage.getItem('demahs-appearance')") is None
+    expect(page.locator('#realm-theme-toggle')).to_have_count(0)
+    page.emulate_media(color_scheme='dark')
     page.screenshot(path=str(OUT / 'home-desktop.png'))
     summary = page.locator('.realm-menu summary').first
     summary.focus()
@@ -153,7 +160,7 @@ with sync_playwright() as p:
     expect(page.locator('.ls-saved-item')).to_have_count(1)
     page.locator('.ls-row-link').first.click()
     page.wait_for_url('**/advice.html')
-    passed('keyboard skip/dropdown, persistent appearance, modal search/pagination, original search and saved searches')
+    passed('keyboard skip/dropdown, sole leaf-green appearance, modal search/pagination, original search and saved searches')
 
     assert page.evaluate('ReaderState.total') > 1
     page.locator('#bar-next').click()
@@ -249,6 +256,8 @@ with sync_playwright() as p:
             expect(page.locator('#public-value')).to_have_value('Yes')
         page.locator('#submit-btn').click()
         expect(page.locator('#form-message')).to_contain_text('Your message has been received')
+        page.wait_for_function("JSON.parse(localStorage.getItem('noegenesis-form-submits-advice') || '{}').count === " + str(n + 1))
+        expect(page.locator('#submit-btn')).to_be_enabled()
     assert len(submissions) == 2
     page.locator('#c-name').fill('Local smoke check')
     page.locator('#c-message').fill('This request must be blocked by the local daily limit.')
@@ -273,7 +282,7 @@ with sync_playwright() as p:
     page.goto(BASE + '/advice.html?page=1', wait_until='domcontentloaded')
     page.wait_for_function('ReaderState.getCurrent() === 1')
     expect(page.locator('.page.active .page-body')).to_contain_text('Remember truth often')
-    assert page.locator('body').evaluate('(el)=>getComputedStyle(el).backgroundColor') == 'rgb(243, 236, 222)'
+    assert page.locator('body').evaluate('(el)=>getComputedStyle(el).backgroundColor') == 'rgb(16, 31, 20)'
     page.locator('#realm-search-open').click()
     page.locator('#realm-search-input').fill('light')
     expect(page.locator('.realm-search-results a')).to_have_count(5)
@@ -288,6 +297,9 @@ with sync_playwright() as p:
         for name in sorted(pages):
             pg.goto(BASE + '/' + name, wait_until='load')
             assert pg.locator('.realm-header').is_visible(), (label, name)
+            expect(pg.locator('#realm-theme-toggle')).to_have_count(0)
+            assert pg.evaluate('getComputedStyle(document.body).backgroundColor') == 'rgb(16, 31, 20)', (label, name)
+            assert pg.evaluate('getComputedStyle(document.documentElement).colorScheme') == 'dark', (label, name)
             assert pg.locator('main').count() == 1, (label, name)
             assert pg.locator('h1').count() == 1, (label, name)
             assert not pg.evaluate('document.documentElement.scrollWidth > innerWidth + 1'), (label, name, 'horizontal overflow')

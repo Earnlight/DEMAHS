@@ -1,7 +1,6 @@
-/* Apply appearance before paint. Separate from the legacy reader's theme key. */
+/* The leaf-green night palette is the sole appearance, applied before paint. */
 (() => {
-  let appearance = 'light';
-  try { if (localStorage.getItem('demahs-appearance') === 'dark') appearance = 'dark'; } catch (_) {}
-  document.documentElement.dataset.appearance = appearance;
+  document.documentElement.dataset.appearance = 'dark';
   document.documentElement.classList.add('realm-design');
+  try { localStorage.removeItem('demahs-appearance'); } catch (_) {}
 })();
