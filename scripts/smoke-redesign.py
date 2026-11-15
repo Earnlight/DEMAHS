@@ -277,7 +277,7 @@ with sync_playwright() as p:
     # Readiness requires all precached URLs, not merely an active worker.
     assets = re.findall(r"'(/[^']*)'", (ROOT / 'service-worker.js').read_text().split('const ASSETS = [', 1)[1].split('];', 1)[0])
     page.wait_for_function('navigator.serviceWorker.controller !== null')
-    page.wait_for_function("async (assets) => {const c=await caches.open('demahs-realm-v1'); return (await Promise.all(assets.map(a=>c.match(a)))).every(Boolean);}", arg=assets)
+    page.wait_for_function("async (assets) => {const c=await caches.open('demahs-realm-v2'); return (await Promise.all(assets.map(a=>c.match(a)))).every(Boolean);}", arg=assets)
     desktop.set_offline(True)
     page.goto(BASE + '/advice.html?page=1', wait_until='domcontentloaded')
     page.wait_for_function('ReaderState.getCurrent() === 1')

@@ -1,7 +1,7 @@
 // My Noegenesis — Service Worker
 // Caches all pages for offline use and fast loading
 
-const CACHE_NAME = 'demahs-realm-v1';
+const CACHE_NAME = 'demahs-realm-v2';
 
 // List every file in your site here
 const ASSETS = [
@@ -60,7 +60,12 @@ const ASSETS = [
   '/assets/images/card-library.webp',
   '/assets/images/card-foundations.webp',
   '/assets/images/card-person.webp',
-  '/assets/images/card-destiny.webp'
+  '/assets/images/card-destiny.webp',
+  '/assets/images/celestial-realm-mobile.webp',
+  '/assets/images/card-library-large.webp',
+  '/assets/images/card-foundations-large.webp',
+  '/assets/images/card-person-large.webp',
+  '/assets/images/card-destiny-large.webp'
 ];
 
 // Install: cache everything

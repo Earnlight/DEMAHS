@@ -45,7 +45,7 @@ Unchanged data and deployment files include `updates.js`, `feed.xml`, `manifest.
 
 All pages have a main landmark, skip navigation and a single H1; reader cover titles and manuscript text remain unchanged. The header adapts at 960px and cards stack at 700px. New ornamental effects use CSS/SVG; reduced motion disables animations without leaving content hidden. Native cross-document view transitions progressively enhance supported browsers.
 
-The six artwork files are locally hosted WebP assets (about 813 KB total), including a smaller panorama for phones. Below-hero card images have fixed dimensions, lazy loading and asynchronous decoding. Headline/body fonts are preloaded and use `font-display: swap`. Font license files are included. Original Google Fonts stylesheet URLs remain in the HTML to preserve existing head links; local font faces keep the site readable when those optional requests are blocked.
+The artwork is locally hosted WebP: a refined desktop panorama (1585×992), a medium landscape (1100×688), a dedicated portrait (1024×1536) for phones and reader covers, and four cards supplied at both 768×512 and 1536×1024. Responsive sources select the portrait on phones and larger cards when display density requires them. The native source detail is retained in high-quality WebP exports; these are not simply enlarged copies. Below-hero card images have fixed dimensions, lazy loading and asynchronous decoding. Headline/body fonts are preloaded and use `font-display: swap`. Font license files are included. Original Google Fonts stylesheet URLs remain in the HTML to preserve existing head links; local font faces keep the site readable when those optional requests are blocked.
 
 `service-worker.js` changes the cache version to `demahs-realm-v1`, retains every original precached URL and adds the new styles, scripts, fonts, artwork and RSS. It remains network-first for fresh edits, caches only successful same-origin GET responses, leaves external integrations/form POSTs alone, and resolves cached deep links by pathname while offline. Homepage registration waits for initial resources to load. Future cache-list changes should use a new cache version.
 
@@ -158,3 +158,12 @@ The original HTML changes are shared presentation hooks/landmarks (plus the rede
 - `understanding.html`
 - `weakness.html`
 - `weight.html`
+
+## Image clarity review
+
+- Replaced the landscape and all four illustrated cards with newly refined artwork, keeping their subjects and the gold/green visual style.
+- Mobile previously enlarged a narrow crop from a 1100×688 landscape; its dedicated 1024×1536 portrait now retains substantially more source pixels vertically. The same portrait improves the tall reader covers across the chapter pages.
+- Supplied 1536×1024 card variants with width descriptors and layout sizes; normal-density small cards still use the smaller files. Hero preload media queries match the selected picture source.
+- Reduced the image-wide dimming/desaturation and the reader-cover overlays so fine architectural and foliage detail remains visible.
+- Reviewed the existing app icons/favicon family at their intended sizes and retained them; the navigation crown and decorative line art are SVG and stay sharp at any size.
+- Offline cache version 2 includes every new image variant. Verified image selection in desktop 1×/2× and mobile 2×/3× Chromium contexts, alongside the full responsive/functional smoke check.

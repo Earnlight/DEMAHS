@@ -344,6 +344,7 @@
   #starfield { position: absolute; inset: 0; }
 </style>
 
+<link rel="preload" href="assets/images/celestial-realm-mobile.webp" as="image" media="(max-width: 700px)" fetchpriority="high">
 <link rel="preload" href="assets/images/celestial-realm.webp" as="image" media="(min-width: 701px)" fetchpriority="high">
 <link rel="stylesheet" href="assets/styles/realm.css">
 <script src="assets/scripts/realm.js" defer></script>
@@ -359,8 +360,8 @@
 <main id="main-content" tabindex="-1">
 <section class="realm-stage" aria-label="Welcome to DEMAHS">
   <picture class="realm-landscape" aria-hidden="true">
-    <source media="(max-width: 700px)" srcset="assets/images/celestial-realm-medium.webp">
-    <img src="assets/images/celestial-realm.webp" width="1586" height="992" alt="" fetchpriority="high" decoding="async">
+    <source media="(max-width: 700px)" srcset="assets/images/celestial-realm-mobile.webp">
+    <img src="assets/images/celestial-realm.webp" width="1585" height="992" alt="" fetchpriority="high" decoding="async">
   </picture>
   <div class="realm-hero">
     <h1 class="hero-title"><span class="realm-sr-only">The </span>DEMAHS</h1>
@@ -372,19 +373,19 @@
   </div>
   <nav class="realm-worlds" id="worlds" aria-label="Explore the work">
     <a class="realm-world-card" href="library.html">
-      <span class="realm-card-art" aria-hidden="true"><img src="assets/images/card-library.webp" width="768" height="512" alt="" loading="lazy" decoding="async"></span>
+      <span class="realm-card-art" aria-hidden="true"><img src="assets/images/card-library.webp" srcset="assets/images/card-library.webp 768w, assets/images/card-library-large.webp 1536w" sizes="(max-width: 550px) calc(100vw - 44px), (max-width: 700px) 506px, (max-width: 1680px) 24vw, 372px" width="768" height="512" alt="" loading="lazy" decoding="async"></span>
       <h2>The Library</h2><p>Select a chapter to begin reading</p><span class="realm-arrow" aria-hidden="true">→</span>
     </a>
     <a class="realm-world-card" href="library.html#foundations">
-      <span class="realm-card-art" aria-hidden="true"><img src="assets/images/card-foundations.webp" width="768" height="512" alt="" loading="lazy" decoding="async"></span>
+      <span class="realm-card-art" aria-hidden="true"><img src="assets/images/card-foundations.webp" srcset="assets/images/card-foundations.webp 768w, assets/images/card-foundations-large.webp 1536w" sizes="(max-width: 550px) calc(100vw - 44px), (max-width: 700px) 506px, (max-width: 1680px) 24vw, 372px" width="768" height="512" alt="" loading="lazy" decoding="async"></span>
       <h2>Foundations</h2><p>What Is</p><span class="realm-arrow" aria-hidden="true">→</span>
     </a>
     <a class="realm-world-card" href="library.html#the-person">
-      <span class="realm-card-art" aria-hidden="true"><img src="assets/images/card-person.webp" width="768" height="512" alt="" loading="lazy" decoding="async"></span>
+      <span class="realm-card-art" aria-hidden="true"><img src="assets/images/card-person.webp" srcset="assets/images/card-person.webp 768w, assets/images/card-person-large.webp 1536w" sizes="(max-width: 550px) calc(100vw - 44px), (max-width: 700px) 506px, (max-width: 1680px) 24vw, 372px" width="768" height="512" alt="" loading="lazy" decoding="async"></span>
       <h2>The Person</h2><p>What We Are</p><span class="realm-arrow" aria-hidden="true">→</span>
     </a>
     <a class="realm-world-card" href="library.html#destiny">
-      <span class="realm-card-art" aria-hidden="true"><img src="assets/images/card-destiny.webp" width="768" height="512" alt="" loading="lazy" decoding="async"></span>
+      <span class="realm-card-art" aria-hidden="true"><img src="assets/images/card-destiny.webp" srcset="assets/images/card-destiny.webp 768w, assets/images/card-destiny-large.webp 1536w" sizes="(max-width: 550px) calc(100vw - 44px), (max-width: 700px) 506px, (max-width: 1680px) 24vw, 372px" width="768" height="512" alt="" loading="lazy" decoding="async"></span>
       <h2>Destiny</h2><p>Where Things Go</p><span class="realm-arrow" aria-hidden="true">→</span>
     </a>
   </nav>
