@@ -1,7 +1,7 @@
 // My Noegenesis — Service Worker
 // Caches all pages for offline use and fast loading
 
-const CACHE_NAME = 'demahs-realm-v3';
+const CACHE_NAME = 'demahs-realm-v4';
 
 // List every file in your site here
 const ASSETS = [
@@ -52,6 +52,7 @@ const ASSETS = [
   '/assets/styles/realm.css',
   '/assets/scripts/appearance.js',
   '/assets/scripts/realm.js',
+  '/assets/scripts/reader.js',
   '/assets/fonts/cinzel-latin-wght-normal.woff2',
   '/assets/fonts/cormorant-garamond-latin-wght-normal.woff2',
   '/assets/fonts/cormorant-garamond-latin-wght-italic.woff2',

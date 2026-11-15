@@ -223,7 +223,7 @@ body.realm-reader{padding:calc(var(--realm-header) + 65px) 20px 60px;background-
 .realm-reader .cover-border::before{border-color:#c9aa6f66;inset:6px}
 .realm-reader .cover-title{color:#fff0c9;font-weight:400;font-size:max(28px,7.3cqi);text-shadow:0 2px 14px #041107cc}
 .realm-reader .cover-ornament,.realm-reader .cover-author{color:#d4b77a}
-.realm-reader .cover-summary{border-color:#c9aa6f66;background:linear-gradient(180deg,#08090e85,#08090eaa);padding:.75em .7em;border-radius:2px}
+.realm-reader .cover-summary{border-color:#c9aa6f66;background:linear-gradient(180deg,#08090e38,#08090e59);padding:.75em .7em;border-radius:2px}
 .realm-reader .cover-summary p{color:#fff1d7;text-shadow:0 1px 7px #041107;font-weight:400;font-size:max(17px,3.1cqi);line-height:1.65;letter-spacing:.01em}
 .realm-reader #page-bar{background:var(--realm-paper);border-color:var(--border);box-shadow:0 10px 30px #43351d12;min-height:60px;padding:8px 15px}
 .realm-reader .page-nav-btn{color:var(--realm-gold);font-size:13px;min-height:40px;min-width:76px}
@@ -441,3 +441,32 @@ body.realm-reader.reader-fullscreen{padding:0;background:var(--realm-bg)}
   .realm-library .book-btn:not(:disabled):is(:hover,:active),
   .realm-world-card:is(:hover,:active){transform:none!important}
 }
+
+/* Reader controls follow the book and Go to Page in document and keyboard order. */
+.realm-reader #search-bar{margin:24px 0 0}
+.realm-reader #reader-toolbar{margin:12px 0 0}
+/* Fullscreen is a flat, viewport-sized layout, including installed iOS/Android PWAs. */
+html.reader-fullscreen-active{overflow:hidden;overscroll-behavior:none}
+body.realm-reader.reader-fullscreen{position:fixed;inset:0;width:100%;height:100%;padding:0;overflow:hidden;overscroll-behavior:none}
+.realm-reader.reader-fullscreen #book-container{
+  position:fixed;inset:auto;left:var(--reader-viewport-left,0px);top:var(--reader-viewport-top,0px);
+  width:var(--reader-viewport-width,100vw)!important;height:var(--reader-viewport-height,100dvh);
+  box-sizing:border-box;margin:0;padding:calc(env(safe-area-inset-top,0px) + 58px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);
+  z-index:10000;display:flex;flex-direction:column;overflow:hidden;isolation:isolate;
+  background:var(--realm-bg);animation:none;transform:none;opacity:1;
+}
+.realm-reader.reader-fullscreen #book-scene{flex:1 1 0%;width:100%;min-height:0;perspective:none;transform:none;transform-style:flat}
+.realm-reader.reader-fullscreen #book{width:min(100%,820px);height:100%;max-height:100%;padding:0!important;transform:none;transform-style:flat}
+.realm-reader.reader-fullscreen .page{transform-style:flat}
+.realm-reader.reader-fullscreen #page-bar{flex:0 0 64px;min-height:64px;width:min(100%,820px);align-self:center;box-sizing:border-box}
+.realm-reader.reader-fullscreen #fs-topbar{z-index:10020;top:var(--reader-viewport-top,0px);left:var(--reader-viewport-left,0px);right:auto;width:var(--reader-viewport-width,100vw);box-sizing:border-box;padding:calc(env(safe-area-inset-top,0px) + 8px) calc(env(safe-area-inset-right,0px) + 12px) 8px calc(env(safe-area-inset-left,0px) + 12px)}
+.realm-reader.reader-fullscreen #reader-toolbar{display:none}
+
+.realm-reader{--reader-top-gap:65px}
+@media(max-width:700px){.realm-reader{--reader-top-gap:60px}}
+body.realm-reader:not(.reader-fullscreen){padding-top:calc(var(--realm-header) + var(--reader-top-gap) + env(safe-area-inset-top,0px))}
+.realm-reader .realm-header{height:calc(var(--realm-header) + env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);box-sizing:border-box}
+.realm-reader #home-btn{top:calc(var(--realm-header) + 16px + env(safe-area-inset-top,0px))}
+.realm-reader #reading-progress-bar{top:calc(var(--realm-header) + env(safe-area-inset-top,0px))}
+
+.realm-reader.reader-fullscreen .cover-content{min-height:0;max-height:100%;box-sizing:border-box;overflow-y:auto;overscroll-behavior:contain}

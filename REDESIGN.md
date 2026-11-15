@@ -174,4 +174,13 @@ Each of the 33 e-readers has a newly generated portrait illustration representin
 
 Cover mappings, subject descriptions and palettes are documented in `assets/images/covers/collection.json`. Each reader declares its own `data-cover` and preloads the corresponding WebP. Shared CSS maps that identifier to the correct artwork and uses neutral shading behind selectable HTML title/author text. The title block sits above the main image subject; existing placeholder-only cover summaries are hidden, while real summaries and book text are retained. Offline cache version 3 includes all 33 cover images.
 
-The cover checks require exactly one unique image per reader, validate WebP headers and distinct file hashes, and decode each mapped cover in Chromium at every responsive test size. Original chapter data and inline reader scripts remain unchanged.
+The cover checks require exactly one unique image per reader, validate WebP headers and distinct file hashes, and decode each mapped cover in Chromium at every responsive test size. Original chapter data and reader logic outside the shared fullscreen controller remain unchanged.
+
+## Reader layout and PWA fullscreen
+
+- Cover summary panels use a translucent neutral backdrop (22–35% opacity) so their illustration remains visible.
+- All 33 reader documents place search, search-result navigation and the progress/text-size toolbar after Go to Page in DOM order.
+- `assets/scripts/reader.js` replaces the duplicated inline fullscreen controllers. Installed standalone/fullscreen PWAs use in-app fullscreen without requesting a second native fullscreen session; regular browser tabs retain native fullscreen when available and a CSS fallback when denied or absent.
+- The fullscreen reader uses Visual Viewport dimensions, safe-area padding and a flex layout with reserved exit/navigation space. Container animations, perspective and preserved 3D transforms are disabled during fullscreen to avoid compositor clipping. Resize, rotation, app resume, native exits and double-tap are handled centrally; leaving restores scroll position and the reader button focus.
+- `python scripts/smoke-fullscreen.py` exercises PWA mode, denied/absent native APIs, viewport changes, page turns and double-tap, then enter/exit on every reader. `DEMAHS_FULLSCREEN_ENGINE=webkit` runs the same checks with a locally installed Playwright WebKit. Tests emulate installed-app mode; physical iPhone/Android Home Screen sessions still require device verification.
+- Offline cache version 4 includes the new shared controller.

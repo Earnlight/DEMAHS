@@ -39,6 +39,8 @@ class Content(HTMLParser):
         if tag in ('meta', 'link'):
             # The sole leaf-green appearance intentionally replaces the browser chrome colour.
             if not (tag == 'meta' and attributes.get('name') == 'theme-color'):
+                if tag == 'meta' and attributes.get('name') == 'viewport':
+                    attrs = [(key, value.replace(', viewport-fit=cover', '') if key == 'content' else value) for key, value in attrs]
                 self.metadata[(tag, tuple(sorted(attrs)))] += 1
         if tag in ('form', 'input', 'textarea', 'button', 'select'):
             self.controls[(tag, tuple(sorted(attrs)))] += 1
@@ -90,7 +92,14 @@ def verify():
         # Preserve all functional code and chapter text byte-for-byte.
         original_scripts = re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>', before, re.S)
         current_scripts = re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>', after, re.S)
-        assert not (Counter(original_scripts) - Counter(current_scripts)), f'Original script changed in {filename}'
+        def without_fullscreen(source):
+            # Only the duplicated fullscreen controller moves into shared reader.js.
+            if '// FULLSCREEN\n' in source and '// HIGHLIGHT FEATURE' in source:
+                start = source.index('// FULLSCREEN\n')
+                end = source.index('// HIGHLIGHT FEATURE', start)
+                return source[:start] + source[end:]
+            return source
+        assert not (Counter(map(without_fullscreen, original_scripts)) - Counter(map(without_fullscreen, current_scripts))), f'Original script changed beyond fullscreen in {filename}'
         # Original inline styles remain as an untouched base beneath the shared theme.
         for style in re.findall(r'<style>(.*?)</style>', before, re.S):
             assert style in after, f'Original base styles changed in {filename}'
@@ -99,7 +108,7 @@ def verify():
         checked_pages += 1
         script_count += len([s for s in original_scripts if s.strip()])
     print(f'PASS: all {len(files)} original files remain; all {checked_pages} pages preserve text, URLs, metadata, controls and IDs.')
-    print(f'PASS: all {script_count} original inline scripts (including chapter text) are unchanged.')
+    print(f'PASS: all {script_count} inline sources preserve chapter data and all logic outside the extracted fullscreen controller.')
     print('PASS: RSS, updates, sitemap, robots, custom domain, icons and feed generator are unchanged; only manifest colours changed.')
 
 

@@ -13,7 +13,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#101f14">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Morality</title>
 <meta name="description" content="INPUT">
 
@@ -659,6 +659,7 @@
 
 <link rel="stylesheet" href="assets/styles/realm.css">
 <script src="assets/scripts/realm.js" defer></script>
+<script src="assets/scripts/reader.js" defer></script>
 </head>
 <body class="realm-page realm-reader" data-cover="morality">
 <div id="realm-navigation"><noscript><nav class="realm-noscript" aria-label="Main navigation"><a href="index.html">DEMAHS</a><a href="library.html">Library</a><a href="introduction.html">Introduction</a></nav></noscript></div>
@@ -701,38 +702,6 @@
   <button id="fs-prev" class="fs-chip" data-tip="Previous page">← Prev</button>
   <span id="fs-indicator">Cover</span>
   <button id="fs-next" class="fs-chip" data-tip="Next page">Next →</button>
-</div>
-
-<!-- Search bar with clear button -->
-<div id="search-bar">
-  <label for="search-input">Find</label>
-  <input type="text" id="search-input" placeholder="Search text in the book…">
-  <button id="search-btn" data-tip="Search the book">Search</button>
-  <button id="search-clear" aria-label="Clear search" data-tip="Clear search">✕</button>
-  <button id="recent-btn" aria-label="Previous searches" data-tip="Recent searches">▾</button>
-  <span id="search-result"></span>
-  <div id="recent-menu"></div>
-</div>
-<div id="search-nav">
-  <button id="search-prev-btn" data-tip="Previous match">← Prev</button>
-  <span id="search-count"></span>
-  <button id="search-next-btn" data-tip="Next match">Next →</button>
-</div>
-
-<!-- Reading time · page progress · font-size controls -->
-<div id="reader-toolbar">
-  <div class="rt-item" data-tip="Estimated reading time for the whole book">
-    <span class="rt-icon">◷</span><span id="reading-time-text">— min read</span>
-  </div>
-  <div class="rt-progress-wrap" data-tip="Your progress through the book">
-    <div class="rt-track"><div class="rt-fill" id="rt-fill"></div></div>
-    <span class="rt-progress-text" id="rt-progress-text">0%</span>
-  </div>
-  <div class="rt-font-controls" role="group" aria-label="Text size">
-    <button type="button" id="font-dec-btn" aria-label="Decrease text size" data-tip="Smaller text">A−</button>
-    <span id="font-size-pct">100%</span>
-    <button type="button" id="font-inc-btn" aria-label="Increase text size" data-tip="Larger text">A+</button>
-  </div>
 </div>
 
 <div id="book-container">
@@ -792,6 +761,39 @@
 <!-- Go-to-page button (replaces old bookmark indicator) -->
 <div id="goto-page-row">
   <button id="goto-page-btn" type="button" data-tip="Jump to any page">Go to Page</button>
+</div>
+
+
+<!-- Search bar with clear button -->
+<div id="search-bar">
+  <label for="search-input">Find</label>
+  <input type="text" id="search-input" placeholder="Search text in the book…">
+  <button id="search-btn" data-tip="Search the book">Search</button>
+  <button id="search-clear" aria-label="Clear search" data-tip="Clear search">✕</button>
+  <button id="recent-btn" aria-label="Previous searches" data-tip="Recent searches">▾</button>
+  <span id="search-result"></span>
+  <div id="recent-menu"></div>
+</div>
+<div id="search-nav">
+  <button id="search-prev-btn" data-tip="Previous match">← Prev</button>
+  <span id="search-count"></span>
+  <button id="search-next-btn" data-tip="Next match">Next →</button>
+</div>
+
+<!-- Reading time · page progress · font-size controls -->
+<div id="reader-toolbar">
+  <div class="rt-item" data-tip="Estimated reading time for the whole book">
+    <span class="rt-icon">◷</span><span id="reading-time-text">— min read</span>
+  </div>
+  <div class="rt-progress-wrap" data-tip="Your progress through the book">
+    <div class="rt-track"><div class="rt-fill" id="rt-fill"></div></div>
+    <span class="rt-progress-text" id="rt-progress-text">0%</span>
+  </div>
+  <div class="rt-font-controls" role="group" aria-label="Text size">
+    <button type="button" id="font-dec-btn" aria-label="Decrease text size" data-tip="Smaller text">A−</button>
+    <span id="font-size-pct">100%</span>
+    <button type="button" id="font-inc-btn" aria-label="Increase text size" data-tip="Larger text">A+</button>
+  </div>
 </div>
 
 <section id="comment-section">
@@ -1266,60 +1268,7 @@ const ReaderState = (function () {
 
 // ══════════════════════════════════════════
 // FULLSCREEN
-// ══════════════════════════════════════════
-(function () {
-  const body    = document.body;
-  const fsBtn   = document.getElementById('fullscreen-btn');
-  const exitBtn = document.getElementById('exit-fullscreen-btn');
-  let isFS      = false;
-
-  async function enter() {
-    isFS = true; body.classList.add('reader-fullscreen'); fsBtn.style.display = 'none';
-    if (window.__chromeActivity) window.__chromeActivity();
-    try {
-      const el = document.documentElement;
-      if (el.requestFullscreen)            await el.requestFullscreen({ navigationUI: 'hide' });
-      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-    } catch(e) { /* silently ignore — CSS fullscreen is still active */ }
-  }
-  function exit() {
-    if (!isFS) return; isFS = false; body.classList.remove('reader-fullscreen'); fsBtn.style.display = '';
-    if (document.exitFullscreen && document.fullscreenElement) document.exitFullscreen();
-    else if (document.webkitExitFullscreen && document.webkitFullscreenElement) document.webkitExitFullscreen();
-  }
-
-  fsBtn.addEventListener('click', enter);
-  exitBtn.addEventListener('click', exit);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') exit(); });
-  document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && isFS) exit(); });
-  document.addEventListener('webkitfullscreenchange', () => { if (!document.webkitFullscreenElement && isFS) exit(); });
-
-  document.getElementById('fs-prev').addEventListener('click', () => ReaderState.goTo(ReaderState.getCurrent() - 1, 'prev'));
-  document.getElementById('fs-next').addEventListener('click', () => ReaderState.goTo(ReaderState.getCurrent() + 1, 'next'));
-
-  // ── Double-tap on the e-reader toggles fullscreen ──
-  // 'click' fires exactly once per confirmed tap on all browsers (Safari, DuckDuckGo,
-  // Chrome) and never fires for swipes — more reliable than touchend or dblclick
-  const book = document.getElementById('book');
-  let dtTime = 0, dtX = 0, dtY = 0;
-
-  book.addEventListener('click', e => {
-    if (e.target.closest('button, a, input, [role="button"]')) return;
-    const now = Date.now();
-    if (now - dtTime < 500 && Math.abs(e.clientX - dtX) < 50 && Math.abs(e.clientY - dtY) < 50) {
-      dtTime = 0;
-      // Confirmed double-tap: toggle fullscreen. If this landed on paragraph
-      // text, the first tap already toggled its highlight (see the
-      // paragraph-tap handler below) -- mark the event so that handler skips
-      // this second tap instead of immediately undoing the highlight, which
-      // would flicker it on and off.
-      e.__dblTapFullscreen = true;
-      if (isFS) exit(); else enter();
-    } else {
-      dtTime = now; dtX = e.clientX; dtY = e.clientY;
-    }
-  });
-})();
+// Shared, PWA-safe controller: assets/scripts/reader.js
 
 // ══════════════════════════════════════════
 // HIGHLIGHT FEATURE — fixed: wraps per text-node, text never disappears

@@ -294,7 +294,7 @@ with sync_playwright() as p:
     # Readiness requires all precached URLs, not merely an active worker.
     assets = re.findall(r"'(/[^']*)'", (ROOT / 'service-worker.js').read_text().split('const ASSETS = [', 1)[1].split('];', 1)[0])
     page.wait_for_function('navigator.serviceWorker.controller !== null')
-    page.wait_for_function("async (assets) => {const c=await caches.open('demahs-realm-v3'); return (await Promise.all(assets.map(a=>c.match(a)))).every(Boolean);}", arg=assets)
+    page.wait_for_function("async (assets) => {const c=await caches.open('demahs-realm-v4'); return (await Promise.all(assets.map(a=>c.match(a)))).every(Boolean);}", arg=assets)
     desktop.set_offline(True)
     page.goto(BASE + '/advice.html?page=1', wait_until='domcontentloaded')
     page.wait_for_function('ReaderState.getCurrent() === 1')
@@ -318,6 +318,12 @@ with sync_playwright() as p:
             assert pg.evaluate('getComputedStyle(document.body).backgroundColor') == 'rgb(16, 31, 20)', (label, name)
             assert pg.evaluate('getComputedStyle(document.documentElement).colorScheme') == 'dark', (label, name)
             if pg.locator('body.realm-reader').count():
+                # Visual order must match document/tab order below Go to Page.
+                assert pg.evaluate('''() => {
+                    const ids=['book-container','goto-page-row','search-bar','search-nav','reader-toolbar'];
+                    return ids.every((id,i)=>!i || Boolean(document.getElementById(ids[i-1]).compareDocumentPosition(document.getElementById(id)) & Node.DOCUMENT_POSITION_FOLLOWING));
+                }'''), (label, name, 'reader toolbar order')
+                assert pg.locator('#search-bar').bounding_box()['y'] >= pg.locator('#goto-page-row').bounding_box()['y'] + pg.locator('#goto-page-row').bounding_box()['height']
                 slug = name.removesuffix('.html')
                 assert pg.locator('body').get_attribute('data-cover') == slug
                 cover_url = pg.locator('.page-cover').evaluate('(el)=>getComputedStyle(el).backgroundImage')
