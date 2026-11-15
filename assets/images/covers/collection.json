@@ -1,0 +1,203 @@
+{
+  "direction": "Each illustration represents its ebook's title and topic. Palettes and compositions vary by subject; there is no shared green treatment. Existing HTML supplies the title and author.",
+  "covers": [
+    {
+      "slug": "advice",
+      "image": "advice.webp",
+      "subject": "A wise mentor's weathered hand offering a small brass compass to a younger traveller at a sunlit crossroads, mountains far beyond; clearly about practical guidance and wisdom",
+      "palette": "warm sandstone, brass, soft sky blue"
+    },
+    {
+      "slug": "age-vs-evolution",
+      "image": "age-vs-evolution.webp",
+      "subject": "A single monumental tree shown across time: ancient exposed annual growth rings and gnarled trunk on one side, fresh branching growth and a geometric upward spiral on the other; distinguish chronological age from development",
+      "palette": "copper, amber, ivory, restrained spring leaf tones"
+    },
+    {
+      "slug": "belief",
+      "image": "belief.webp",
+      "subject": "A small lone human figure taking a step onto a bridge that is forming from luminous stones over a deep chasm, held by conviction rather than proof",
+      "palette": "midnight violet, gold light, pale lilac"
+    },
+    {
+      "slug": "delusion",
+      "image": "delusion.webp",
+      "subject": "A person seen from behind facing an ornate fractured mirror which reflects a magnificent false city while the real room is crumbling; illusion and mistaken perception are unmistakable",
+      "palette": "smoky purple, tarnished silver, dusty rose"
+    },
+    {
+      "slug": "gravitation",
+      "image": "gravitation.webp",
+      "subject": "A large richly textured planet visibly bending a luminous spacetime grid, with smaller moons following precise orbital paths; scientifically inspired gravity, not astrology",
+      "palette": "deep indigo, cosmic black, icy white, copper"
+    },
+    {
+      "slug": "greatness",
+      "image": "greatness.webp",
+      "subject": "A lone mountaineer reaching an immense sunlit summit above clouds, their long difficult stair-like ridge clearly visible below; earned achievement and aspiration",
+      "palette": "sunrise gold, white snow, slate blue"
+    },
+    {
+      "slug": "hellfire",
+      "image": "hellfire.webp",
+      "subject": "A monumental volcanic fissure and towering sculptural flames over black obsidian stone, molten lava pouring below; beautiful severe infernal fire, no violence or suffering",
+      "palette": "incandescent orange, ember red, obsidian black"
+    },
+    {
+      "slug": "hierarchy",
+      "image": "hierarchy.webp",
+      "subject": "An enormous stepped stone ziggurat with distinct ordered levels and increasingly smaller terraces, ascending from many foundation blocks to one luminous apex; hierarchy made architectural",
+      "palette": "terracotta, weathered limestone, bronze, pale desert sky"
+    },
+    {
+      "slug": "honour",
+      "image": "honour.webp",
+      "subject": "A polished sheathed ceremonial sword laid over a white cloak beside an intact wax seal and olive sprig, on a stone altar; an oath, dignity and restraint",
+      "palette": "crimson, ivory, steel silver, restrained gold"
+    },
+    {
+      "slug": "how-to-build-your-light",
+      "image": "how-to-build-your-light.webp",
+      "subject": "An artisan carefully assembling a glowing lantern from individual crystalline pieces at a workbench; a small inner flame becomes a strong radiant light through deliberate craft",
+      "palette": "honey gold, warm amber, charcoal, clear white light"
+    },
+    {
+      "slug": "imagination",
+      "image": "imagination.webp",
+      "subject": "An impossible dream world unfolding from a child's simple paper boat: floating islands, an upside-down waterfall, a whale swimming through clouds, an impossible staircase; abundant creative invention",
+      "palette": "cobalt blue, coral, apricot, lavender, pearlescent white"
+    },
+    {
+      "slug": "light-as-meaning",
+      "image": "light-as-meaning.webp",
+      "subject": "A luminous human silhouette carrying a brilliant light within the chest while walking from a dark earthly landscape toward a vast sunrise; the light leaves a constellation-like trail of meaningful acts",
+      "palette": "radiant white, warm gold, midnight blue"
+    },
+    {
+      "slug": "morality",
+      "image": "morality.webp",
+      "subject": "An ancient bronze balance scale at a forked stone path, one pan holding a feather and the other a human hand-shaped stone; ethical judgment and consequences, not monetary wealth",
+      "palette": "aged bronze, ivory, charcoal, muted burgundy"
+    },
+    {
+      "slug": "our-heart",
+      "image": "our-heart.webp",
+      "subject": "A luminous sculptural human heart formed from ruby glass and branching living vessels, glowing with warm life inside; unmistakably a heart and the center of identity, elegant not bloody or medical-gory",
+      "palette": "deep crimson, ruby red, warm rose, black cherry"
+    },
+    {
+      "slug": "our-mind",
+      "image": "our-mind.webp",
+      "subject": "An elegant translucent human head in profile containing a luminous network of neurons and layered geometric thought structures; cognition, awareness and the inner world",
+      "palette": "electric blue, cyan, silver, midnight navy"
+    },
+    {
+      "slug": "paradise",
+      "image": "paradise.webp",
+      "subject": "An abundant tranquil garden with clear turquoise water, fruit-laden trees, white blossoms, bright marble terraces and open sunlight; unmistakably a peaceful flourishing paradise",
+      "palette": "turquoise, fresh botanical green, white, sunlit peach"
+    },
+    {
+      "slug": "pleasure",
+      "image": "pleasure.webp",
+      "subject": "A sumptuous intimate still life of ripe figs, strawberries, velvet fabric, rose petals and a crystal goblet catching warm light; sensory pleasure and delight, tasteful and contemplative",
+      "palette": "plum, rose pink, raspberry, warm amber"
+    },
+    {
+      "slug": "power",
+      "image": "power.webp",
+      "subject": "A monumental crowned lion resting confidently on a dark stone throne above a stormy landscape, protective rather than attacking; authority, strength and self-command",
+      "palette": "royal purple, bronze gold, charcoal"
+    },
+    {
+      "slug": "purity",
+      "image": "purity.webp",
+      "subject": "A single flawless white lotus above perfectly clear water, with a transparent crystal and untouched snow-like marble; absolute clarity and unblemished purity",
+      "palette": "white, pearl, pale ice blue, silver"
+    },
+    {
+      "slug": "reading",
+      "image": "reading.webp",
+      "subject": "A beautifully detailed open book in a warm lamplit library, pages becoming a small path into a world of knowledge beyond; reading and discovery, no readable printed text",
+      "palette": "warm sepia, chestnut brown, cream parchment, amber"
+    },
+    {
+      "slug": "reality",
+      "image": "reality.webp",
+      "subject": "A perfectly sharp clear glass sphere revealing the solid physical landscape behind it while painted theatrical scenery peels away at the edges; actual reality beneath appearances",
+      "palette": "neutral stone, clear daylight blue, steel silver"
+    },
+    {
+      "slug": "reason",
+      "image": "reason.webp",
+      "subject": "A precise brass geometric compass drawing an intelligible luminous construction over marble, a straight illuminated path emerging from a labyrinth; logical deduction and rational clarity",
+      "palette": "ivory, brass, ink navy"
+    },
+    {
+      "slug": "the-conscience",
+      "image": "the-conscience.webp",
+      "subject": "A human silhouette standing before two diverging doors while a small warm light over their heart guides them toward the honest path; inward moral awareness, intimate and quiet",
+      "palette": "warm cream, midnight blue, restrained amber"
+    },
+    {
+      "slug": "the-continuum",
+      "image": "the-continuum.webp",
+      "subject": "One continuous luminous ribbon weaving without interruption from a seed through a living tree into a starfield, linking changing stages as one seamless flow; no isolated collage panels",
+      "palette": "violet, flowing cyan, rose gold, deep space blue"
+    },
+    {
+      "slug": "the-finality",
+      "image": "the-finality.webp",
+      "subject": "One final monumental stone doorway at the end of a long path, opening onto a still brilliant horizon, with a final stone step and no path beyond; closure, completion and ultimate threshold",
+      "palette": "black marble, pale white gold, soft ash gray"
+    },
+    {
+      "slug": "the-nature-of-life",
+      "image": "the-nature-of-life.webp",
+      "subject": "A detailed living seed germinating: branching roots below, a tender unfolding leaf above, water droplets and warm sunlight; the organic process of life clearly visible as one unified living organism",
+      "palette": "fresh leaf green, warm earth brown, clear water blue, sunlit gold"
+    },
+    {
+      "slug": "the-pen",
+      "image": "the-pen.webp",
+      "subject": "A finely engraved fountain pen hovering above cream paper, dark blue ink flowing from its nib and becoming expressive birds and a written world; authorship and expression, no readable lettering",
+      "palette": "ink blue, parchment ivory, copper"
+    },
+    {
+      "slug": "the-unseen",
+      "image": "the-unseen.webp",
+      "subject": "A sheer silver veil moving in an otherwise empty arched room, revealing faint luminous particles and the suggestion of hidden architecture beyond what the eye can see; serene mystery, not horror",
+      "palette": "moonlit silver, midnight indigo, soft violet"
+    },
+    {
+      "slug": "thoughts",
+      "image": "thoughts.webp",
+      "subject": "An expressive translucent head in profile with many small luminous origami birds, threads and cloud-like ideas emerging and interconnecting above it; thoughts taking form",
+      "palette": "cerulean blue, white, pale peach, gold sparks"
+    },
+    {
+      "slug": "truth",
+      "image": "truth.webp",
+      "subject": "A single brilliant beam of pure white light passing through a flawless clear prism and revealing a sharply defined real object behind a falling translucent veil; revelation, honesty, optical clarity",
+      "palette": "pure white, clear crystal, subtle spectrum colors, cool slate"
+    },
+    {
+      "slug": "understanding",
+      "image": "understanding.webp",
+      "subject": "Two complex interlocking transparent puzzle forms and branching lines meeting in one coherent luminous whole, with a precisely completed bridge in the background; comprehension and ideas connecting",
+      "palette": "teal blue, warm amber, ivory"
+    },
+    {
+      "slug": "weakness",
+      "image": "weakness.webp",
+      "subject": "A visibly cracked delicate porcelain vessel beside a small vulnerable sapling bowed by wind, a restrained line of gold repair suggesting awareness and resilience; fragility treated with dignity",
+      "palette": "pale porcelain blue, ash gray, soft ochre"
+    },
+    {
+      "slug": "weight",
+      "image": "weight.webp",
+      "subject": "An immense rough stone suspended opposite one delicate feather on a heavy brass balance, the stone's gravity visibly tensioning its chains; physical and existential weight",
+      "palette": "granite gray, brass, parchment cream, deep charcoal"
+    }
+  ]
+}

@@ -183,13 +183,48 @@ body.realm-reader{padding:calc(var(--realm-header) + 65px) 20px 60px;background-
 .realm-reader .page-body p+p{margin-top:1em;text-indent:0}
 .realm-reader .page-header{font-size:11px;letter-spacing:.18em;color:var(--realm-muted);padding-bottom:12px}
 .realm-reader .chapter-title{font-size:24px;font-weight:500;color:var(--realm-heading)}
-.realm-reader .page-cover{background:linear-gradient(160deg,#173f24b3,#0e2719d1),url('../images/celestial-realm-mobile.webp') 50% 65%/cover;box-shadow:0 20px 50px #33251733;border-color:#bda16b}
+/* Topic-led artwork keeps its individual palette; titles remain selectable HTML. */
+.realm-reader .page-cover{background-color:#14151a;background-image:linear-gradient(180deg,#08090ed9 0%,#08090e99 22%,#08090e26 48%,transparent 70%),var(--reader-cover-image);background-position:center;background-size:cover;justify-content:flex-start;box-shadow:0 20px 50px #33251733;border-color:#bda16b}
+.realm-reader[data-cover='advice']{--reader-cover-image:url('../images/covers/advice.webp')}
+.realm-reader[data-cover='age-vs-evolution']{--reader-cover-image:url('../images/covers/age-vs-evolution.webp')}
+.realm-reader[data-cover='belief']{--reader-cover-image:url('../images/covers/belief.webp')}
+.realm-reader[data-cover='delusion']{--reader-cover-image:url('../images/covers/delusion.webp')}
+.realm-reader[data-cover='gravitation']{--reader-cover-image:url('../images/covers/gravitation.webp')}
+.realm-reader[data-cover='greatness']{--reader-cover-image:url('../images/covers/greatness.webp')}
+.realm-reader[data-cover='hellfire']{--reader-cover-image:url('../images/covers/hellfire.webp')}
+.realm-reader[data-cover='hierarchy']{--reader-cover-image:url('../images/covers/hierarchy.webp')}
+.realm-reader[data-cover='honour']{--reader-cover-image:url('../images/covers/honour.webp')}
+.realm-reader[data-cover='how-to-build-your-light']{--reader-cover-image:url('../images/covers/how-to-build-your-light.webp')}
+.realm-reader[data-cover='imagination']{--reader-cover-image:url('../images/covers/imagination.webp')}
+.realm-reader[data-cover='light-as-meaning']{--reader-cover-image:url('../images/covers/light-as-meaning.webp')}
+.realm-reader[data-cover='morality']{--reader-cover-image:url('../images/covers/morality.webp')}
+.realm-reader[data-cover='our-heart']{--reader-cover-image:url('../images/covers/our-heart.webp')}
+.realm-reader[data-cover='our-mind']{--reader-cover-image:url('../images/covers/our-mind.webp')}
+.realm-reader[data-cover='paradise']{--reader-cover-image:url('../images/covers/paradise.webp')}
+.realm-reader[data-cover='pleasure']{--reader-cover-image:url('../images/covers/pleasure.webp')}
+.realm-reader[data-cover='power']{--reader-cover-image:url('../images/covers/power.webp')}
+.realm-reader[data-cover='purity']{--reader-cover-image:url('../images/covers/purity.webp')}
+.realm-reader[data-cover='reading']{--reader-cover-image:url('../images/covers/reading.webp')}
+.realm-reader[data-cover='reality']{--reader-cover-image:url('../images/covers/reality.webp')}
+.realm-reader[data-cover='reason']{--reader-cover-image:url('../images/covers/reason.webp')}
+.realm-reader[data-cover='the-conscience']{--reader-cover-image:url('../images/covers/the-conscience.webp')}
+.realm-reader[data-cover='the-continuum']{--reader-cover-image:url('../images/covers/the-continuum.webp')}
+.realm-reader[data-cover='the-finality']{--reader-cover-image:url('../images/covers/the-finality.webp')}
+.realm-reader[data-cover='the-nature-of-life']{--reader-cover-image:url('../images/covers/the-nature-of-life.webp')}
+.realm-reader[data-cover='the-pen']{--reader-cover-image:url('../images/covers/the-pen.webp')}
+.realm-reader[data-cover='the-unseen']{--reader-cover-image:url('../images/covers/the-unseen.webp')}
+.realm-reader[data-cover='thoughts']{--reader-cover-image:url('../images/covers/thoughts.webp')}
+.realm-reader[data-cover='truth']{--reader-cover-image:url('../images/covers/truth.webp')}
+.realm-reader[data-cover='understanding']{--reader-cover-image:url('../images/covers/understanding.webp')}
+.realm-reader[data-cover='weakness']{--reader-cover-image:url('../images/covers/weakness.webp')}
+.realm-reader[data-cover='weight']{--reader-cover-image:url('../images/covers/weight.webp')}
+.realm-reader .cover-content{width:100%;padding:8% 9% 6%;text-shadow:0 2px 10px #0009}
 .realm-reader .cover-border{border-color:#c9aa6f;inset:4%}
 .realm-reader .cover-border::before{border-color:#c9aa6f66;inset:6px}
-.realm-reader .cover-title{color:#f0dbad;font-weight:400;font-size:max(28px,7.3cqi);text-shadow:0 2px 10px #0004}
+.realm-reader .cover-title{color:#fff0c9;font-weight:400;font-size:max(28px,7.3cqi);text-shadow:0 2px 14px #041107cc}
 .realm-reader .cover-ornament,.realm-reader .cover-author{color:#d4b77a}
-.realm-reader .cover-summary{border-color:#c9aa6f66}
-.realm-reader .cover-summary p{color:#f0e4ca;font-weight:400;font-size:max(17px,3.1cqi);line-height:1.65;letter-spacing:.01em}
+.realm-reader .cover-summary{border-color:#c9aa6f66;background:linear-gradient(180deg,#08090e85,#08090eaa);padding:.75em .7em;border-radius:2px}
+.realm-reader .cover-summary p{color:#fff1d7;text-shadow:0 1px 7px #041107;font-weight:400;font-size:max(17px,3.1cqi);line-height:1.65;letter-spacing:.01em}
 .realm-reader #page-bar{background:var(--realm-paper);border-color:var(--border);box-shadow:0 10px 30px #43351d12;min-height:60px;padding:8px 15px}
 .realm-reader .page-nav-btn{color:var(--realm-gold);font-size:13px;min-height:40px;min-width:76px}
 .realm-reader .page-number{color:var(--realm-muted);font-size:13px;min-height:40px;display:flex;align-items:center;justify-content:center}

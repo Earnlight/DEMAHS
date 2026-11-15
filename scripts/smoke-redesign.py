@@ -7,6 +7,7 @@ no public counter is incremented and no real form message is sent.
 """
 from html.parser import HTMLParser
 import json
+import hashlib
 import os
 from pathlib import Path
 import re
@@ -65,6 +66,22 @@ for path in sorted(references):
     with urlopen(BASE + '/' + path, timeout=10) as response:
         assert response.status == 200 and response.read() == (ROOT / path).read_bytes(), path
 passed(f'all {len(pages)} page routes and {len(references)} local document/asset destinations serve correctly')
+
+# Every e-reader must receive a distinct, decodable, topic-specific asset.
+cover_collection = json.loads((ROOT / 'assets/images/covers/collection.json').read_text())['covers']
+reader_pages = {p.stem for p in ROOT.glob('*.html') if 'class="realm-page realm-reader"' in p.read_text()}
+assert {entry['slug'] for entry in cover_collection} == reader_pages
+assert len(cover_collection) == len(reader_pages) == 33
+cover_hashes = set()
+for entry in cover_collection:
+    path = ROOT / 'assets/images/covers' / entry['image']
+    data = path.read_bytes()
+    assert data[:4] == b'RIFF' and data[8:12] == b'WEBP', path
+    assert entry['subject'] and entry['palette']
+    cover_hashes.add(hashlib.sha256(data).hexdigest())
+assert len(cover_hashes) == 33, 'Reader covers must not repeat the same image'
+passed('all 33 e-readers have distinct topic-led WebP cover assets')
+
 
 scripts = [(str(p.relative_to(ROOT)), p.read_text()) for p in ROOT.rglob('*.js') if '.git' not in p.parts]
 for page in ROOT.glob('*.html'):
@@ -277,7 +294,7 @@ with sync_playwright() as p:
     # Readiness requires all precached URLs, not merely an active worker.
     assets = re.findall(r"'(/[^']*)'", (ROOT / 'service-worker.js').read_text().split('const ASSETS = [', 1)[1].split('];', 1)[0])
     page.wait_for_function('navigator.serviceWorker.controller !== null')
-    page.wait_for_function("async (assets) => {const c=await caches.open('demahs-realm-v2'); return (await Promise.all(assets.map(a=>c.match(a)))).every(Boolean);}", arg=assets)
+    page.wait_for_function("async (assets) => {const c=await caches.open('demahs-realm-v3'); return (await Promise.all(assets.map(a=>c.match(a)))).every(Boolean);}", arg=assets)
     desktop.set_offline(True)
     page.goto(BASE + '/advice.html?page=1', wait_until='domcontentloaded')
     page.wait_for_function('ReaderState.getCurrent() === 1')
@@ -300,6 +317,13 @@ with sync_playwright() as p:
             expect(pg.locator('#realm-theme-toggle')).to_have_count(0)
             assert pg.evaluate('getComputedStyle(document.body).backgroundColor') == 'rgb(16, 31, 20)', (label, name)
             assert pg.evaluate('getComputedStyle(document.documentElement).colorScheme') == 'dark', (label, name)
+            if pg.locator('body.realm-reader').count():
+                slug = name.removesuffix('.html')
+                assert pg.locator('body').get_attribute('data-cover') == slug
+                cover_url = pg.locator('.page-cover').evaluate('(el)=>getComputedStyle(el).backgroundImage')
+                assert '/assets/images/covers/' + slug + '.webp' in cover_url, (label, name, cover_url)
+                dimensions = pg.evaluate("""async (url) => {const i=new Image();i.src=url;await i.decode();return [i.naturalWidth,i.naturalHeight]}""", BASE + '/assets/images/covers/' + slug + '.webp')
+                assert dimensions[0] >= 1024 and dimensions[1] >= 1536, (name, dimensions)
             assert pg.locator('main').count() == 1, (label, name)
             assert pg.locator('h1').count() == 1, (label, name)
             assert not pg.evaluate('document.documentElement.scrollWidth > innerWidth + 1'), (label, name, 'horizontal overflow')

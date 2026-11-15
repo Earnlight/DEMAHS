@@ -1,7 +1,7 @@
 // My Noegenesis — Service Worker
 // Caches all pages for offline use and fast loading
 
-const CACHE_NAME = 'demahs-realm-v2';
+const CACHE_NAME = 'demahs-realm-v3';
 
 // List every file in your site here
 const ASSETS = [
@@ -65,7 +65,40 @@ const ASSETS = [
   '/assets/images/card-library-large.webp',
   '/assets/images/card-foundations-large.webp',
   '/assets/images/card-person-large.webp',
-  '/assets/images/card-destiny-large.webp'
+  '/assets/images/card-destiny-large.webp',
+  '/assets/images/covers/advice.webp',
+  '/assets/images/covers/age-vs-evolution.webp',
+  '/assets/images/covers/belief.webp',
+  '/assets/images/covers/delusion.webp',
+  '/assets/images/covers/gravitation.webp',
+  '/assets/images/covers/greatness.webp',
+  '/assets/images/covers/hellfire.webp',
+  '/assets/images/covers/hierarchy.webp',
+  '/assets/images/covers/honour.webp',
+  '/assets/images/covers/how-to-build-your-light.webp',
+  '/assets/images/covers/imagination.webp',
+  '/assets/images/covers/light-as-meaning.webp',
+  '/assets/images/covers/morality.webp',
+  '/assets/images/covers/our-heart.webp',
+  '/assets/images/covers/our-mind.webp',
+  '/assets/images/covers/paradise.webp',
+  '/assets/images/covers/pleasure.webp',
+  '/assets/images/covers/power.webp',
+  '/assets/images/covers/purity.webp',
+  '/assets/images/covers/reading.webp',
+  '/assets/images/covers/reality.webp',
+  '/assets/images/covers/reason.webp',
+  '/assets/images/covers/the-conscience.webp',
+  '/assets/images/covers/the-continuum.webp',
+  '/assets/images/covers/the-finality.webp',
+  '/assets/images/covers/the-nature-of-life.webp',
+  '/assets/images/covers/the-pen.webp',
+  '/assets/images/covers/the-unseen.webp',
+  '/assets/images/covers/thoughts.webp',
+  '/assets/images/covers/truth.webp',
+  '/assets/images/covers/understanding.webp',
+  '/assets/images/covers/weakness.webp',
+  '/assets/images/covers/weight.webp'
 ];
 
 // Install: cache everything
