@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta charset="UTF-8">
+<!-- Shared realm presentation; content and original reader scripts remain below. -->
+<script src="assets/scripts/appearance.js"></script>
+<link rel="preload" href="assets/fonts/cinzel-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/cormorant-garamond-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="manifest" href="/manifest.json">
 <link rel="alternate" type="application/rss+xml" title="The DEMAHS — Updates" href="/feed.xml">
 <meta name="theme-color" content="#0d0b05">
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The DEMAHS — Welcome</title>
 <meta name="description" content="INPUT">
@@ -338,17 +343,56 @@
 
   #starfield { position: absolute; inset: 0; }
 </style>
+
+<link rel="preload" href="assets/images/celestial-realm.webp" as="image" media="(min-width: 701px)" fetchpriority="high">
+<link rel="stylesheet" href="assets/styles/realm.css">
+<script src="assets/scripts/realm.js" defer></script>
 </head>
-<body>
+<body class="realm-page realm-home">
+<div id="realm-navigation"><noscript><nav class="realm-noscript" aria-label="Main navigation"><a href="index.html">DEMAHS</a><a href="library.html">Library</a><a href="introduction.html">Introduction</a></nav></noscript></div>
+
 
 <div class="cosmic-bg" aria-hidden="true">
   <canvas id="starfield"></canvas>
 </div>
 
-<section class="hero">
+<main id="main-content" tabindex="-1">
+<section class="realm-stage" aria-label="Welcome to DEMAHS">
+  <picture class="realm-landscape" aria-hidden="true">
+    <source media="(max-width: 700px)" srcset="assets/images/celestial-realm-medium.webp">
+    <img src="assets/images/celestial-realm.webp" width="1586" height="992" alt="" fetchpriority="high" decoding="async">
+  </picture>
+  <div class="realm-hero">
+    <h1 class="hero-title"><span class="realm-sr-only">The </span>DEMAHS</h1>
+    <div class="realm-ornament" aria-hidden="true">✧</div>
+    <p class="realm-motto">Discover <span aria-hidden="true">·</span> Imagine <span aria-hidden="true">·</span> Grow</p>
+    <p class="realm-description">A realm of stories, ideas and wonder,<br>for all who seek more.</p>
+    <a class="realm-primary" href="library.html">Explore Our Worlds <span class="realm-arrow" aria-hidden="true">→</span></a>
+    <a class="realm-scroll" href="#worlds" aria-label="Discover the library and its worlds">↓</a>
+  </div>
+  <nav class="realm-worlds" id="worlds" aria-label="Explore the work">
+    <a class="realm-world-card" href="library.html">
+      <span class="realm-card-art" aria-hidden="true"><img src="assets/images/card-library.webp" width="768" height="512" alt="" loading="lazy" decoding="async"></span>
+      <h2>The Library</h2><p>Select a chapter to begin reading</p><span class="realm-arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="realm-world-card" href="library.html#foundations">
+      <span class="realm-card-art" aria-hidden="true"><img src="assets/images/card-foundations.webp" width="768" height="512" alt="" loading="lazy" decoding="async"></span>
+      <h2>Foundations</h2><p>What Is</p><span class="realm-arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="realm-world-card" href="library.html#the-person">
+      <span class="realm-card-art" aria-hidden="true"><img src="assets/images/card-person.webp" width="768" height="512" alt="" loading="lazy" decoding="async"></span>
+      <h2>The Person</h2><p>What We Are</p><span class="realm-arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="realm-world-card" href="library.html#destiny">
+      <span class="realm-card-art" aria-hidden="true"><img src="assets/images/card-destiny.webp" width="768" height="512" alt="" loading="lazy" decoding="async"></span>
+      <h2>Destiny</h2><p>Where Things Go</p><span class="realm-arrow" aria-hidden="true">→</span>
+    </a>
+  </nav>
+</section>
+
+<section class="legacy-welcome" id="about" aria-label="About The DEMAHS">
   <div class="hero-ornament">&#10022; &#10022; &#10022;</div>
   <p class="hero-eyebrow">Welcome to</p>
-  <h1 class="hero-title">The DEMAHS</h1>
   <div class="hero-divider"></div>
 
   <div class="acronym">
@@ -380,6 +424,8 @@
   <p>[Placeholder — a second paragraph, more personal in tone: why this was written, what the reader can expect from spending time here.]</p>
   <span class="placeholder-note">Replace this section's copy before publishing</span>
 </section>
+
+</main>
 
 <footer>
   <p>The DEMAHS &nbsp;&middot;&nbsp; EARNLIGHT &nbsp;&middot;&nbsp; All rights reserved</p>

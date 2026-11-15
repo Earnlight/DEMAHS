@@ -1,7 +1,7 @@
 // My Noegenesis — Service Worker
 // Caches all pages for offline use and fast loading
 
-const CACHE_NAME = 'noegenesis-v6';
+const CACHE_NAME = 'demahs-realm-v1';
 
 // List every file in your site here
 const ASSETS = [
@@ -47,7 +47,20 @@ const ASSETS = [
   '/manifest.json',
   '/updates.js',
   '/android-chrome-192x192.png',
-  '/android-chrome-512x512.png'
+  '/android-chrome-512x512.png',
+  '/feed.xml',
+  '/assets/styles/realm.css',
+  '/assets/scripts/appearance.js',
+  '/assets/scripts/realm.js',
+  '/assets/fonts/cinzel-latin-wght-normal.woff2',
+  '/assets/fonts/cormorant-garamond-latin-wght-normal.woff2',
+  '/assets/fonts/cormorant-garamond-latin-wght-italic.woff2',
+  '/assets/images/celestial-realm.webp',
+  '/assets/images/celestial-realm-medium.webp',
+  '/assets/images/card-library.webp',
+  '/assets/images/card-foundations.webp',
+  '/assets/images/card-person.webp',
+  '/assets/images/card-destiny.webp'
 ];
 
 // Install: cache everything
@@ -79,13 +92,20 @@ self.addEventListener('activate', event => {
 // handler as event.request, so without this override this "network first"
 // fetch could still be quietly satisfied from the browser's own HTTP cache.
 self.addEventListener('fetch', event => {
+  // Leave external integrations and form POSTs to the browser. Only cache this site.
+  const url = new URL(event.request.url);
+  if (event.request.method !== 'GET' || url.origin !== self.location.origin) return;
   event.respondWith(
     fetch(event.request, { cache: 'no-store' }).then(response => {
+      if (!response.ok) return response;
       const copy = response.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+      event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(() => {}));
       return response;
-    }).catch(() =>
-      caches.match(event.request).then(cached => cached || caches.match('/index.html'))
-    )
+    }).catch(async () => {
+      const cached = await caches.match(event.request) || await caches.match(url.pathname);
+      if (cached) return cached;
+      if (event.request.mode === 'navigate') return caches.match('/index.html');
+      return new Response('Unavailable offline', { status: 503 });
+    })
   );
 });
