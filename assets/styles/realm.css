@@ -309,6 +309,87 @@ html[data-appearance='dark'] .realm-ornament,html[data-appearance='dark'] .realm
   .realm-manuscript .hero{padding:85px 20px 42px}.realm-manuscript .hero-title{font-size:clamp(34px,8vw,48px)}.realm-manuscript .hero-meta{font-size:9px;gap:10px}.realm-manuscript .manuscript-wrap{padding:30px 23px;width:calc(100% - 28px)}.realm-manuscript .manuscript p{font-size:calc(21px*var(--manuscript-scale,1));line-height:1.8}.realm-manuscript blockquote{font-size:23px}.realm-manuscript .closing{padding-inline:20px}
   .realm-search-dialog{margin-top:6vh}.realm-search-head{padding:19px 20px 0}.realm-search-head h2{font-size:20px}.realm-search-form{padding:15px 20px 12px;gap:8px}.realm-search-form input{font-size:19px;padding:10px}.realm-search-form button{padding:8px 12px}.realm-search-status{padding-inline:20px}.realm-search-results{padding-inline:20px}.realm-search-results strong{font-size:14px}.realm-search-results p{font-size:18px}
 }
+/* Polished, raised controls: a reflective face above a solid lower bevel. */
+:root{
+  --control-face:linear-gradient(180deg,#fffdf6 0%,#f8ebcd 46%,#e7d1a1 49%,#f5e4bd 100%);
+  --control-edge:#aa803c;--control-base:#977039;--control-shade:#48321733;
+  --control-highlight:#ffffffeb;
+}
+html[data-appearance='dark']{
+  --control-face:linear-gradient(180deg,#52616b 0%,#344550 46%,#23323d 49%,#30424e 100%);
+  --control-edge:#b99a61;--control-base:#101c25;--control-shade:#0006;
+  --control-highlight:#ddecf66b;
+}
+.realm-page :is(.cta-btn,.book-btn,.continue-btn,.contact-btn,#next-chapter-btn,
+  .realm-manuscript-tools button,.realm-search-form button,.realm-search-pager button,
+  #search-btn,#search-clear,#recent-btn,.rt-font-controls button,.page-nav-btn,
+  #goto-page-btn,#fullscreen-btn,.fs-chip,#submit-btn,.ls-saved-toggle,.ls-pager-btn){
+  background:var(--control-face);border:1px solid var(--control-edge);border-radius:6px;
+  box-shadow:inset 0 1px 0 var(--control-highlight),inset 1px 0 0 #ffffff40,
+    inset 0 -2px 2px #72502026,0 4px 0 var(--control-base),0 8px 14px var(--control-shade);
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+}
+.realm-page :is(.realm-search-form button,#fullscreen-btn){color:var(--realm-ink)}
+.realm-library .book-btn{transform:none!important;border-top-color:#e7cd94}
+.realm-page :is(.cta-btn,.book-btn,.continue-btn,.contact-btn,#next-chapter-btn,
+  .realm-manuscript-tools button,.realm-search-form button,.realm-search-pager button,
+  #search-btn,#search-clear,#recent-btn,.rt-font-controls button,.page-nav-btn,
+  #goto-page-btn,#fullscreen-btn,.fs-chip,#submit-btn,.ls-saved-toggle,.ls-pager-btn):not(:disabled):hover{
+  background:var(--control-face);filter:brightness(1.07);transform:translateY(-2px);
+  box-shadow:inset 0 1px 0 var(--control-highlight),inset 1px 0 0 #ffffff40,
+    inset 0 -2px 2px #72502026,0 6px 0 var(--control-base),0 12px 20px var(--control-shade);
+}
+.realm-library .book-btn:not(:disabled):hover{transform:translateY(-2px)!important}
+.realm-page :is(.cta-btn,.book-btn,.continue-btn,.contact-btn,#next-chapter-btn,
+  .realm-manuscript-tools button,.realm-search-form button,.realm-search-pager button,
+  #search-btn,#search-clear,#recent-btn,.rt-font-controls button,.page-nav-btn,
+  #goto-page-btn,#fullscreen-btn,.fs-chip,#submit-btn,.ls-saved-toggle,.ls-pager-btn):not(:disabled):active{
+  transform:translateY(3px);filter:brightness(.98);
+  box-shadow:inset 0 2px 4px #38271933,0 1px 0 var(--control-base),0 3px 6px var(--control-shade);
+}
+.realm-library .book-btn:not(:disabled):active{transform:translateY(3px)!important}
+.realm-page :is(.realm-primary,.realm-enter){
+  clip-path:none;border-radius:7px;border:1px solid #e6c47f;border-top-color:#fff0be;
+  background:linear-gradient(180deg,#a2834d 0%,#70552f 45%,#3e2f20 49%,#584025 100%);
+  color:#fff1cc!important;text-shadow:0 1px 2px #1d130ccc;
+  box-shadow:inset 0 1px 0 #fff7daaa,inset 1px 0 1px #ffe4ab55,inset 0 -2px 2px #21190e80,
+    0 5px 0 #382817,0 6px 0 #bc9557,0 12px 22px #19160f70,0 0 24px #f5d48c26;
+  outline:none;transition:transform .18s ease,filter .18s ease,box-shadow .18s ease;
+}
+.realm-primary::before{inset:3px;background:none;border:1px solid #efd39b66;border-radius:4px}
+.realm-page :is(.realm-primary,.realm-enter):hover{
+  filter:brightness(1.15);transform:translateY(-3px);
+  box-shadow:inset 0 1px 0 #fff7dacc,inset 1px 0 1px #ffe4ab55,inset 0 -2px 2px #21190e80,
+    0 8px 0 #382817,0 9px 0 #bc9557,0 17px 26px #19160f70,0 0 30px #f5d48c40;
+}
+.realm-page :is(.realm-primary,.realm-enter):active{
+  transform:translateY(4px);filter:brightness(1.03);
+  box-shadow:inset 0 2px 5px #21190e80,0 1px 0 #382817,0 2px 0 #bc9557,0 5px 10px #19160f60;
+}
+.realm-page :is(.realm-primary,.realm-enter):focus-visible{outline:3px solid #fff0b9;outline-offset:5px}
+.realm-page .realm-icon-button{
+  border:1px solid #c9ad765c;border-radius:7px;
+  background:linear-gradient(180deg,#fff9df30 0%,#fff9df0d 46%,#211b1714 50%,#211b1708 100%);
+  box-shadow:inset 0 1px 0 #fff6db66,0 2px 0 #51412c50,0 4px 8px #151d2426;
+  transition:transform .18s ease,filter .18s ease;
+}
+.realm-page .realm-icon-button:hover{filter:brightness(1.2);transform:translateY(-1px)}
+.realm-page .realm-icon-button:active{transform:translateY(2px)}
+.realm-world-card{
+  clip-path:none;border-radius:9px;border-top-color:#f4dca5;border-bottom-color:#8e6835;
+  box-shadow:inset 0 1px 0 #fff2cc99,0 6px 0 #292116,0 7px 0 #a27e46,0 15px 25px #080d1266;
+  transition:transform .25s ease,filter .25s ease,box-shadow .25s ease;
+}
+.realm-world-card::before{
+  border:1px solid #e9ce927d;border-radius:6px;
+  background:linear-gradient(170deg,#fff5d83b 0%,#fff5d80d 40%,transparent 41%);
+  box-shadow:inset 0 1px 1px #fff7dc80;
+}
+.realm-world-card:hover{
+  box-shadow:inset 0 1px 0 #fff2cc99,0 11px 0 #292116,0 12px 0 #a27e46,0 22px 30px #080d1270;
+}
+.realm-world-card:active{transform:translateY(4px);box-shadow:0 2px 0 #292116,0 5px 10px #080d1266}
+.realm-page :is(button,.page-nav-btn):disabled{filter:saturate(.35);opacity:.5;box-shadow:none;transform:none}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.realm-page *,.realm-page *::before,.realm-page *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.realm-page .page-body p,.realm-page .cover-content>*,.realm-page .cover-summary p,.realm-page .manuscript p,.realm-page .section-break,.realm-page .closing-ornament,.realm-page .continue-row,.realm-page .back-link{opacity:1!important;transform:none!important}.realm-page .hero-title,.realm-page .header-title{opacity:1!important}.realm-world-card:hover{transform:none}.realm-world-card:hover img{transform:none}::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
 @media print{.realm-header,.realm-search-dialog,.realm-manuscript-tools,#realm-footer,.realm-skip{display:none!important}.realm-page{background:white!important;color:black!important;padding:0!important}.realm-manuscript .hero{margin-top:0}.realm-manuscript .manuscript-wrap{border:0;box-shadow:none;width:100%}.realm-page .manuscript p{opacity:1!important;transform:none!important;color:black!important}.realm-reader #book{padding:0;height:auto}.realm-reader .page{position:relative;opacity:1;overflow:visible;break-inside:avoid}.realm-reader .page-inner,.realm-reader .page-body{overflow:visible}.realm-reader #search-bar,.realm-reader #reader-toolbar,.realm-reader #comment-section,.realm-reader #page-bar{display:none}}
 /* Reduced motion must also undo legacy entry states, without exposing inactive pages. */
@@ -319,3 +400,8 @@ html[data-appearance='dark'] .realm-ornament,html[data-appearance='dark'] .realm
 }
 @media(max-width:700px){.realm-header-actions .realm-icon-button{width:44px;height:44px}.realm-header-actions>.realm-icon-button:first-child{width:44px}}
 @media(max-width:360px){.realm-header{padding-inline:14px;gap:8px}.realm-header .realm-brand{font-size:21px;gap:6px}.realm-crown{width:28px}.realm-header-actions{gap:0}}
+
+@media(prefers-reduced-motion:reduce){
+  .realm-page :is(.realm-primary,.realm-enter,.realm-icon-button,.cta-btn,.continue-btn,.contact-btn,#next-chapter-btn,.realm-manuscript-tools button,.realm-search-form button,.realm-search-pager button,#search-btn,#search-clear,#recent-btn,.rt-font-controls button,.page-nav-btn,#goto-page-btn,#fullscreen-btn,.fs-chip,#submit-btn,.ls-saved-toggle,.ls-pager-btn):not(:disabled):is(:hover,:active),
+  .realm-library .book-btn:not(:disabled):is(:hover,:active){transform:none!important}
+}
