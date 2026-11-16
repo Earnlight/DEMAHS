@@ -307,3 +307,36 @@ body.dem-active{background:#142b22}
 }
 @media(max-height:600px){.dem-scroll>.dem-panorama{height:85px}.dem-panorama-space{height:65px}.dem-marginalia{background-size:20px 180px;width:20px}}
 @media print{.dem-marginalia,.dem-scroll>.dem-panorama,.dem-reveal-controls{display:none!important}.dem-panorama-space{display:none}}
+/* A continuous manuscript, divided at the same real boundaries as paginated reading. */
+.dem-app[data-view=scroll] .dem-scroll{overflow-y:auto;overflow-x:hidden;align-items:flex-start;scrollbar-width:thin;scrollbar-color:#b99a61 var(--paper)}
+.dem-app[data-view=scroll] .dem-page-window{height:auto;min-height:100%;overflow:visible}
+.dem-app[data-view=scroll] .dem-manuscript{width:100%;height:auto;columns:auto;column-width:auto;column-count:auto;transform:none!important;will-change:auto}
+.dem-app[data-view=scroll] .dem-folio{display:none}
+.dem-app[data-view=scroll] .dem-marginalia{display:none}
+.dem-app[data-view=scroll] .dem-page-window::before,.dem-app[data-view=scroll] .dem-page-window::after{content:'';position:absolute;top:0;bottom:0;width:17px;background:url('../images/manuscript-vine.svg') center top/17px 180px repeat-y;opacity:.65;pointer-events:none}
+.dem-app[data-view=scroll] .dem-page-window::before{left:-23px}.dem-app[data-view=scroll] .dem-page-window::after{right:-23px;transform:scaleX(-1)}
+.dem-scroll-break{position:relative;display:block;height:35px;margin:30px 0;clear:both;font:11px/35px 'Cinzel',serif;text-align:center;color:var(--muted);letter-spacing:.12em}
+.dem-scroll-break::before{content:'';position:absolute;inset:11px 0;border-top:1px solid #b99a6170;border-bottom:1px solid #b99a6135;pointer-events:none}
+.dem-scroll-break::after{content:'❦  ·  PAGE ' attr(data-page-number);position:relative;display:inline-block;padding:0 18px;background:var(--paper);color:#a2823d;white-space:nowrap}
+.dem-scroll-break[data-page-index='0']{margin-top:0}
+.dem-scroll-break[data-end]::after{content:'❦  ·  END  ·  ❦'}
+.dem-layout-choice{padding:0;margin:0 0 26px;border:0}.dem-layout-choice legend{margin-bottom:12px;color:#e8d3a3;font-size:17px}
+.dem-layout-choice .dem-choice button{font-size:12px;padding-inline:8px}
+.dem-bookmark-card{position:relative}.dem-bookmark-card .dem-record-actions{min-height:44px;padding-right:52px}
+.dem-bookmark-card .dem-remove-bookmark{position:absolute;right:14px;bottom:14px;width:44px;min-width:44px;height:44px}
+.dem-bottom{position:relative}
+.dem-find-nav{position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);display:flex;align-items:center;gap:5px;width:min(460px,calc(100vw - 24px));border:1px solid #d8bc7299;border-radius:7px;padding:4px 6px;background:#173025f5;color:#f3dfb4;box-shadow:0 5px 20px #0003;z-index:13}
+.dem-find-count{flex:1;min-width:0;text-align:center;font:14px/1.4 'Cormorant Garamond',serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dem-find-nav .dem-icon{min-width:44px;min-height:44px}
+.dem-reading-content mark[data-kind=search]{background:#e2bd5a5c;outline:0}
+.dem-reading-content mark.dem-current-match{background:#e9bb42d9;outline:1px solid #a7832d;outline-offset:1px}
+.dem-search-history{margin:0 0 18px;border-top:1px solid #c9a84c35;border-bottom:1px solid #c9a84c35;padding:10px 0}
+.dem-search-history summary{cursor:pointer;min-height:44px;padding:9px 0;font:20px 'Cormorant Garamond',serif;color:#ead39a}
+.dem-history-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0}
+.dem-history-query{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0;min-height:54px;padding:10px;border:1px solid #c9a84c40;border-radius:4px;background:#e8cc8007;color:#f3dfb4;text-align:left;font:17px 'Cormorant Garamond',serif}
+.dem-history-query span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dem-history-query small{color:#bdab81;font:9px 'Cinzel',serif}
+.dem-open-matches{margin-bottom:16px;width:100%}
+@media print{.dem-scroll-break::after{background:white}.dem-find-nav{display:none!important}}
+.dem-app[data-view=scroll] .dem-scroll::before{display:none}
+.dem-scroll-break[data-end-page]::after{content:'PAGE ' attr(data-end-page) '  ·  ❦  ·  PAGE ' attr(data-page-number)}
+.dem-scroll-break{user-select:none;-webkit-user-select:none}

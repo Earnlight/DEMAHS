@@ -89,6 +89,12 @@
   document.addEventListener('visibilitychange', () => { if (!document.hidden) scheduleViewport(); });
   document.getElementById('fs-prev').addEventListener('click', () => ReaderState.goTo(ReaderState.getCurrent() - 1, 'prev'));
   document.getElementById('fs-next').addEventListener('click', () => ReaderState.goTo(ReaderState.getCurrent() + 1, 'next'));
+  // Collection-search links open the real legacy search on readers outside the pilot.
+  const find=new URLSearchParams(location.search).get('find');
+  if(find&&!document.querySelector('script[src$="immersive-reader.js"]')){
+    const input=document.getElementById('search-input'),button=document.getElementById('search-btn');
+    if(input&&button){input.value=find;button.click();}
+  }
   let lastTap = null;
   book.addEventListener('click', event => {
     if (event.target.closest('button,a,input,textarea,[role="button"]')) return;

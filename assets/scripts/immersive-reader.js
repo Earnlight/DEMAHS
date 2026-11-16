@@ -14,9 +14,9 @@
   const legacyLast = readLegacy('noegenesis-lastread', null);
   const prefKey = 'demahs.reader.preferences.v1', dataKey = 'demahs.reader.annotations.v1', positionKey = 'demahs.reader.positions.v1';
   const storedPrefs=read(prefKey, {});
-  const prefs = Object.assign({ mode: 'light', size: 21, line: 1.8, width: 84, art: 1 }, storedPrefs);
+  const prefs = Object.assign({ mode: 'light', size: 21, line: 1.8, width: 84, art: 1, view:'pages' }, storedPrefs);
   if(!storedPrefs.defaultsVersion&&storedPrefs.width===65)prefs.width=84;
-  prefs.defaultsVersion=2;
+  prefs.defaultsVersion=2;if(!['pages','scroll'].includes(prefs.view))prefs.view='pages';
   if (!['light', 'sepia', 'dark'].includes(prefs.mode)) prefs.mode = 'light';
   const data = Object.assign({ bookmarks: [], highlights: [], notes: [], definitions: [], imported: [] }, read(dataKey, {}));
   for (const key of ['bookmarks', 'highlights', 'notes', 'definitions', 'imported']) if (!Array.isArray(data[key])) data[key] = [];
@@ -34,25 +34,28 @@
   const esc = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const button = (action, icon, label, extra='') => `<button type="button" class="dem-icon ${extra}" data-action="${action}" aria-label="${label}" title="${label}">${svg(icon)}</button>`;
   const nav = () => [['continue','play','Continue Reading'],['chapters','chapters','Chapters'],['bookmarks','bookmark','Bookmarks'],['notes','note','Notes'],['highlights','highlight','Highlights'],['dictionary','dictionary','Dictionary'],['definitions','dictionary','Saved definitions'],['settings','settings','Settings']].map(([action,icon,label]) => `<button type="button" data-action="${action}">${svg(icon)}<span>${label}</span>${['bookmarks','notes','highlights','definitions'].includes(action)?`<span class="dem-count" data-count="${action}"></span>`:''}</button>`).join('');
-  const app = document.createElement('div'); app.id = 'dem-app'; app.className = 'dem-app'; app.dataset.mode = prefs.mode;
+  const app = document.createElement('div'); app.id = 'dem-app'; app.className = 'dem-app'; app.dataset.mode = prefs.mode;app.dataset.view='pages';
   app.innerHTML = `<a class="dem-skip" href="#dem-reading">Skip to chapter text</a>
     <header class="dem-top"><div style="display:flex;align-items:center;gap:5px">${button('chapters','menu','Open reader navigation','dem-menu')}<a class="dem-brand" href="library.html" aria-label="DEMAHS library">${crown}<span>DEMAHS <small>THE MANUSCRIPT READER</small></span></a></div><span class="dem-top-title">${esc(title)} <span aria-hidden="true" style="color:#766147;margin-inline:14px">/</span> By EARNLIGHT</span><nav class="dem-actions" aria-label="Reader actions">${button('search','search','Search chapters')}${button('bookmark','bookmark','Bookmark this location')}${button('settings','settings','Reader settings','dem-settings-top')}</nav></header>
     <div class="dem-workspace"><aside class="dem-sidebar" aria-label="Reader navigation"><div class="dem-cover"><img src="${esc(current.cover)}" alt="" width="1024" height="1536"><span>${esc(title)}</span></div><div class="dem-sidebar-search-slot"></div><p class="dem-sidebar-label">YOUR READING ROOM</p><nav class="dem-nav">${nav()}</nav><div class="dem-sidebar-foot">✦<a href="library.html">Return to the library</a><button class="dem-text-button" type="button" data-action="extras">About &amp; discussion</button></div></aside>
     <main id="dem-reading" class="dem-scroll" tabindex="0" aria-label="${esc(title)} manuscript"><div class="dem-page-window"><article class="dem-manuscript" aria-labelledby="dem-title"><div class="dem-panorama" aria-hidden="true"><picture><source media="(max-width:760px)" srcset="assets/images/celestial-realm-mobile.webp"><img src="assets/images/celestial-realm.webp" width="1585" height="992" alt="" decoding="async" fetchpriority="high"></picture></div><header class="dem-chapter-heading"><div class="dem-kicker"></div><h1 id="dem-title">${esc(title)}</h1><div class="dem-ornament" aria-hidden="true">✦</div></header><div class="dem-reading-content" id="dem-content"></div><div class="dem-end"><span aria-hidden="true">❧</span>End of ${esc(title)}</div></article></div><span class="dem-folio" aria-hidden="true"></span></main></div>
-    <footer class="dem-bottom"><nav class="dem-page-turns" aria-label="Page navigation"><button class="dem-text-button dem-page-previous" type="button" data-action="previous-page" aria-label="Previous page">${svg('left')}<span class="dem-label">Previous page</span></button><form class="dem-page-jump"><label for="dem-page-number">Page</label><input id="dem-page-number" type="number" inputmode="numeric" enterkeyhint="go" min="1" value="1" aria-label="Go to page" aria-describedby="dem-page-total"><span class="dem-page-total" id="dem-page-total">of 1</span><button type="submit" class="dem-text-button">Go</button></form><button class="dem-text-button dem-page-next" type="button" data-action="next-page" aria-label="Next page"><span class="dem-label">Next page</span>${svg('right')}</button></nav><span class="dem-page-announcement" role="status" aria-live="polite" aria-atomic="true"></span><div class="dem-reading-tools">${button('chapters','chapters','Open chapter shelf')}<div class="dem-progress"><div class="dem-progress-line" role="progressbar" aria-label="Chapter reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><label class="dem-progress-label">Opening manuscript</label></div>${button('settings','settings','Font and appearance settings')}${button('mode','sun','Change reading appearance')}${button('fullscreen','full','Enter distraction-free fullscreen')}</div></footer>
+    <footer class="dem-bottom"><div class="dem-find-nav" role="navigation" aria-label="Search match navigation" hidden><button type="button" class="dem-icon" data-action="previous-match" aria-label="Previous search match">${svg('left')}</button><span class="dem-find-count" role="status" aria-live="polite"></span><button type="button" class="dem-icon" data-action="next-match" aria-label="Next search match">${svg('right')}</button><button type="button" class="dem-icon" data-action="clear-find" aria-label="Clear search highlights">${svg('close')}</button></div><nav class="dem-page-turns" aria-label="Page navigation"><button class="dem-text-button dem-page-previous" type="button" data-action="previous-page" aria-label="Previous page">${svg('left')}<span class="dem-label">Previous page</span></button><form class="dem-page-jump"><label for="dem-page-number">Page</label><input id="dem-page-number" type="number" inputmode="numeric" enterkeyhint="go" min="1" value="1" aria-label="Go to page" aria-describedby="dem-page-total"><span class="dem-page-total" id="dem-page-total">of 1</span><button type="submit" class="dem-text-button">Go</button></form><button class="dem-text-button dem-page-next" type="button" data-action="next-page" aria-label="Next page"><span class="dem-label">Next page</span>${svg('right')}</button></nav><span class="dem-page-announcement" role="status" aria-live="polite" aria-atomic="true"></span><div class="dem-reading-tools">${button('chapters','chapters','Open chapter shelf')}<div class="dem-progress"><div class="dem-progress-line" role="progressbar" aria-label="Chapter reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><label class="dem-progress-label">Opening manuscript</label></div>${button('settings','settings','Font and appearance settings')}${button('mode','sun','Change reading appearance')}${button('fullscreen','full','Enter distraction-free fullscreen')}</div></footer>
     <button class="dem-reveal-controls" type="button" data-action="show-controls" aria-label="Show reader controls"><span></span></button><dialog class="dem-panel" aria-labelledby="dem-panel-title"><header class="dem-panel-header"><h2 id="dem-panel-title"></h2>${button('close','close','Close panel')}</header><div class="dem-panel-body"></div></dialog>
     <div class="dem-selection" role="toolbar" aria-label="Selected passage actions" hidden><button type="button" data-action="highlight">${svg('highlight')}Highlight</button><button type="button" data-action="note">${svg('note')}Note</button><button type="button" data-action="define-selection">${svg('dictionary')}Define</button><button type="button" data-action="copy">${svg('copy')}Copy</button><button type="button" data-action="share">${svg('share')}Share</button></div><div class="dem-toast" role="status" aria-live="polite" hidden></div>`;
   document.body.append(app);
   const viewport = app.querySelector('.dem-scroll'), content = app.querySelector('#dem-content'), panel = app.querySelector('dialog'), panelBody = app.querySelector('.dem-panel-body'), panelTitle = app.querySelector('#dem-panel-title');
   const pageWindow = app.querySelector('.dem-page-window'), flow = app.querySelector('.dem-manuscript');
   let pageIndex = 0, pageCount = 1, pageStride = 1, paginationReady = false, pageFrame = 0, pageTimer = 0, lastAnchor = {block:0,char:0};
+  let pageBoundaries=[],scrollMarkers=[],scrollOffsets=[],scrollBlocks=[],scrollTimer=0,layoutBusy=false;
+  const historyKey='demahs.reader.search-history.v1';let searchHistory=read(historyKey,null);if(!Array.isArray(searchHistory))searchHistory=(read('noegenesis-recent-searches',[])||[]).filter(q=>typeof q==='string').slice(0,12).map(query=>({query,all:false}));
+  let activeSearch={query:'',matches:[],index:0};
   const selectedNotes=new Set();let exportFormat='txt';
   const pageInput=app.querySelector('#dem-page-number'),chromeBars=[app.querySelector('.dem-top'),app.querySelector('.dem-bottom')];
   let pageJumpLock=null,jumpReleaseTimer=0,chromeTimer=0,keyboardChrome=false,suppressSelectionUntil=0;
   const panorama=flow.querySelector('.dem-panorama'),spacer=document.createElement('div');spacer.className='dem-panorama-space';spacer.setAttribute('aria-hidden','true');panorama.before(spacer);viewport.prepend(panorama);
   for(const side of ['left','right']){const ornament=document.createElement('span');ornament.className='dem-marginalia dem-marginalia-'+side;ornament.setAttribute('aria-hidden','true');viewport.append(ornament);}
   const blocks = [], segments = [], supplemental = document.createElement('div');
-  let selection = null, toastTimer, saveTimer, panelType = '', opener = null, fullscreen = false, nativeFullscreen = false, searchIndexPromise;
+  let selection = null, toastTimer, saveTimer, panelType = '', opener = null, fullscreen = false, nativeFullscreen = false, searchIndexPromise,coverObserver=null;
   let suppressSave = true;
   legacyPages.forEach(page => {
     const body = page.querySelector('.page-body'); if (!body) return;
@@ -105,12 +108,15 @@
     if(!text)return node.getBoundingClientRect();
     const range=document.createRange();range.setStart(text,Math.min(offset,text.length));range.setEnd(text,Math.min(offset+1,text.length));return range.getBoundingClientRect();
   }
+  function continuous(){return app.dataset.view==='scroll';}
   function pageForAnchor(anchor) {
+    if(continuous()){if(anchor?.end)return pageCount-1;const node=blocks[anchor?.block];if(!node||!content.contains(node)||anchor?.opening)return 0;return scrollPageAt(textRect(node,anchor.char??anchor.start??0).top-viewport.getBoundingClientRect().top+viewport.scrollTop);}
     const node=blocks[anchor?.block];if(anchor?.end)return pageCount-1;if(!node||!content.contains(node))return 0;
     const rect=textRect(node,anchor.char??anchor.start??0);
     return Math.max(0,Math.min(pageCount-1,Math.floor((rect.left-flow.getBoundingClientRect().left+1)/pageStride)));
   }
   function anchorNow() {
+    if(continuous())return scrollAnchor();
     for(const node of blocks.filter(n=>content.contains(n))){
       const rects=[...node.getClientRects()];
       if(!rects.some(r=>Math.floor((r.left-flow.getBoundingClientRect().left+1)/pageStride)===pageIndex))continue;
@@ -122,27 +128,65 @@
     return pageIndex===pageCount-1&&last?{block:Number(last.dataset.block),char:Math.max(0,last.textContent.length-1),end:true}:{block:0,char:0};
   }
   function showPage(index, focus=false) {
+    if(continuous()){const target=Math.max(0,Math.min(pageCount-1,Math.trunc(index)||0));viewport.scrollTo({top:target===0?0:Math.max(0,(scrollOffsets[target]||0)-12),behavior:'instant'});syncScroll();if(focus)viewport.focus({preventScroll:true});return;}
     pageIndex=Math.max(0,Math.min(pageCount-1,Math.trunc(index)||0));viewport.dataset.opening=String(pageIndex===0);
     flow.style.transform=`translate3d(${-pageIndex*pageStride}px,0,0)`;
     pageWindow.scrollLeft=0;viewport.scrollTop=0;
     lastAnchor=anchorNow();updateProgress();
     if(focus)viewport.focus({preventScroll:true});
   }
+  function clearDividers(){flow.querySelectorAll('.dem-scroll-break').forEach(node=>node.remove());flow.normalize();}
+  function rangeAt(unit,offset){const w=document.createTreeWalker(unit,NodeFilter.SHOW_TEXT);let text;while(text=w.nextNode()){if(offset<=text.length){const range=document.createRange();range.setStart(text,offset);range.collapse(true);return range;}offset-=text.length;}return null;}
+  function divider(index,end=false){const node=document.createElement('span');node.className='dem-scroll-break';node.dataset.pageIndex=index;node.dataset.pageNumber=index+1;if(end)node.dataset.end='true';node.setAttribute('role','separator');if(index>0&&!end)node.dataset.endPage=index;node.setAttribute('aria-label',end?'End of chapter':index?'End of page '+index+'; beginning of page '+(index+1):'Beginning of page 1');return node;}
+  function installDividers(){
+    scrollMarkers=new Array(pageCount);
+    for(let index=pageCount-1;index>0;index--){const boundary=pageBoundaries[index]||pageBoundaries.slice(index+1).find(Boolean)||{unit:flow.lastElementChild,char:0};const node=divider(index),range=rangeAt(boundary.unit,boundary.char);if(range)range.insertNode(node);else boundary.unit.before(node);scrollMarkers[index]=node;}
+    scrollMarkers[0]=divider(0);flow.prepend(scrollMarkers[0]);flow.append(divider(pageCount-1,true));cacheScrollGeometry();
+  }
+  function cacheScrollGeometry(){
+    const top=viewport.getBoundingClientRect().top,offset=viewport.scrollTop;
+    scrollOffsets=scrollMarkers.map(node=>node.getBoundingClientRect().top-top+offset);
+    scrollBlocks=blocks.filter(node=>content.contains(node)).map(node=>{const rect=node.getBoundingClientRect();return {node,bottom:rect.bottom-top+offset};});
+  }
+  function scrollPageAt(offset){let lo=0,hi=Math.max(0,scrollOffsets.length-1);while(lo<hi){const mid=Math.ceil((lo+hi)/2);if(scrollOffsets[mid]<=offset+2)lo=mid;else hi=mid-1;}return lo;}
+  function scrollAnchor(){
+    if(viewport.scrollTop<20)return {block:0,char:0,opening:true};
+    const top=viewport.getBoundingClientRect().top+36,target=viewport.scrollTop+36;
+    let lo=0,hi=Math.max(0,scrollBlocks.length-1);while(lo<hi){const mid=Math.floor((lo+hi)/2);if(scrollBlocks[mid].bottom<=target)lo=mid+1;else hi=mid;}
+    const node=scrollBlocks[lo]?.node;if(!node)return {block:0,char:0};
+    let from=0,to=Math.max(0,node.textContent.length-1);while(from<to){const mid=Math.floor((from+to)/2);if(textRect(node,mid).bottom<top)from=mid+1;else to=mid;}
+    return {block:Number(node.dataset.block),char:from};
+  }
+  function syncScroll(){
+    if(!continuous()||layoutBusy)return;
+    pageIndex=viewport.scrollTop>=viewport.scrollHeight-viewport.clientHeight-2?pageCount-1:scrollPageAt(viewport.scrollTop+48);
+    viewport.dataset.opening='true';lastAnchor=scrollAnchor();updateProgress();
+  }
+  viewport.addEventListener('scroll',()=>{if(!continuous()||layoutBusy||scrollTimer)return;scrollTimer=setTimeout(()=>{scrollTimer=0;syncScroll();},32);},{passive:true});
   function paginate(anchor=lastAnchor) {
-    if(pageJumpLock)return;
-    const width=pageWindow.clientWidth;if(!width||!pageWindow.clientHeight)return;
+    if(pageJumpLock)return;layoutBusy=true;
+    clearDividers();app.dataset.view='pages';viewport.scrollTop=0;
+    const width=pageWindow.clientWidth;if(!width||!pageWindow.clientHeight){layoutBusy=false;return;}
     const gap=48;pageStride=width+gap;
-    flow.style.setProperty('--page-width',width+'px');flow.style.setProperty('--page-gap',gap+'px');
-    flow.style.transform='none';
-    // Count the actual rendered fragments, including split paragraphs, rather
-    // than inferring pages from the overflowing column container's scrollWidth.
+    flow.style.setProperty('--page-width',width+'px');flow.style.setProperty('--page-gap',gap+'px');flow.style.transform='none';
     const origin=flow.getBoundingClientRect().left;
     const nodes=[...blocks.filter(n=>content.contains(n)),...flow.querySelectorAll('.dem-panorama-space,.dem-chapter-heading,.dem-end,.dem-empty')];
     let extent=width;for(const node of nodes)for(const rect of node.getClientRects())extent=Math.max(extent,rect.right-origin);
+    pageBoundaries=[];
     const walker=document.createTreeWalker(flow,NodeFilter.SHOW_TEXT),range=document.createRange();let text;
-    while(text=walker.nextNode()){if(!text.textContent.trim())continue;range.selectNodeContents(text);for(const rect of range.getClientRects())extent=Math.max(extent,rect.right-origin);}
-    pageCount=Math.max(1,Math.ceil((extent+gap-1)/pageStride));
-    paginationReady=true;showPage(pageForAnchor(anchor));if(blocks[anchor?.block]||anchor?.end)lastAnchor=anchor;
+    while(text=walker.nextNode()){
+      if(!text.textContent.trim())continue;range.selectNodeContents(text);const rects=[...range.getClientRects()];
+      for(const rect of rects){
+        extent=Math.max(extent,rect.right-origin);const index=Math.floor((rect.left-origin+1)/pageStride);
+        if(index<=0||pageBoundaries[index])continue;
+        let lo=0,hi=text.length-1;while(lo<hi){const mid=Math.floor((lo+hi)/2);range.setStart(text,mid);range.setEnd(text,mid+1);if(Math.floor((range.getBoundingClientRect().left-origin+1)/pageStride)<index)lo=mid+1;else hi=mid;}
+        const unit=text.parentElement.closest('.dem-block,.dem-kicker,h1,.dem-synopsis p,.dem-end')||text.parentElement,prefix=document.createRange();prefix.selectNodeContents(unit);prefix.setEnd(text,lo);pageBoundaries[index]={unit,char:prefix.toString().length};
+      }
+    }
+    pageCount=Math.max(1,Math.ceil((extent+gap-1)/pageStride));paginationReady=true;
+    if(prefs.view==='scroll'){app.dataset.view='scroll';flow.style.transform='none';installDividers();layoutBusy=false;go(anchor,false);}
+    else {layoutBusy=false;showPage(pageForAnchor(anchor));}
+    if(blocks[anchor?.block]||anchor?.end)lastAnchor=anchor;
   }
   function schedulePagination(anchor=lastAnchor) {
     if(pageJumpLock)return;
@@ -152,15 +196,20 @@
     const run=()=>{cancelAnimationFrame(pageFrame);clearTimeout(pageTimer);pageFrame=pageTimer=0;paginate(anchor);};
     pageFrame=requestAnimationFrame(run);pageTimer=setTimeout(run,60);
   }
-  function go(anchor) {
-    if(!paginationReady)paginate(anchor);else showPage(pageForAnchor(anchor),true);
+  function go(anchor,focus=true) {
+    if(!paginationReady){paginate(anchor);return;}
+    if(continuous()){
+      const node=blocks[anchor?.block],top=anchor?.end?viewport.scrollHeight:node&&content.contains(node)&&!anchor?.opening?viewport.scrollTop+textRect(node,anchor.char??anchor.start??0).top-viewport.getBoundingClientRect().top-36:0;
+      viewport.scrollTo({top:Math.max(0,top),behavior:'instant'});syncScroll();if(focus)viewport.focus({preventScroll:true});
+    }else showPage(pageForAnchor(anchor),focus);
   }
   function updateProgress() {
-    const progress=!hasChapterText?0:pageCount===1?100:Math.round(pageIndex/(pageCount-1)*100);
+    const distance=viewport.scrollHeight-viewport.clientHeight;
+    const progress=!hasChapterText?0:continuous()?distance>0?Math.max(0,Math.min(100,Math.round(viewport.scrollTop/distance*100))):100:pageCount===1?100:Math.round(pageIndex/(pageCount-1)*100);
     const line=app.querySelector('.dem-progress-line');line.querySelector('span').style.width=progress+'%';line.setAttribute('aria-valuenow',progress);line.setAttribute('aria-valuetext',`Page ${pageIndex+1} of ${pageCount}`);
     app.querySelector('.dem-progress-label').textContent=hasChapterText?progress+'% of chapter':'No chapter text yet';
     const input=pageInput;if(document.activeElement!==input)input.value=pageIndex+1;input.max=pageCount;
-    app.querySelector('.dem-page-total').textContent='of '+pageCount;app.querySelector('.dem-page-announcement').textContent=`Page ${pageIndex+1} of ${pageCount}`;
+    app.querySelector('.dem-page-total').textContent='of '+pageCount;const announcement=app.querySelector('.dem-page-announcement'),pageText=`Page ${pageIndex+1} of ${pageCount}`;if(announcement.textContent!==pageText)announcement.textContent=pageText;
     app.querySelector('.dem-folio').textContent='—  '+(pageIndex+1)+'  —';
     app.querySelector('[data-action=previous-page]').disabled=pageIndex===0;
     app.querySelector('[data-action=next-page]').disabled=pageIndex===pageCount-1;
@@ -194,7 +243,7 @@
   const resize=()=>{syncFullscreen();if(!mobileReader()){clearTimeout(chromeTimer);setChromeHidden(false);}if(pageJumpLock){releasePageJump();return;}schedulePagination();};
   window.addEventListener('resize',resize);window.addEventListener('orientationchange',resize);
   window.visualViewport?.addEventListener('resize',resize);window.visualViewport?.addEventListener('scroll',()=>{syncFullscreen();releasePageJump();});
-  new ResizeObserver(()=>{if(paginationReady&&!pageJumpLock)schedulePagination();}).observe(pageWindow);
+  new ResizeObserver(()=>{if(paginationReady&&!pageJumpLock)schedulePagination();}).observe(viewport);
   window.addEventListener('pagehide',()=>{clearTimeout(chromeTimer);if(!suppressSave)savePosition();});
   let touchStart=null;
   viewport.addEventListener('touchstart',event=>{
@@ -213,8 +262,7 @@
   viewport.addEventListener('click',event=>{if(event.target.closest('a,button,input'))return;if(performance.now()<suppressSelectionUntil){event.preventDefault();return;}revealChrome();});
   content.addEventListener('focusin',event=>{const node=event.target.closest('.dem-block');if(node)showPage(pageForAnchor({block:Number(node.dataset.block)}));});
 
-  function applyPrefs(persist=true) {
-    const anchor=lastAnchor;
+  function applyPrefs(persist=true,anchor=lastAnchor) {
     const limits={size:[16,30],line:[1.4,2.3],width:[45,84],art:[0,1]};
     for(const [key,[min,max]] of Object.entries(limits)) prefs[key]=Math.min(max,Math.max(min,Number(prefs[key])||min));
     app.dataset.mode=prefs.mode;app.style.setProperty('--font-size',prefs.size+'px');app.style.setProperty('--line-height',prefs.line);app.style.setProperty('--reading-width',prefs.width+'ch');app.style.setProperty('--art-strength',prefs.art);
@@ -256,7 +304,8 @@
       const a=item.anchor;if(!Number.isFinite(a.start))continue;
       for(let index=a.block;index<=(a.endBlock??a.block);index++){const node=blocks[index];if(!node||!content.contains(node))continue;wrap(node,index===a.block?a.start:0,index===(a.endBlock??a.block)?a.end:node.textContent.length,kind,item.id);}
     }
-    if(search)wrap(blocks[search.block],search.start,search.end,'search');
+    if(search&&!activeSearch.query)wrap(blocks[search.block],search.start,search.end,'search');
+    activeSearch.matches.forEach((match,index)=>wrap(blocks[match.block],match.start,match.end,'search',String(index)));updateMatchNavigation();if(continuous())cacheScrollGeometry();
   }
   function captureSelection() {
     if(performance.now()<suppressSelectionUntil)return;
@@ -274,7 +323,7 @@
   app.querySelector('.dem-selection').addEventListener('pointerdown',event=>event.preventDefault());
 
   function openPanel(type, source=document.activeElement, options={}) {
-    revealChrome();
+    revealChrome();coverObserver?.disconnect();
     if(panelType==='extras') supplemental.remove();
     opener=source;panelType=type;panel.dataset.panel=type;selection=selection?{...selection}:null;panelBody.replaceChildren();
     const names={chapters:'Chapters',bookmarks:'Bookmarks',notes:'Notes',highlights:'Highlights',settings:'Reader settings',search:'Search',dictionary:'Dictionary',definitions:'Saved definitions',extras:'About & discussion',editor:'Passage note'};
@@ -291,7 +340,7 @@
     requestAnimationFrame(()=>{(panelBody.querySelector('input,textarea,button,a')||panel.querySelector('button')).focus();});
   }
   function closePanel() { app.querySelectorAll('[data-action=chapters]').forEach(b=>b.setAttribute('aria-expanded','false')); panel.close();app.querySelectorAll('.dem-nav button').forEach(el=>el.removeAttribute('aria-current')); }
-  panel.addEventListener('close',()=>{revealChrome();if(opener?.isConnected&&opener.getClientRects().length)opener.focus({preventScroll:true});else viewport.focus({preventScroll:true});});
+  panel.addEventListener('close',()=>{coverObserver?.disconnect();revealChrome();if(opener?.isConnected&&opener.getClientRects().length)opener.focus({preventScroll:true});else viewport.focus({preventScroll:true});});
   panel.addEventListener('keydown',event=>{if(event.key==='Escape')event.stopPropagation();});
   panel.addEventListener('click',event=>{if(event.target===panel){const r=panel.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)closePanel();}});
   function paragraph(text){const p=document.createElement('p');p.textContent=text;return p;}
@@ -347,7 +396,7 @@
       const copy=document.createElement('button');copy.type='button';copy.innerHTML=svg('copy')+'<span>Copy</span>';copy.setAttribute('aria-label','Copy highlighted passage');copy.addEventListener('click',()=>sharePassage(item,true));actions.append(share,copy);
     }
     const remove=document.createElement('button');remove.type='button';
-    if(kind==='highlights'){remove.className='dem-remove-highlight';remove.innerHTML=svg('close');remove.setAttribute('aria-label','Remove highlight');remove.title='Remove highlight';}else remove.textContent='Remove';
+    if(['highlights','bookmarks'].includes(kind)){remove.className='dem-remove-highlight'+(kind==='bookmarks'?' dem-remove-bookmark':'');remove.innerHTML=svg('close');const label=kind==='bookmarks'?'Remove bookmark':'Remove highlight';remove.setAttribute('aria-label',label);remove.title=label;if(kind==='bookmarks')card.classList.add('dem-bookmark-card');}else remove.textContent='Remove';
     remove.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();data[kind]=data[kind].filter(x=>x.id!==item.id);selectedNotes.delete(item.id);const persisted=storeAnnotations();renderRecords(kind);if(kind==='highlights'&&persisted)toast('Highlight removed.');});actions.append(remove);card.append(actions);return card;
   }
   function renderRecords(kind) {
@@ -370,34 +419,68 @@
     const routes=document.createElement('nav');routes.className='dem-chapter-routes';routes.setAttribute('aria-label','Chapter navigation');
     for(const [route,label] of [[current.previous,'← Previous chapter'],['library.html','Library'],[current.next,'Next chapter →']])if(route){const a=document.createElement('a');a.href=route;a.textContent=label;routes.append(a);}panelBody.append(routes);
     const list=document.createElement('nav');list.className='dem-chapter-shelf';list.setAttribute('aria-label','Chapter list');panelBody.append(list);
-    function render(){list.replaceChildren();let section='';const matches=catalog.filter(item=>item.title.toLowerCase().includes(input.value.toLowerCase()));matches.forEach(item=>{
+    coverObserver=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){const image=entry.target;image.src=image.dataset.src;coverObserver?.unobserve(image);}},{root:panelBody,rootMargin:'150px'}):null;
+    function render(){coverObserver?.disconnect();list.replaceChildren();let section='';const matches=catalog.filter(item=>item.title.toLowerCase().includes(input.value.toLowerCase()));matches.forEach(item=>{
       if(item.section!==section){section=item.section;const head=document.createElement('h3');head.className='dem-section-label';head.textContent=section;list.append(head);}
       const link=document.createElement('a');link.className='dem-chapter-link';link.href=item.file;
-      const img=document.createElement('img');img.src=item.cover;img.alt='';img.width=1024;img.height=1536;img.loading='lazy';img.decoding='async';
+      const img=document.createElement('img');img.dataset.src=item.cover;if(!coverObserver)img.src=item.cover;img.alt='';img.width=1024;img.height=1536;img.loading='lazy';img.decoding='async';
       const name=document.createElement('span');name.className='dem-shelf-title';name.textContent=item.title;
       const meta=document.createElement('span');meta.className='dem-shelf-meta';const saved=positions.entries[item.file];meta.textContent=item.file===file?'Reading now'+(saved?' · '+Math.round(saved.progress)+'%':''):saved?Math.round(saved.progress)+'% read':'Open chapter';
-      link.append(img,name,meta);if(item.file===file)link.setAttribute('aria-current','page');list.append(link);
+      link.append(img,name,meta);coverObserver?.observe(img);if(item.file===file)link.setAttribute('aria-current','page');list.append(link);
     });if(!matches.length)list.append(paragraph('No chapters match your search.'));}
     input.addEventListener('input',render);render();refreshCounts();
   }
   function renderSettings() {
     panelBody.innerHTML='<p>Shape a quiet space for the written word.</p><label class="dem-field"><span>Reading appearance</span><div class="dem-choice">'+['light','sepia','dark'].map(mode=>`<button type="button" data-mode="${mode}" aria-pressed="${prefs.mode===mode}">${mode[0].toUpperCase()+mode.slice(1)}</button>`).join('')+'</div></label>';
+    const layout=document.createElement('fieldset');layout.className='dem-layout-choice';const legend=document.createElement('legend');legend.textContent='Reading layout';const options=document.createElement('div');options.className='dem-choice';
+    for(const [view,label] of [['pages','Pages'],['scroll','Continuous scroll']]){const button=document.createElement('button');button.type='button';button.dataset.view=view;button.textContent=label;button.setAttribute('aria-pressed',String(prefs.view===view));button.addEventListener('click',()=>{const anchor=!continuous()&&pageIndex===0?{block:0,char:0,opening:true}:anchorNow();prefs.view=view;applyPrefs(true,anchor);options.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));});options.append(button);}layout.append(legend,options);panelBody.prepend(layout);
     for(const [key,label,min,max,step,unit] of [['size','Font size',16,30,1,'px'],['line','Line spacing',1.4,2.3,.1,''],['width','Reading width',45,84,1,'ch'],['art','Artwork intensity',0,1,.1,'']]) {
       const field=document.createElement('label');field.className='dem-field';const text=document.createElement('span');text.textContent=label;const output=document.createElement('output');output.textContent=prefs[key]+unit;text.append(output);
       const input=document.createElement('input');input.type='range';input.min=min;input.max=max;input.step=step;input.value=prefs[key];input.setAttribute('aria-label',label);input.addEventListener('input',()=>{prefs[key]=Number(input.value);output.textContent=input.value+unit;applyPrefs();});field.append(text,input);panelBody.append(field);
     }
     panelBody.querySelectorAll('[data-mode]').forEach(button=>button.addEventListener('click',()=>{prefs.mode=button.dataset.mode;applyPrefs();panelBody.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));}));
   }
-  function renderSearch({query='',all=false}={}) {
-    panelBody.innerHTML='<form class="dem-search-form"><input type="search" aria-label="Search text" placeholder="A word, a passage, an idea…" required><button class="dem-primary" type="submit">Search</button></form><label class="dem-search-scope"><input type="checkbox"> Search the complete work</label><p class="dem-search-status" role="status">Search this chapter or all chapters and introductory manuscripts.</p><div class="dem-search-results dem-list"></div>';
-    const form=panelBody.querySelector('form'),input=form.querySelector('input'),scope=panelBody.querySelector('[type=checkbox]'),status=panelBody.querySelector('.dem-search-status'),results=panelBody.querySelector('.dem-search-results');let generation=0;input.value=query;scope.checked=all;
-    form.addEventListener('submit',async event=>{event.preventDefault();const query=input.value.trim();if(!query)return;const thisSearch=++generation;results.replaceChildren();status.textContent='Searching…';
-      try {const index=scope.checked?await getIndex():blocks.filter(node=>content.contains(node)).map(node=>({file,title,text:node.textContent,block:Number(node.dataset.block)}));if(thisSearch!==generation)return;
-        const matches=index.filter(unit=>unit.text.toLocaleLowerCase().includes(query.toLocaleLowerCase()));status.textContent=matches.length+' matching passages'+(matches.length>100?' · showing the first 100':'')+'.';
-        matches.slice(0,100).forEach(unit=>{const card=document.createElement('div');card.className='dem-record';const a=document.createElement('a');a.textContent=unit.title;a.href=unit.file+(catalog.some(item=>item.file===unit.file)?'?find=':'#:~:text=')+encodeURIComponent(query);if(unit.file===file)a.addEventListener('click',event=>{event.preventDefault();const node=blocks[unit.block]||blocks.find(n=>n.textContent.includes(unit.text));if(!node)return;const at=node.textContent.toLowerCase().indexOf(query.toLowerCase());closePanel();go({block:Number(node.dataset.block),char:at});refreshMarks({block:Number(node.dataset.block),start:at,end:at+query.length});});const snippet=document.createElement('small');const at=unit.text.toLowerCase().indexOf(query.toLowerCase());snippet.textContent=(at>60?'…':'')+unit.text.slice(Math.max(0,at-60),at+query.length+110);card.append(a,snippet);results.append(card);});
-      } catch(_){status.textContent='Some chapters could not be loaded. Please try again when connected.';}
+  function chapterMatches(query){
+    // Literal search: regular-expression punctuation is treated as writing.
+    const pattern=new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'giu'),matches=[];
+    for(const node of blocks.filter(node=>content.contains(node))){pattern.lastIndex=0;let found;while(found=pattern.exec(node.textContent)){matches.push({block:Number(node.dataset.block),start:found.index,end:found.index+found[0].length});if(!found[0].length)break;}}
+    return matches;
+  }
+  function setChapterSearch(query,index=0,all=activeSearch.all||false){activeSearch={query,matches:query?chapterMatches(query):[],index,all};refreshMarks();}
+  function updateMatchNavigation(){
+    const nav=app.querySelector('.dem-find-nav'),count=activeSearch.matches.length;nav.hidden=count===0;
+    if(count){activeSearch.index=((activeSearch.index%count)+count)%count;nav.querySelector('.dem-find-count').textContent=(activeSearch.index+1)+' of '+count+' · '+activeSearch.query;}
+    content.querySelectorAll('mark[data-kind=search]').forEach(mark=>{const current=Number(mark.dataset.record)===activeSearch.index;mark.classList.toggle('dem-current-match',current);if(current)mark.setAttribute('aria-current','true');else mark.removeAttribute('aria-current');});
+  }
+  function goToMatch(index){
+    if(!activeSearch.matches.length)return;activeSearch.index=((index%activeSearch.matches.length)+activeSearch.matches.length)%activeSearch.matches.length;
+    if(panel.open)closePanel();const match=activeSearch.matches[activeSearch.index];updateMatchNavigation();go({block:match.block,char:match.start});revealChrome();
+  }
+  function rememberSearch(query,all){searchHistory=[{query,all,at:Date.now()},...searchHistory.filter(item=>typeof item.query==='string'&&(item.query.toLowerCase()!==query.toLowerCase()||!!item.all!==all))].slice(0,12);write(historyKey,searchHistory);}
+  function renderSearch({query=activeSearch.query,all=activeSearch.all||false}={}) {
+    panelBody.innerHTML='<form class="dem-search-form"><input type="search" aria-label="Search text" placeholder="A word, a passage, an idea…" required><button class="dem-primary" type="submit">Search</button></form><label class="dem-search-scope"><input type="checkbox"> Search the complete work</label><details class="dem-search-history" aria-label="Previous searches"></details><p class="dem-search-status" role="status">Search this chapter or all chapters and introductory manuscripts.</p><div class="dem-search-results dem-list"></div>';
+    const form=panelBody.querySelector('form'),input=form.querySelector('input'),scope=panelBody.querySelector('[type=checkbox]'),status=panelBody.querySelector('.dem-search-status'),results=panelBody.querySelector('.dem-search-results'),history=panelBody.querySelector('.dem-search-history');let generation=0,initialIndex=query===activeSearch.query?activeSearch.index:0;input.value=query;scope.checked=all;
+    function renderHistory(){
+      history.replaceChildren();const heading=document.createElement('summary');heading.textContent='Previous searches'+(searchHistory.length?' ('+searchHistory.length+')':'');history.append(heading);
+      if(!searchHistory.length){history.append(paragraph('Your previous searches will appear here.'));return;}
+      const list=document.createElement('div');list.className='dem-history-list';
+      searchHistory.forEach(item=>{if(typeof item.query!=='string')return;const button=document.createElement('button');button.type='button';button.className='dem-history-query';const term=document.createElement('span');term.textContent=item.query;const where=document.createElement('small');where.textContent=item.all?'Complete work':'This chapter';button.append(term,where);button.addEventListener('click',()=>{input.value=item.query;scope.checked=!!item.all;form.requestSubmit();});list.append(button);});
+      const clear=document.createElement('button');clear.type='button';clear.className='dem-text-button';clear.textContent='Clear previous searches';clear.addEventListener('click',()=>{searchHistory=[];write(historyKey,searchHistory);renderHistory();});history.append(list,clear);
+    }
+    form.addEventListener('submit',async event=>{event.preventDefault();const query=input.value.trim();if(!query)return;rememberSearch(query,scope.checked);renderHistory();history.open=false;setChapterSearch(query,initialIndex,scope.checked);initialIndex=0;panelBody.querySelector('.dem-open-matches')?.remove();const thisSearch=++generation;results.replaceChildren();status.textContent='Searching…';
+      try {
+        const index=scope.checked?await getIndex():blocks.filter(node=>content.contains(node)).map(node=>({file,title,text:node.textContent,block:Number(node.dataset.block)}));if(thisSearch!==generation)return;
+        const matches=index.filter(unit=>unit.text.toLocaleLowerCase().includes(query.toLocaleLowerCase()));status.textContent=scope.checked?matches.length+' matching passages in the complete work · '+activeSearch.matches.length+' matches in this chapter.':activeSearch.matches.length+' matches in this chapter.';
+        matches.slice(0,100).forEach(unit=>{
+          const card=document.createElement('div');card.className='dem-record';const a=document.createElement('a');a.textContent=unit.title;a.href=unit.file+(catalog.some(item=>item.file===unit.file)?'?find=':'#:~:text=')+encodeURIComponent(query);
+          if(unit.file===file)a.addEventListener('click',event=>{event.preventDefault();const node=blocks[unit.block]||blocks.find(n=>n.textContent.includes(unit.text));if(!node)return;const match=activeSearch.matches.findIndex(m=>m.block===Number(node.dataset.block));if(match>=0)goToMatch(match);});
+          const snippet=document.createElement('small'),at=unit.text.toLowerCase().indexOf(query.toLowerCase());snippet.textContent=(at>60?'…':'')+unit.text.slice(Math.max(0,at-60),at+query.length+110);card.append(a,snippet);results.append(card);
+        });
+        if(matches.length>100)results.append(paragraph('Showing the first 100 matching passages.'));
+        if(activeSearch.matches.length){const go=document.createElement('button');go.type='button';go.className='dem-primary dem-open-matches';go.textContent='Read chapter matches';go.addEventListener('click',()=>goToMatch(0));status.after(go);}
+      }catch(_){status.textContent='Some chapters could not be loaded. Please try again when connected.';}
     });
-    if(query)form.requestSubmit();
+    renderHistory();if(query)form.requestSubmit();
   }
   async function getIndex() {
     if(!searchIndexPromise)searchIndexPromise=(async()=>{
@@ -498,7 +581,10 @@
   document.addEventListener('fullscreenchange',nativeChange);document.addEventListener('webkitfullscreenchange',nativeChange);
   app.addEventListener('click',async event=>{
     const target=event.target.closest('[data-action]');if(!target)return;const action=target.dataset.action;
-    if(action==='show-controls')revealChrome();
+    if(action==='previous-match')goToMatch(activeSearch.index-1);
+    else if(action==='next-match')goToMatch(activeSearch.index+1);
+    else if(action==='clear-find'){activeSearch={query:'',matches:[],index:0};refreshMarks();}
+    else if(action==='show-controls')revealChrome();
     else if(action==='close')closePanel();
     else if(action==='previous-page')showPage(pageIndex-1,true);
     else if(action==='next-page')showPage(pageIndex+1,true);
@@ -530,10 +616,10 @@
     if(query.has('page')){const node=segments.find(s=>Number(s.dataset.legacyPage)===page)?.querySelector('.dem-block');anchor={block:Number(node?.dataset.block||0)};}
     if(!anchor&&query.get('resume')==='1'&&legacyLast?.file===file){const node=segments.find(s=>Number(s.dataset.legacyPage)===legacyLast.page)?.querySelector('.dem-block');anchor={block:Number(node?.dataset.block||0)};}
     paginate(anchor||{block:0,char:0});
-    if(query.get('find')){const term=query.get('find'),node=blocks.find(n=>content.contains(n)&&n.textContent.toLowerCase().includes(term.toLowerCase()));if(node){const at=node.textContent.toLowerCase().indexOf(term.toLowerCase());go({block:Number(node.dataset.block),char:at});refreshMarks({block:Number(node.dataset.block),start:at,end:at+term.length});}}
+    if(query.get('find')){const term=query.get('find'),node=blocks.find(n=>content.contains(n)&&n.textContent.toLowerCase().includes(term.toLowerCase()));if(node){const at=node.textContent.toLowerCase().indexOf(term.toLowerCase());setChapterSearch(term);const match=activeSearch.matches.findIndex(item=>item.block===Number(node.dataset.block)&&item.start===at);if(match>=0)goToMatch(match);}}
     updateProgress();suppressSave=false;
   }));
   // Future narration can consume real paragraph anchors and aligned timing data.
   // No audio is generated, and no approximate word timers are simulated.
-  window.DemahsReader=Object.freeze({file,getBlocks:()=>blocks.filter(n=>content.contains(n)).map(n=>({id:n.id,text:n.textContent})),goToAnchor:anchor=>go(anchor),getPosition:anchorNow,getPagination:()=>({page:pageIndex+1,total:pageCount,ready:paginationReady}),goToPage:page=>showPage(page-1,true)});
+  window.DemahsReader=Object.freeze({file,getBlocks:()=>blocks.filter(n=>content.contains(n)).map(n=>({id:n.id,text:n.textContent})),goToAnchor:anchor=>go(anchor),getPosition:anchorNow,getPagination:()=>({page:pageIndex+1,total:pageCount,ready:paginationReady,view:prefs.view}),goToPage:page=>showPage(page-1,true)});
 })();

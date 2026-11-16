@@ -5,9 +5,10 @@
   let catalog;try{const response=await fetch('assets/reader-catalog.json');if(!response.ok)return;catalog=await response.json();}catch(_){return;}
   let positions;try{positions=JSON.parse(localStorage.getItem('demahs.reader.positions.v1'))||{};}catch(_){positions={};}
   const lookup=new Map(catalog.map(item=>[item.file,item]));
+  const covers=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){const image=entry.target;image.src=image.dataset.src;covers.unobserve(image);}},{rootMargin:'240px'}):null;
   document.querySelectorAll('.library-section .book-btn').forEach(link=>{
     const item=lookup.get(link.getAttribute('href'));if(!item)return;
-    const image=document.createElement('img');image.className='shelf-cover';image.src=item.cover;image.alt='';image.width=1024;image.height=1536;image.loading='lazy';image.decoding='async';link.prepend(image);link.classList.add('shelf-book');
+    const image=document.createElement('img');image.className='shelf-cover';image.dataset.src=item.cover;if(!covers)image.src=item.cover;image.alt='';image.width=1024;image.height=1536;image.loading='lazy';image.decoding='async';link.prepend(image);link.classList.add('shelf-book');covers?.observe(image);
     const saved=positions.entries?.[item.file];
     if(saved){let label=link.querySelector('.btn-progress-label');if(!label){label=document.createElement('span');label.className='btn-progress-label';link.querySelector('.btn-text').append(label);}label.textContent=saved.progress>=100?'Finished':Math.round(saved.progress)+'% read';let bar=link.querySelector('.btn-progress-bar');if(!bar){bar=document.createElement('div');bar.className='btn-progress-bar';link.append(bar);}bar.style.width=Math.max(0,Math.min(100,saved.progress))+'%';}
   });

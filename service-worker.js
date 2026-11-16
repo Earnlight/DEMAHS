@@ -1,7 +1,7 @@
 // My Noegenesis — Service Worker
 // Caches all pages for offline use and fast loading
 
-const CACHE_NAME = 'demahs-reader-pilot-v4';
+const CACHE_NAME = 'demahs-reader-pilot-v5';
 
 // List every file in your site here
 const ASSETS = [
@@ -109,12 +109,14 @@ const ASSETS = [
   '/assets/images/covers/weight.webp'
 ];
 
-// Install: cache everything
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
-  );
-  self.skipWaiting();
+// Warm the complete offline collection with bounded, low-priority requests.
+// This avoids a hundred competing downloads during a first foreground visit.
+self.addEventListener('install',event=>{
+  event.waitUntil((async()=>{
+    const cache=await caches.open(CACHE_NAME);let cursor=0;
+    async function worker(){while(cursor<ASSETS.length){const path=ASSETS[cursor++],request=new Request(path,{cache:'reload'});const response=await fetch(request,{priority:'low'});if(!response.ok)throw new Error('Offline asset unavailable: '+path);await cache.put(request,response);}}
+    await Promise.all(Array.from({length:3},worker));await self.skipWaiting();
+  })());
 });
 
 // Activate: clear old caches
@@ -129,29 +131,23 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch: try the network first so edits show up immediately, cache the
-// result for offline use, and only fall back to the cache when offline.
-//
-// The network attempt explicitly forces { cache: 'no-store' } rather than
-// relying on event.request's own cache mode — a page-level fetch(url, {cache:
-// 'no-store'}) is not guaranteed to keep that mode once it reaches this
-// handler as event.request, so without this override this "network first"
-// fetch could still be quietly satisfied from the browser's own HTTP cache.
-self.addEventListener('fetch', event => {
-  // Leave external integrations and form POSTs to the browser. Only cache this site.
-  const url = new URL(event.request.url);
-  if (event.request.method !== 'GET' || url.origin !== self.location.origin) return;
-  event.respondWith(
-    fetch(event.request, { cache: 'no-store' }).then(response => {
-      if (!response.ok) return response;
-      const copy = response.clone();
-      event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(() => {}));
-      return response;
-    }).catch(async () => {
-      const cached = await caches.match(event.request) || await caches.match(url.pathname);
-      if (cached) return cached;
-      if (event.request.mode === 'navigate') return caches.match('/index.html');
-      return new Response('Unavailable offline', { status: 503 });
-    })
-  );
+// Documents/scripts stay network-first. Versioned worker installs refresh all
+// image/font entries; repeated artwork visits can then use the local copy.
+self.addEventListener('fetch',event=>{
+  const url=new URL(event.request.url);
+  if(event.request.method!=='GET'||url.origin!==self.location.origin)return;
+  event.respondWith((async()=>{
+    const cache=await caches.open(CACHE_NAME);
+    if(/\.(?:webp|png|jpe?g|svg|ico|woff2)$/i.test(url.pathname)){
+      const stored=await cache.match(event.request)||await cache.match(url.pathname);if(stored)return stored;
+    }
+    try{
+      const response=await fetch(event.request,{cache:'no-store'});
+      if(response.ok)event.waitUntil(cache.put(event.request,response.clone()).catch(()=>{}));return response;
+    }catch(_){
+      const stored=await cache.match(event.request)||await cache.match(url.pathname);if(stored)return stored;
+      if(event.request.mode==='navigate')return await cache.match('/index.html')||new Response('Unavailable offline',{status:503});
+      return new Response('Unavailable offline',{status:503});
+    }
+  })());
 });
