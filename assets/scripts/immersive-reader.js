@@ -35,14 +35,16 @@
   app.innerHTML = `<a class="dem-skip" href="#dem-reading">Skip to chapter text</a>
     <header class="dem-top"><div style="display:flex;align-items:center;gap:5px">${button('chapters','menu','Open reader navigation','dem-menu')}<a class="dem-brand" href="library.html" aria-label="DEMAHS library">${crown}<span>DEMAHS <small>THE MANUSCRIPT READER</small></span></a></div><span class="dem-top-title">${esc(title)} <span aria-hidden="true" style="color:#766147;margin-inline:14px">/</span> By EARNLIGHT</span><nav class="dem-actions" aria-label="Reader actions">${button('search','search','Search chapters')}${button('bookmark','bookmark','Bookmark this location')}${button('settings','settings','Reader settings','dem-settings-top')}</nav></header>
     <div class="dem-workspace"><aside class="dem-sidebar" aria-label="Reader navigation"><div class="dem-cover"><img src="${esc(current.cover)}" alt="" width="1024" height="1536"><span>${esc(title)}</span></div><p class="dem-sidebar-label">YOUR READING ROOM</p><nav class="dem-nav">${nav()}</nav><div class="dem-sidebar-foot">✦<a href="library.html">Return to the library</a><button class="dem-text-button" type="button" data-action="extras">About &amp; discussion</button></div></aside>
-    <main id="dem-reading" class="dem-scroll" tabindex="0" aria-label="${esc(title)} manuscript"><article class="dem-manuscript" aria-labelledby="dem-title"><div class="dem-panorama" aria-hidden="true"><picture><source media="(max-width:760px)" srcset="assets/images/celestial-realm-mobile.webp"><img src="assets/images/celestial-realm.webp" width="1585" height="992" alt="" decoding="async"></picture></div><header class="dem-chapter-heading"><div class="dem-kicker"></div><h1 id="dem-title">${esc(title)}</h1><div class="dem-ornament" aria-hidden="true">✦</div></header><div class="dem-reading-content" id="dem-content"></div><div class="dem-end"><span aria-hidden="true">❧</span>End of ${esc(title)}</div></article></main></div>
-    <footer class="dem-bottom"><div class="dem-bottom-side"><a class="dem-text-button dem-prev" aria-label="Previous chapter">${svg('left')}<span class="dem-label">Previous chapter</span></a><button class="dem-text-button dem-bottom-chapters" type="button" data-action="chapters">${svg('chapters')}<span class="dem-label">Chapters</span></button></div><div class="dem-progress"><div class="dem-progress-line" role="progressbar" aria-label="Chapter reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><label class="dem-progress-label">0% of chapter</label></div><div class="dem-bottom-side">${button('settings','settings','Font and appearance settings','dem-width-control')}${button('mode','sun','Change reading appearance')}${button('fullscreen','full','Enter distraction-free fullscreen')}<a class="dem-text-button dem-next" aria-label="Next chapter"><span class="dem-label">Next chapter</span>${svg('right')}</a></div></footer>
+    <main id="dem-reading" class="dem-scroll" tabindex="0" aria-label="${esc(title)} manuscript"><div class="dem-page-window"><article class="dem-manuscript" aria-labelledby="dem-title"><div class="dem-panorama" aria-hidden="true"><picture><source media="(max-width:760px)" srcset="assets/images/celestial-realm-mobile.webp"><img src="assets/images/celestial-realm.webp" width="1585" height="992" alt="" decoding="async"></picture></div><header class="dem-chapter-heading"><div class="dem-kicker"></div><h1 id="dem-title">${esc(title)}</h1><div class="dem-ornament" aria-hidden="true">✦</div></header><div class="dem-reading-content" id="dem-content"></div><div class="dem-end"><span aria-hidden="true">❧</span>End of ${esc(title)}</div></article></div><span class="dem-folio" aria-hidden="true"></span></main></div>
+    <footer class="dem-bottom"><nav class="dem-page-turns" aria-label="Page navigation"><button class="dem-text-button dem-page-previous" type="button" data-action="previous-page" aria-label="Previous page">${svg('left')}<span class="dem-label">Previous page</span></button><form class="dem-page-jump"><label for="dem-page-number">Page</label><input id="dem-page-number" type="number" inputmode="numeric" min="1" value="1" aria-label="Go to page" aria-describedby="dem-page-total"><span class="dem-page-total" id="dem-page-total">of 1</span><button type="submit" class="dem-text-button">Go</button></form><button class="dem-text-button dem-page-next" type="button" data-action="next-page" aria-label="Next page"><span class="dem-label">Next page</span>${svg('right')}</button></nav><span class="dem-page-announcement" role="status" aria-live="polite" aria-atomic="true"></span><div class="dem-reading-tools">${button('chapters','chapters','Open chapter shelf')}<div class="dem-progress"><div class="dem-progress-line" role="progressbar" aria-label="Chapter reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><label class="dem-progress-label">Opening manuscript</label></div>${button('settings','settings','Font and appearance settings')}${button('mode','sun','Change reading appearance')}${button('fullscreen','full','Enter distraction-free fullscreen')}</div></footer>
     <dialog class="dem-panel" aria-labelledby="dem-panel-title"><header class="dem-panel-header"><h2 id="dem-panel-title"></h2>${button('close','close','Close panel')}</header><div class="dem-panel-body"></div></dialog>
     <div class="dem-selection" role="toolbar" aria-label="Selected passage actions" hidden><button type="button" data-action="highlight">${svg('highlight')}Highlight</button><button type="button" data-action="note">${svg('note')}Note</button><button type="button" data-action="define-selection">${svg('dictionary')}Define</button><button type="button" data-action="copy">${svg('copy')}Copy</button><button type="button" data-action="share">${svg('share')}Share</button></div><div class="dem-toast" role="status" aria-live="polite" hidden></div>`;
   document.body.append(app);
   const viewport = app.querySelector('.dem-scroll'), content = app.querySelector('#dem-content'), panel = app.querySelector('dialog'), panelBody = app.querySelector('.dem-panel-body'), panelTitle = app.querySelector('#dem-panel-title');
+  const pageWindow = app.querySelector('.dem-page-window'), flow = app.querySelector('.dem-manuscript');
+  let pageIndex = 0, pageCount = 1, pageStride = 1, paginationReady = false, pageFrame = 0, pageTimer = 0, lastAnchor = {block:0,char:0};
   const blocks = [], segments = [], supplemental = document.createElement('div');
-  let selection = null, toastTimer, saveTimer, scrollFrame, panelType = '', opener = null, fullscreen = false, nativeFullscreen = false, searchIndexPromise;
+  let selection = null, toastTimer, saveTimer, panelType = '', opener = null, fullscreen = false, nativeFullscreen = false, searchIndexPromise;
   let suppressSave = true;
   legacyPages.forEach(page => {
     const body = page.querySelector('.page-body'); if (!body) return;
@@ -64,6 +66,7 @@
     const synopsis = document.createElement('div'); synopsis.className = 'dem-synopsis';
     [...legacySummary.childNodes].forEach(node => synopsis.append(node)); app.querySelector('.dem-chapter-heading').append(synopsis);
   }
+  const opening=content.querySelector('p');if(opening&&/^\p{L}/u.test(opening.textContent.trim()))opening.classList.add('dem-opening-paragraph');
   const hasChapterText = blocks.some(node => node.matches('p,ul,ol,blockquote'));
   if (!hasChapterText) {
     app.querySelector('.dem-end').hidden=true;
@@ -75,9 +78,6 @@
   const seenLinks=new Set();
   document.querySelectorAll('#realm-navigation a[href]:not(.realm-skip),#home-btn').forEach(original=>{const href=original.getAttribute('href');if(seenLinks.has(href))return;seenLinks.add(href);const link=document.createElement('a');link.href=href;link.textContent=original.getAttribute('aria-label')||original.textContent.trim();siteLinks.append(link);});
   supplemental.append(siteLinks);
-  const previous = app.querySelector('.dem-prev'), next = app.querySelector('.dem-next');
-  if (current.previous) previous.href = current.previous; else { previous.setAttribute('aria-disabled','true'); previous.hidden = true; }
-  if (current.next) next.href = current.next; else { next.setAttribute('aria-disabled','true'); next.hidden = true; }
   document.body.classList.remove('realm-page','realm-reader'); document.body.classList.add('dem-active'); document.body.style.overflow = '';
   window.DemahsReaderBoot?.finish();
   syncFullscreen(); applyPrefs(false); importLegacy(); refreshMarks(); refreshCounts();
@@ -87,39 +87,95 @@
   function write(key, value) { try { localStorage.setItem(key,JSON.stringify(value)); return true; } catch (_) { toast('Browser storage is unavailable. Changes will last for this session.'); return false; } }
   function uid() { return crypto.randomUUID?.() || Date.now().toString(36)+Math.random().toString(36).slice(2); }
   function toast(message) { const el=app.querySelector('.dem-toast'); el.textContent=message; el.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>{el.hidden=true;},3500); }
-  function anchorNow() {
-    const top=viewport.getBoundingClientRect().top+36;
-    const candidates=blocks.filter(node=>content.contains(node));
-    const node=candidates.find(node=>node.getBoundingClientRect().bottom>top)||candidates.at(-1);
-    return node ? {block:Number(node.dataset.block),offset:top-node.getBoundingClientRect().top} : {block:0,offset:0};
+  // CSS columns fragment the original selectable nodes into genuine viewport-sized pages.
+  // Character anchors survive font changes, rotation and native/PWA fullscreen.
+  function textRect(node, offset=0) {
+    const walker=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);let text,last;
+    while(text=walker.nextNode()){last=text;if(offset<text.length)break;offset-=text.length;}
+    if(!text){text=last;offset=Math.max(0,(last?.length||1)-1);}
+    if(!text)return node.getBoundingClientRect();
+    const range=document.createRange();range.setStart(text,Math.min(offset,text.length));range.setEnd(text,Math.min(offset+1,text.length));return range.getBoundingClientRect();
   }
-  function go(anchor, smooth=true) {
-    const node=blocks[anchor?.block];
-    if(node && content.contains(node)) viewport.scrollTo({top:viewport.scrollTop+node.getBoundingClientRect().top-viewport.getBoundingClientRect().top-36+(anchor.offset||0),behavior:smooth&&!matchMedia('(prefers-reduced-motion: reduce)').matches?'smooth':'instant'});
-    else viewport.scrollTo({top:0,behavior:'instant'});
-    viewport.focus({preventScroll:true}); updateProgress();
+  function pageForAnchor(anchor) {
+    const node=blocks[anchor?.block];if(anchor?.end)return pageCount-1;if(!node||!content.contains(node))return 0;
+    const rect=textRect(node,anchor.char??anchor.start??0);
+    return Math.max(0,Math.min(pageCount-1,Math.floor((rect.left-flow.getBoundingClientRect().left+1)/pageStride)));
+  }
+  function anchorNow() {
+    for(const node of blocks.filter(n=>content.contains(n))){
+      const rects=[...node.getClientRects()];
+      if(!rects.some(r=>Math.floor((r.left-flow.getBoundingClientRect().left+1)/pageStride)===pageIndex))continue;
+      let lo=0,hi=Math.max(0,node.textContent.length-1);
+      while(lo<hi){const mid=Math.floor((lo+hi)/2),at=Math.floor((textRect(node,mid).left-flow.getBoundingClientRect().left+1)/pageStride);if(at<pageIndex)lo=mid+1;else hi=mid;}
+      return {block:Number(node.dataset.block),char:lo};
+    }
+    const last=blocks.filter(n=>content.contains(n)).at(-1);
+    return pageIndex===pageCount-1&&last?{block:Number(last.dataset.block),char:Math.max(0,last.textContent.length-1),end:true}:{block:0,char:0};
+  }
+  function showPage(index, focus=false) {
+    pageIndex=Math.max(0,Math.min(pageCount-1,Math.trunc(index)||0));
+    flow.style.transform=`translate3d(${-pageIndex*pageStride}px,0,0)`;
+    pageWindow.scrollLeft=0;viewport.scrollTop=0;
+    lastAnchor=anchorNow();updateProgress();
+    if(focus)viewport.focus({preventScroll:true});
+  }
+  function paginate(anchor=lastAnchor) {
+    const width=pageWindow.clientWidth;if(!width||!pageWindow.clientHeight)return;
+    const gap=48;pageStride=width+gap;
+    flow.style.setProperty('--page-width',width+'px');flow.style.setProperty('--page-gap',gap+'px');
+    flow.style.transform='none';
+    // Count the actual rendered fragments, including split paragraphs, rather
+    // than inferring pages from the overflowing column container's scrollWidth.
+    const origin=flow.getBoundingClientRect().left;
+    const nodes=[...blocks.filter(n=>content.contains(n)),...flow.querySelectorAll('.dem-panorama,.dem-chapter-heading,.dem-end,.dem-empty')];
+    let extent=width;for(const node of nodes)for(const rect of node.getClientRects())extent=Math.max(extent,rect.right-origin);
+    const walker=document.createTreeWalker(flow,NodeFilter.SHOW_TEXT),range=document.createRange();let text;
+    while(text=walker.nextNode()){if(!text.textContent.trim())continue;range.selectNodeContents(text);for(const rect of range.getClientRects())extent=Math.max(extent,rect.right-origin);}
+    pageCount=Math.max(1,Math.ceil((extent+gap-1)/pageStride));
+    paginationReady=true;showPage(pageForAnchor(anchor));if(blocks[anchor?.block]||anchor?.end)lastAnchor=anchor;
+  }
+  function schedulePagination(anchor=lastAnchor) {
+    cancelAnimationFrame(pageFrame);clearTimeout(pageTimer);
+    // Safari can throttle animation frames while a native settings dialog is open.
+    // The bounded fallback keeps page counts current as the reader adjusts text.
+    const run=()=>{cancelAnimationFrame(pageFrame);clearTimeout(pageTimer);pageFrame=pageTimer=0;paginate(anchor);};
+    pageFrame=requestAnimationFrame(run);pageTimer=setTimeout(run,60);
+  }
+  function go(anchor) {
+    if(!paginationReady)paginate(anchor);else showPage(pageForAnchor(anchor),true);
   }
   function updateProgress() {
-    const distance=viewport.scrollHeight-viewport.clientHeight;
-    const progress=!hasChapterText?0:distance>0 ? Math.max(0,Math.min(100,Math.round(viewport.scrollTop/distance*100))) : 100;
-    app.querySelector('.dem-progress-line span').style.width=progress+'%'; app.querySelector('.dem-progress-line').setAttribute('aria-valuenow',progress); app.querySelector('.dem-progress-label').textContent=hasChapterText?progress+'% of chapter':'No chapter text yet';
-    const marked=data.bookmarks.some(item=>item.file===file&&item.anchor.block===anchorNow().block);
+    const progress=!hasChapterText?0:pageCount===1?100:Math.round(pageIndex/(pageCount-1)*100);
+    const line=app.querySelector('.dem-progress-line');line.querySelector('span').style.width=progress+'%';line.setAttribute('aria-valuenow',progress);line.setAttribute('aria-valuetext',`Page ${pageIndex+1} of ${pageCount}`);
+    app.querySelector('.dem-progress-label').textContent=hasChapterText?progress+'% of chapter':'No chapter text yet';
+    const input=app.querySelector('#dem-page-number');input.value=pageIndex+1;input.max=pageCount;
+    app.querySelector('.dem-page-total').textContent='of '+pageCount;app.querySelector('.dem-page-announcement').textContent=`Page ${pageIndex+1} of ${pageCount}`;
+    app.querySelector('.dem-folio').textContent='—  '+(pageIndex+1)+'  —';
+    app.querySelector('[data-action=previous-page]').disabled=pageIndex===0;
+    app.querySelector('[data-action=next-page]').disabled=pageIndex===pageCount-1;
+    const marked=data.bookmarks.some(item=>item.file===file&&pageForAnchor(item.anchor)===pageIndex);
     app.querySelector('[data-action="bookmark"]').setAttribute('aria-pressed',String(marked));
-    app.dispatchEvent(new CustomEvent('demahs:reading-position',{detail:{file,anchor:anchorNow(),progress}}));
-    if(!suppressSave) { clearTimeout(saveTimer); saveTimer=setTimeout(savePosition,160); }
+    app.dispatchEvent(new CustomEvent('demahs:reading-position',{detail:{file,anchor:anchorNow(),progress,page:pageIndex+1,total:pageCount}}));
+    if(!suppressSave){clearTimeout(saveTimer);saveTimer=setTimeout(savePosition,160);}
   }
-  function savePosition() { positions.entries[file]={anchor:anchorNow(),progress:Number(app.querySelector('.dem-progress-line').getAttribute('aria-valuenow')),title,updatedAt:Date.now()};positions.last=file;write(positionKey,positions); }
-  viewport.addEventListener('scroll',()=>{if(!scrollFrame)scrollFrame=requestAnimationFrame(()=>{scrollFrame=0;updateProgress();});},{passive:true});
-  window.addEventListener('resize',()=>{syncFullscreen();updateProgress();});
-  window.visualViewport?.addEventListener('resize',()=>{syncFullscreen();updateProgress();});
-  window.visualViewport?.addEventListener('scroll',syncFullscreen);
+  function savePosition() { positions.entries[file]={anchor:lastAnchor,progress:Number(app.querySelector('.dem-progress-line').getAttribute('aria-valuenow')),page:pageIndex+1,total:pageCount,title,updatedAt:Date.now()};positions.last=file;write(positionKey,positions); }
+  app.querySelector('.dem-page-jump').addEventListener('submit',event=>{event.preventDefault();showPage(Number(app.querySelector('#dem-page-number').value)-1,true);});
+  const resize=()=>{syncFullscreen();schedulePagination();};
+  window.addEventListener('resize',resize);window.addEventListener('orientationchange',resize);
+  window.visualViewport?.addEventListener('resize',resize);window.visualViewport?.addEventListener('scroll',syncFullscreen);
+  new ResizeObserver(()=>{if(paginationReady)schedulePagination();}).observe(pageWindow);
   window.addEventListener('pagehide',()=>{if(!suppressSave)savePosition();});
+  let touchStart=null;
+  viewport.addEventListener('touchstart',event=>{const t=event.touches[0];touchStart=event.touches.length===1&&!event.target.closest('a,button,input')?{x:t.clientX,y:t.clientY}:null;},{passive:true});
+  viewport.addEventListener('touchend',event=>{if(!touchStart)return;const t=event.changedTouches[0],dx=t.clientX-touchStart.x,dy=t.clientY-touchStart.y;touchStart=null;if(Math.abs(dx)>65&&Math.abs(dy)<45&&getSelection()?.isCollapsed)showPage(pageIndex+(dx<0?1:-1));},{passive:true});
+  content.addEventListener('focusin',event=>{const node=event.target.closest('.dem-block');if(node)showPage(pageForAnchor({block:Number(node.dataset.block)}));});
 
   function applyPrefs(persist=true) {
+    const anchor=lastAnchor;
     const limits={size:[16,30],line:[1.4,2.3],width:[45,84],art:[0,1]};
     for(const [key,[min,max]] of Object.entries(limits)) prefs[key]=Math.min(max,Math.max(min,Number(prefs[key])||min));
     app.dataset.mode=prefs.mode;app.style.setProperty('--font-size',prefs.size+'px');app.style.setProperty('--line-height',prefs.line);app.style.setProperty('--reading-width',prefs.width+'ch');app.style.setProperty('--art-strength',prefs.art);
-    if(persist)write(prefKey,prefs);requestAnimationFrame(updateProgress);
+    if(persist)write(prefKey,prefs);if(paginationReady)schedulePagination(anchor);
   }
   function refreshCounts() { app.querySelectorAll('[data-count]').forEach(el=>{el.textContent=data[el.dataset.count].filter(item=>item.file===file).length;}); }
   function storeAnnotations() { write(dataKey,data);refreshCounts();refreshMarks(); }
@@ -175,7 +231,7 @@
 
   function openPanel(type, source=document.activeElement) {
     if(panelType==='extras') supplemental.remove();
-    opener=source;panelType=type;selection=selection?{...selection}:null;panelBody.replaceChildren();
+    opener=source;panelType=type;panel.dataset.panel=type;selection=selection?{...selection}:null;panelBody.replaceChildren();
     const names={chapters:'Chapters',bookmarks:'Bookmarks',notes:'Notes',highlights:'Highlights',settings:'Reader settings',search:'Search',dictionary:'Dictionary',extras:'About & discussion',editor:'Passage note'};
     panelTitle.textContent=names[type]||type;app.querySelectorAll('.dem-nav button').forEach(el=>el.setAttribute('aria-current',String(el.dataset.action===type)));
     app.querySelectorAll('[data-action=chapters]').forEach(b=>b.setAttribute('aria-expanded',String(type==='chapters')));
@@ -218,17 +274,26 @@
     form.addEventListener('submit',event=>{event.preventDefault();if(!input.value.trim())return;if(kind==='notes')item.text=input.value.trim();else item.name=input.value.trim();if(!data[kind].some(x=>x.id===item.id))data[kind].push(item);storeAnnotations();panelType=kind;panelTitle.textContent=kind==='notes'?'Notes':'Bookmarks';renderRecords(kind);toast('Saved.');});panelBody.append(form);requestAnimationFrame(()=>input.focus());
   }
   function renderChapters() {
-    const mobile=document.createElement('nav');mobile.className='dem-mobile-nav dem-nav';mobile.setAttribute('aria-label','Reading tools');mobile.innerHTML=nav();panelBody.append(mobile);
+    const tools=document.createElement('details');tools.className='dem-mobile-tools';const summary=document.createElement('summary');summary.textContent='Bookmarks, notes & reading tools';const mobile=document.createElement('nav');mobile.className='dem-mobile-nav dem-nav';mobile.setAttribute('aria-label','Reading tools');mobile.innerHTML=nav();tools.append(summary,mobile);panelBody.append(tools);
     const label=document.createElement('label');label.className='dem-field';label.textContent='Find a chapter';const input=document.createElement('input');input.type='search';input.setAttribute('aria-label','Find a chapter');label.append(input);panelBody.append(label);
-    const list=document.createElement('nav');list.setAttribute('aria-label','Chapter list');panelBody.append(list);
-    function render(){list.replaceChildren();let section='';catalog.filter(item=>item.title.toLowerCase().includes(input.value.toLowerCase())).forEach(item=>{if(item.section!==section){section=item.section;const head=document.createElement('p');head.className='dem-section-label';head.textContent=section;list.append(head);}const link=document.createElement('a');link.className='dem-chapter-link';link.href=item.file;link.textContent=item.title;if(item.file===file)link.setAttribute('aria-current','page');list.append(link);});}
+    const routes=document.createElement('nav');routes.className='dem-chapter-routes';routes.setAttribute('aria-label','Chapter navigation');
+    for(const [route,label] of [[current.previous,'← Previous chapter'],['library.html','Library'],[current.next,'Next chapter →']])if(route){const a=document.createElement('a');a.href=route;a.textContent=label;routes.append(a);}panelBody.append(routes);
+    const list=document.createElement('nav');list.className='dem-chapter-shelf';list.setAttribute('aria-label','Chapter list');panelBody.append(list);
+    function render(){list.replaceChildren();let section='';const matches=catalog.filter(item=>item.title.toLowerCase().includes(input.value.toLowerCase()));matches.forEach(item=>{
+      if(item.section!==section){section=item.section;const head=document.createElement('p');head.className='dem-section-label';head.textContent=section;list.append(head);}
+      const link=document.createElement('a');link.className='dem-chapter-link';link.href=item.file;
+      const img=document.createElement('img');img.src=item.cover;img.alt='';img.width=1024;img.height=1536;img.loading='lazy';img.decoding='async';
+      const name=document.createElement('span');name.className='dem-shelf-title';name.textContent=item.title;
+      const meta=document.createElement('span');meta.className='dem-shelf-meta';const saved=positions.entries[item.file];meta.textContent=saved?Math.round(saved.progress)+'% read':'Open chapter';
+      link.append(img,name,meta);if(item.file===file)link.setAttribute('aria-current','page');list.append(link);
+    });if(!matches.length)list.append(paragraph('No chapters match your search.'));}
     input.addEventListener('input',render);render();refreshCounts();
   }
   function renderSettings() {
     panelBody.innerHTML='<p>Shape a quiet space for the written word.</p><label class="dem-field"><span>Reading appearance</span><div class="dem-choice">'+['light','sepia','dark'].map(mode=>`<button type="button" data-mode="${mode}" aria-pressed="${prefs.mode===mode}">${mode[0].toUpperCase()+mode.slice(1)}</button>`).join('')+'</div></label>';
     for(const [key,label,min,max,step,unit] of [['size','Font size',16,30,1,'px'],['line','Line spacing',1.4,2.3,.1,''],['width','Reading width',45,84,1,'ch'],['art','Artwork intensity',0,1,.1,'']]) {
       const field=document.createElement('label');field.className='dem-field';const text=document.createElement('span');text.textContent=label;const output=document.createElement('output');output.textContent=prefs[key]+unit;text.append(output);
-      const input=document.createElement('input');input.type='range';input.min=min;input.max=max;input.step=step;input.value=prefs[key];input.setAttribute('aria-label',label);input.addEventListener('input',()=>{const anchor=anchorNow();prefs[key]=Number(input.value);output.textContent=input.value+unit;applyPrefs();if(key!=='art')go(anchor,false);});field.append(text,input);panelBody.append(field);
+      const input=document.createElement('input');input.type='range';input.min=min;input.max=max;input.step=step;input.value=prefs[key];input.setAttribute('aria-label',label);input.addEventListener('input',()=>{prefs[key]=Number(input.value);output.textContent=input.value+unit;applyPrefs();});field.append(text,input);panelBody.append(field);
     }
     panelBody.querySelectorAll('[data-mode]').forEach(button=>button.addEventListener('click',()=>{prefs.mode=button.dataset.mode;applyPrefs();panelBody.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));}));
   }
@@ -238,7 +303,7 @@
     form.addEventListener('submit',async event=>{event.preventDefault();const query=input.value.trim();if(!query)return;const thisSearch=++generation;results.replaceChildren();status.textContent='Searching…';
       try {const index=scope.checked?await getIndex():blocks.filter(node=>content.contains(node)).map(node=>({file,title,text:node.textContent,block:Number(node.dataset.block)}));if(thisSearch!==generation)return;
         const matches=index.filter(unit=>unit.text.toLocaleLowerCase().includes(query.toLocaleLowerCase()));status.textContent=matches.length+' matching passages'+(matches.length>100?' · showing the first 100':'')+'.';
-        matches.slice(0,100).forEach(unit=>{const card=document.createElement('div');card.className='dem-record';const a=document.createElement('a');a.textContent=unit.title;a.href=unit.file+'?find='+encodeURIComponent(query);if(unit.file===file)a.addEventListener('click',event=>{event.preventDefault();const node=blocks[unit.block]||blocks.find(n=>n.textContent.includes(unit.text));if(!node)return;const at=node.textContent.toLowerCase().indexOf(query.toLowerCase());closePanel();go({block:Number(node.dataset.block)});refreshMarks({block:Number(node.dataset.block),start:at,end:at+query.length});});const snippet=document.createElement('small');const at=unit.text.toLowerCase().indexOf(query.toLowerCase());snippet.textContent=(at>60?'…':'')+unit.text.slice(Math.max(0,at-60),at+query.length+110);card.append(a,snippet);results.append(card);});
+        matches.slice(0,100).forEach(unit=>{const card=document.createElement('div');card.className='dem-record';const a=document.createElement('a');a.textContent=unit.title;a.href=unit.file+'?find='+encodeURIComponent(query);if(unit.file===file)a.addEventListener('click',event=>{event.preventDefault();const node=blocks[unit.block]||blocks.find(n=>n.textContent.includes(unit.text));if(!node)return;const at=node.textContent.toLowerCase().indexOf(query.toLowerCase());closePanel();go({block:Number(node.dataset.block),char:at});refreshMarks({block:Number(node.dataset.block),start:at,end:at+query.length});});const snippet=document.createElement('small');const at=unit.text.toLowerCase().indexOf(query.toLowerCase());snippet.textContent=(at>60?'…':'')+unit.text.slice(Math.max(0,at-60),at+query.length+110);card.append(a,snippet);results.append(card);});
       } catch(_){status.textContent='Some chapters could not be loaded. Please try again when connected.';}
     });
   }
@@ -252,17 +317,32 @@
     if(word)form.requestSubmit();
   }
   function addBookmark() {
-    const anchor=anchorNow(),existing=data.bookmarks.find(item=>item.file===file&&item.anchor.block===anchor.block);
+    const anchor=anchorNow(),existing=data.bookmarks.find(item=>item.file===file&&pageForAnchor(item.anchor)===pageIndex);
     if(existing){data.bookmarks=data.bookmarks.filter(item=>item!==existing);toast('Bookmark removed.');}
     else {const text=blocks[anchor.block]?.textContent.trim();data.bookmarks.push({id:uid(),file,title,name:text?text.slice(0,65):title,anchor,createdAt:Date.now()});toast('Location bookmarked.');}storeAnnotations();updateProgress();
   }
-  function syncFullscreen(){app.style.setProperty('--dem-visible-height',(window.visualViewport?.height||innerHeight)+'px');app.style.setProperty('--dem-visible-top',(window.visualViewport?.offsetTop||0)+'px');if(fullscreen)document.documentElement.style.setProperty('--dem-height',(visualViewport?.height||innerHeight)+'px');}
-  async function enterFullscreen(){fullscreen=true;document.body.classList.add('dem-fullscreen');syncFullscreen();const standalone=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!standalone&&document.fullscreenEnabled&&document.documentElement.requestFullscreen){try{await document.documentElement.requestFullscreen();nativeFullscreen=!!document.fullscreenElement;}catch(_){}}app.querySelector('[data-action="fullscreen"]').setAttribute('aria-label','Exit distraction-free fullscreen');requestAnimationFrame(updateProgress);}
-  function exitFullscreen(){fullscreen=false;nativeFullscreen=false;document.body.classList.remove('dem-fullscreen');document.documentElement.style.removeProperty('--dem-height');if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});app.querySelector('[data-action="fullscreen"]').setAttribute('aria-label','Enter distraction-free fullscreen');requestAnimationFrame(updateProgress);}
-  document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&nativeFullscreen)exitFullscreen();});
+  function nativeElement(){return document.fullscreenElement||document.webkitFullscreenElement;}
+  function syncFullscreen(){
+    const vv=window.visualViewport;
+    for(const [name,value] of Object.entries({height:vv?.height||innerHeight,width:vv?.width||innerWidth,top:vv?.offsetTop||0,left:vv?.offsetLeft||0}))app.style.setProperty('--dem-visible-'+name,value+'px');
+  }
+  function fullscreenButton(){const button=app.querySelector('[data-action=fullscreen]'),label=fullscreen?'Exit distraction-free fullscreen':'Enter distraction-free fullscreen';button.setAttribute('aria-label',label);button.title=label;button.setAttribute('aria-pressed',String(fullscreen));button.innerHTML=fullscreen?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h5V3m8 0v5h5M8 21v-5H3m18 0h-5v5"/></svg>':svg('full');}
+  async function enterFullscreen(){
+    const anchor=lastAnchor;fullscreen=true;document.body.classList.add('dem-fullscreen');syncFullscreen();fullscreenButton();schedulePagination(anchor);
+    const standalone=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches;
+    if(!standalone){try{if(document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen({navigationUI:'hide'});else if(document.documentElement.webkitRequestFullscreen)await document.documentElement.webkitRequestFullscreen();nativeFullscreen=!!nativeElement();}catch(_){}}
+    if(!fullscreen&&nativeElement()){try{await (document.exitFullscreen?.()||document.webkitExitFullscreen?.());}catch(_){}return;}
+    if(!standalone&&!nativeFullscreen&&matchMedia('(max-width:760px)').matches)toast('Reader expanded. On iPhone, open from your Home Screen to hide browser bars.');
+    syncFullscreen();schedulePagination(anchor);
+  }
+  function exitFullscreen(){const anchor=lastAnchor;fullscreen=false;nativeFullscreen=false;document.body.classList.remove('dem-fullscreen');if(nativeElement()){try{Promise.resolve(document.exitFullscreen?document.exitFullscreen():document.webkitExitFullscreen?.()).catch(()=>{});}catch(_){}}fullscreenButton();syncFullscreen();schedulePagination(anchor);}
+  function nativeChange(){if(nativeElement())nativeFullscreen=true;else if(nativeFullscreen)exitFullscreen();syncFullscreen();schedulePagination();}
+  document.addEventListener('fullscreenchange',nativeChange);document.addEventListener('webkitfullscreenchange',nativeChange);
   app.addEventListener('click',async event=>{
     const target=event.target.closest('[data-action]');if(!target)return;const action=target.dataset.action;
     if(action==='close')closePanel();
+    else if(action==='previous-page')showPage(pageIndex-1,true);
+    else if(action==='next-page')showPage(pageIndex+1,true);
     else if(action==='continue'){const targetFile=positions.last||legacyLast?.file;if(targetFile&&targetFile!==file)location.href=targetFile+'?resume=1';else {if(panel.open)closePanel();go(positions.entries[file]?.anchor||{block:0});}}
     else if(action==='bookmark')addBookmark();
     else if(action==='mode'){prefs.mode=['light','sepia','dark'][(['light','sepia','dark'].indexOf(prefs.mode)+1)%3];applyPrefs();toast(prefs.mode[0].toUpperCase()+prefs.mode.slice(1)+' reading appearance.');}
@@ -278,18 +358,22 @@
   window.addEventListener('keydown',event=>{
     if(!document.body.classList.contains('dem-active'))return;
     if(event.key==='Escape'){event.stopImmediatePropagation();if(panel.open){event.preventDefault();closePanel();}else if(fullscreen)exitFullscreen();else app.querySelector('.dem-selection').hidden=true;}
-    if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.stopImmediatePropagation();if(event.altKey&&!event.target.closest('input,textarea,select')){const route=event.key==='ArrowLeft'?current.previous:current.next;if(route){event.preventDefault();location.href=route;}}}
+    if(['ArrowLeft','ArrowRight','PageUp','PageDown','Home','End'].includes(event.key)){
+      event.stopImmediatePropagation();if(panel.open||event.target.closest('input,textarea,select,[contenteditable=true]'))return;
+      event.preventDefault();if(event.altKey){const route=event.key==='ArrowLeft'?current.previous:current.next;if(route)location.href=route;return;}
+      showPage(event.key==='Home'?0:event.key==='End'?pageCount-1:pageIndex+(['ArrowLeft','PageUp'].includes(event.key)?-1:1),true);
+    }
   },true);
   document.fonts.ready.then(()=>requestAnimationFrame(()=>{
     const query=new URLSearchParams(location.search),hash=location.hash.match(/^#dem-block-(\d+)$/),page=Number(query.get('page'));
     let anchor=hash?{block:Number(hash[1])}:positions.entries[file]?.anchor;
     if(query.has('page')){const node=segments.find(s=>Number(s.dataset.legacyPage)===page)?.querySelector('.dem-block');anchor={block:Number(node?.dataset.block||0)};}
     if(!anchor&&query.get('resume')==='1'&&legacyLast?.file===file){const node=segments.find(s=>Number(s.dataset.legacyPage)===legacyLast.page)?.querySelector('.dem-block');anchor={block:Number(node?.dataset.block||0)};}
-    if(anchor)go(anchor,false);
-    if(query.get('find')){const term=query.get('find'),node=blocks.find(n=>content.contains(n)&&n.textContent.toLowerCase().includes(term.toLowerCase()));if(node){const at=node.textContent.toLowerCase().indexOf(term.toLowerCase());go({block:Number(node.dataset.block)},false);refreshMarks({block:Number(node.dataset.block),start:at,end:at+term.length});}}
+    paginate(anchor||{block:0,char:0});
+    if(query.get('find')){const term=query.get('find'),node=blocks.find(n=>content.contains(n)&&n.textContent.toLowerCase().includes(term.toLowerCase()));if(node){const at=node.textContent.toLowerCase().indexOf(term.toLowerCase());go({block:Number(node.dataset.block),char:at});refreshMarks({block:Number(node.dataset.block),start:at,end:at+term.length});}}
     updateProgress();suppressSave=false;
   }));
   // Future narration can consume real paragraph anchors and aligned timing data.
   // No audio is generated, and no approximate word timers are simulated.
-  window.DemahsReader=Object.freeze({file,getBlocks:()=>blocks.filter(n=>content.contains(n)).map(n=>({id:n.id,text:n.textContent})),goToAnchor:anchor=>go(anchor),getPosition:anchorNow});
+  window.DemahsReader=Object.freeze({file,getBlocks:()=>blocks.filter(n=>content.contains(n)).map(n=>({id:n.id,text:n.textContent})),goToAnchor:anchor=>go(anchor),getPosition:anchorNow,getPagination:()=>({page:pageIndex+1,total:pageCount,ready:paginationReady}),goToPage:page=>showPage(page-1,true)});
 })();
