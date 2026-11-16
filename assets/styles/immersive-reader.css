@@ -222,3 +222,30 @@ body.dem-fullscreen .dem-bottom{padding-bottom:calc(7px + env(safe-area-inset-bo
 @media(max-width:760px){.dem-mobile-tools{display:block;margin:0 0 20px;padding:0 0 12px;border-bottom:1px solid #c9a84c40}.dem-mobile-tools summary{padding:10px 0;min-height:44px;color:#e8cc80;font-size:17px;cursor:pointer}.dem-mobile-tools .dem-mobile-nav{margin:8px 0 0;padding:0;border:0}}
 .dem-page-announcement{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .dem-page-jump button{min-height:44px}
+/* Search, personal exports and saved dictionary entries. */
+.dem-writing-search{margin:0 0 22px;padding:0 0 18px;border-bottom:1px solid #c9a84c35;color:#d7c49d}
+.dem-writing-search>label{display:block;font:14px/1.4 'Cormorant Garamond',serif;letter-spacing:.02em}
+.dem-writing-search-row{display:flex;margin:8px 0 10px;border:1px solid #c9a84c66;border-radius:4px;background:#12100d;overflow:hidden}
+.dem-writing-search input[type=search]{width:100%;min-width:0;min-height:44px;padding:8px 10px;border:0!important;border-radius:0!important;background:transparent!important;color:#f3e2be;font:16px Georgia,serif}
+.dem-writing-search-row .dem-icon{flex-shrink:0;border:0;border-left:1px solid #c9a84c35;border-radius:0}
+.dem-writing-search .dem-scope-label{display:flex;gap:8px;align-items:center;font-size:13px}
+.dem-writing-search select{flex:1;min-width:0;min-height:38px;padding:5px 7px;border:1px solid #c9a84c50;border-radius:4px;background:#211d18;color:#ead5a8;font-size:14px}
+.dem-panel .dem-writing-search{margin-bottom:22px}.dem-panel .dem-writing-search input[type=search]{font-size:17px}
+.dem-record-actions{align-items:center;flex-wrap:wrap}
+.dem-record-actions button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px!important}
+.dem-record-actions svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.dem-record-actions .dem-remove-highlight{margin-left:auto;min-width:44px;padding:10px;color:#ffaaaa;border-color:#c561615c;background:#c2474712}
+.dem-remove-highlight svg{width:14px;height:14px;stroke-width:2}
+.dem-remove-highlight:hover{background:#c247472d;border-color:#e28b8b}
+.dem-note-export{display:flex;flex-wrap:wrap;gap:10px;padding:15px 0 20px;margin-bottom:18px;border-bottom:1px solid #c9a84c40}
+.dem-export-format{width:100%;font-size:15px;color:#dac69e}.dem-export-format select{display:block;margin-top:7px}
+.dem-note-export>.dem-primary{flex:1 1 130px;font-size:11px;min-height:44px}
+.dem-export-all,.dem-note-selection{display:flex;align-items:center;gap:10px;min-height:44px;font-size:16px;color:#d5c2a0}
+.dem-panel .dem-export-all input,.dem-panel .dem-note-selection input{appearance:auto;width:18px;min-height:18px;height:18px;margin:0;padding:0;flex-shrink:0;accent-color:#c9a84c}
+.dem-note-selection{margin-top:10px}
+.dem-note-export button:disabled{opacity:.45}
+.dem-definition-card h3{font:500 25px/1.25 'Cormorant Garamond',serif;margin:0 0 4px;color:#f1ddb4}
+.dem-definition-card p{margin:12px 0!important;font-size:18px}
+.dem-definition-card a.dem-definition-source{display:inline-flex;align-items:center;min-height:44px;color:#e8cc80;text-decoration:underline;text-underline-offset:3px;font-size:15px}
+.dem-copy-buffer{position:fixed!important;top:0;left:0;width:1px!important;height:1px!important;min-height:0!important;opacity:0;pointer-events:none}
+@media(max-width:760px){.dem-panel .dem-writing-search .dem-scope-label{font-size:15px}.dem-writing-search select{min-height:44px}.dem-note-export>.dem-primary{font-size:11px}}

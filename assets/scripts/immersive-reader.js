@@ -15,8 +15,8 @@
   const prefKey = 'demahs.reader.preferences.v1', dataKey = 'demahs.reader.annotations.v1', positionKey = 'demahs.reader.positions.v1';
   const prefs = Object.assign({ mode: 'sepia', size: 21, line: 1.8, width: 65, art: 1 }, read(prefKey, {}));
   if (!['light', 'sepia', 'dark'].includes(prefs.mode)) prefs.mode = 'sepia';
-  const data = Object.assign({ bookmarks: [], highlights: [], notes: [], imported: [] }, read(dataKey, {}));
-  for (const key of ['bookmarks', 'highlights', 'notes', 'imported']) if (!Array.isArray(data[key])) data[key] = [];
+  const data = Object.assign({ bookmarks: [], highlights: [], notes: [], definitions: [], imported: [] }, read(dataKey, {}));
+  for (const key of ['bookmarks', 'highlights', 'notes', 'definitions', 'imported']) if (!Array.isArray(data[key])) data[key] = [];
   const positions = Object.assign({ entries: {}, last: null }, read(positionKey, {}));
   const icons = {
     menu:'<path d="M4 6h16M4 12h16M4 18h16"/>', search:'<circle cx="10" cy="10" r="6.5"/><path d="m15 15 5 5"/>',
@@ -30,11 +30,11 @@
   const svg = name => `<svg viewBox="0 0 24 24" aria-hidden="true">${icons[name] || icons.chapters}</svg>`;
   const esc = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const button = (action, icon, label, extra='') => `<button type="button" class="dem-icon ${extra}" data-action="${action}" aria-label="${label}" title="${label}">${svg(icon)}</button>`;
-  const nav = () => [['continue','play','Continue Reading'],['chapters','chapters','Chapters'],['bookmarks','bookmark','Bookmarks'],['notes','note','Notes'],['highlights','highlight','Highlights'],['dictionary','dictionary','Dictionary'],['settings','settings','Settings']].map(([action,icon,label]) => `<button type="button" data-action="${action}">${svg(icon)}<span>${label}</span>${['bookmarks','notes','highlights'].includes(action)?`<span class="dem-count" data-count="${action}"></span>`:''}</button>`).join('');
+  const nav = () => [['continue','play','Continue Reading'],['chapters','chapters','Chapters'],['bookmarks','bookmark','Bookmarks'],['notes','note','Notes'],['highlights','highlight','Highlights'],['dictionary','dictionary','Dictionary'],['definitions','dictionary','Saved definitions'],['settings','settings','Settings']].map(([action,icon,label]) => `<button type="button" data-action="${action}">${svg(icon)}<span>${label}</span>${['bookmarks','notes','highlights','definitions'].includes(action)?`<span class="dem-count" data-count="${action}"></span>`:''}</button>`).join('');
   const app = document.createElement('div'); app.id = 'dem-app'; app.className = 'dem-app'; app.dataset.mode = prefs.mode;
   app.innerHTML = `<a class="dem-skip" href="#dem-reading">Skip to chapter text</a>
     <header class="dem-top"><div style="display:flex;align-items:center;gap:5px">${button('chapters','menu','Open reader navigation','dem-menu')}<a class="dem-brand" href="library.html" aria-label="DEMAHS library">${crown}<span>DEMAHS <small>THE MANUSCRIPT READER</small></span></a></div><span class="dem-top-title">${esc(title)} <span aria-hidden="true" style="color:#766147;margin-inline:14px">/</span> By EARNLIGHT</span><nav class="dem-actions" aria-label="Reader actions">${button('search','search','Search chapters')}${button('bookmark','bookmark','Bookmark this location')}${button('settings','settings','Reader settings','dem-settings-top')}</nav></header>
-    <div class="dem-workspace"><aside class="dem-sidebar" aria-label="Reader navigation"><div class="dem-cover"><img src="${esc(current.cover)}" alt="" width="1024" height="1536"><span>${esc(title)}</span></div><p class="dem-sidebar-label">YOUR READING ROOM</p><nav class="dem-nav">${nav()}</nav><div class="dem-sidebar-foot">✦<a href="library.html">Return to the library</a><button class="dem-text-button" type="button" data-action="extras">About &amp; discussion</button></div></aside>
+    <div class="dem-workspace"><aside class="dem-sidebar" aria-label="Reader navigation"><div class="dem-cover"><img src="${esc(current.cover)}" alt="" width="1024" height="1536"><span>${esc(title)}</span></div><div class="dem-sidebar-search-slot"></div><p class="dem-sidebar-label">YOUR READING ROOM</p><nav class="dem-nav">${nav()}</nav><div class="dem-sidebar-foot">✦<a href="library.html">Return to the library</a><button class="dem-text-button" type="button" data-action="extras">About &amp; discussion</button></div></aside>
     <main id="dem-reading" class="dem-scroll" tabindex="0" aria-label="${esc(title)} manuscript"><div class="dem-page-window"><article class="dem-manuscript" aria-labelledby="dem-title"><div class="dem-panorama" aria-hidden="true"><picture><source media="(max-width:760px)" srcset="assets/images/celestial-realm-mobile.webp"><img src="assets/images/celestial-realm.webp" width="1585" height="992" alt="" decoding="async"></picture></div><header class="dem-chapter-heading"><div class="dem-kicker"></div><h1 id="dem-title">${esc(title)}</h1><div class="dem-ornament" aria-hidden="true">✦</div></header><div class="dem-reading-content" id="dem-content"></div><div class="dem-end"><span aria-hidden="true">❧</span>End of ${esc(title)}</div></article></div><span class="dem-folio" aria-hidden="true"></span></main></div>
     <footer class="dem-bottom"><nav class="dem-page-turns" aria-label="Page navigation"><button class="dem-text-button dem-page-previous" type="button" data-action="previous-page" aria-label="Previous page">${svg('left')}<span class="dem-label">Previous page</span></button><form class="dem-page-jump"><label for="dem-page-number">Page</label><input id="dem-page-number" type="number" inputmode="numeric" min="1" value="1" aria-label="Go to page" aria-describedby="dem-page-total"><span class="dem-page-total" id="dem-page-total">of 1</span><button type="submit" class="dem-text-button">Go</button></form><button class="dem-text-button dem-page-next" type="button" data-action="next-page" aria-label="Next page"><span class="dem-label">Next page</span>${svg('right')}</button></nav><span class="dem-page-announcement" role="status" aria-live="polite" aria-atomic="true"></span><div class="dem-reading-tools">${button('chapters','chapters','Open chapter shelf')}<div class="dem-progress"><div class="dem-progress-line" role="progressbar" aria-label="Chapter reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><label class="dem-progress-label">Opening manuscript</label></div>${button('settings','settings','Font and appearance settings')}${button('mode','sun','Change reading appearance')}${button('fullscreen','full','Enter distraction-free fullscreen')}</div></footer>
     <dialog class="dem-panel" aria-labelledby="dem-panel-title"><header class="dem-panel-header"><h2 id="dem-panel-title"></h2>${button('close','close','Close panel')}</header><div class="dem-panel-body"></div></dialog>
@@ -43,6 +43,7 @@
   const viewport = app.querySelector('.dem-scroll'), content = app.querySelector('#dem-content'), panel = app.querySelector('dialog'), panelBody = app.querySelector('.dem-panel-body'), panelTitle = app.querySelector('#dem-panel-title');
   const pageWindow = app.querySelector('.dem-page-window'), flow = app.querySelector('.dem-manuscript');
   let pageIndex = 0, pageCount = 1, pageStride = 1, paginationReady = false, pageFrame = 0, pageTimer = 0, lastAnchor = {block:0,char:0};
+  const selectedNotes=new Set();let exportFormat='txt';
   const blocks = [], segments = [], supplemental = document.createElement('div');
   let selection = null, toastTimer, saveTimer, panelType = '', opener = null, fullscreen = false, nativeFullscreen = false, searchIndexPromise;
   let suppressSave = true;
@@ -80,6 +81,7 @@
   supplemental.append(siteLinks);
   document.body.classList.remove('realm-page','realm-reader'); document.body.classList.add('dem-active'); document.body.style.overflow = '';
   window.DemahsReaderBoot?.finish();
+  app.querySelector('.dem-sidebar-search-slot').append(createWritingSearch());
   syncFullscreen(); applyPrefs(false); importLegacy(); refreshMarks(); refreshCounts();
 
   function read(key, fallback) { try { const value=JSON.parse(localStorage.getItem(key)); return value ?? fallback; } catch (_) { return fallback; } }
@@ -177,8 +179,8 @@
     app.dataset.mode=prefs.mode;app.style.setProperty('--font-size',prefs.size+'px');app.style.setProperty('--line-height',prefs.line);app.style.setProperty('--reading-width',prefs.width+'ch');app.style.setProperty('--art-strength',prefs.art);
     if(persist)write(prefKey,prefs);if(paginationReady)schedulePagination(anchor);
   }
-  function refreshCounts() { app.querySelectorAll('[data-count]').forEach(el=>{el.textContent=data[el.dataset.count].filter(item=>item.file===file).length;}); }
-  function storeAnnotations() { write(dataKey,data);refreshCounts();refreshMarks(); }
+  function refreshCounts() { app.querySelectorAll('[data-count]').forEach(el=>{el.textContent=el.dataset.count==='definitions'?data.definitions.length:data[el.dataset.count].filter(item=>item.file===file).length;}); }
+  function storeAnnotations() { const persisted=write(dataKey,data);refreshCounts();refreshMarks();return persisted; }
   function paragraphAnchor(quote,pageIndex) {
     const candidates=blocks.filter(node=>content.contains(node));
     const node=candidates.find(node=>node.textContent.includes(quote));
@@ -229,18 +231,19 @@
   document.addEventListener('selectionchange',()=>{if(!panel.open)captureSelection();});
   app.querySelector('.dem-selection').addEventListener('pointerdown',event=>event.preventDefault());
 
-  function openPanel(type, source=document.activeElement) {
+  function openPanel(type, source=document.activeElement, options={}) {
     if(panelType==='extras') supplemental.remove();
     opener=source;panelType=type;panel.dataset.panel=type;selection=selection?{...selection}:null;panelBody.replaceChildren();
-    const names={chapters:'Chapters',bookmarks:'Bookmarks',notes:'Notes',highlights:'Highlights',settings:'Reader settings',search:'Search',dictionary:'Dictionary',extras:'About & discussion',editor:'Passage note'};
+    const names={chapters:'Chapters',bookmarks:'Bookmarks',notes:'Notes',highlights:'Highlights',settings:'Reader settings',search:'Search',dictionary:'Dictionary',definitions:'Saved definitions',extras:'About & discussion',editor:'Passage note'};
     panelTitle.textContent=names[type]||type;app.querySelectorAll('.dem-nav button').forEach(el=>el.setAttribute('aria-current',String(el.dataset.action===type)));
     app.querySelectorAll('[data-action=chapters]').forEach(b=>b.setAttribute('aria-expanded',String(type==='chapters')));
     if(!panel.open)panel.showModal();
     if(type==='chapters')renderChapters();
     else if(['bookmarks','notes','highlights'].includes(type))renderRecords(type);
     else if(type==='settings')renderSettings();
-    else if(type==='search')renderSearch();
+    else if(type==='search')renderSearch(options);
     else if(type==='dictionary')renderDictionary();
+    else if(type==='definitions')renderDefinitions();
     else if(type==='extras'){panelBody.append(supplemental);}
     requestAnimationFrame(()=>{(panelBody.querySelector('input,textarea,button,a')||panel.querySelector('button')).focus();});
   }
@@ -249,21 +252,66 @@
   panel.addEventListener('keydown',event=>{if(event.key==='Escape')event.stopPropagation();});
   panel.addEventListener('click',event=>{if(event.target===panel){const r=panel.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)closePanel();}});
   function paragraph(text){const p=document.createElement('p');p.textContent=text;return p;}
+  function passageURL(item) {return new URL(item.file+'#dem-block-'+(item.anchor?.block??0),location.href).href;}
+  async function copyText(text) {
+    try {await navigator.clipboard.writeText(text);return true;}catch(_){}
+    const input=document.createElement('textarea');input.className='dem-copy-buffer';input.value=text;(panel.open?panelBody:app).append(input);input.select();let copied=false;
+    try{copied=document.execCommand('copy');}catch(_){}input.remove();return copied;
+  }
+  async function sharePassage(item,copyOnly=false) {
+    const quote=item.anchor?.quote;if(!quote){toast('This saved highlight has no passage text to share.');return;}
+    const url=passageURL(item),text=quote+'\n\n'+item.title+' — By EARNLIGHT\n'+url;
+    if(!copyOnly&&navigator.share){try{await navigator.share({title:item.title,text:quote,url});return;}catch(error){if(error.name==='AbortError')return;}}
+    toast(await copyText(text)?'Passage and link copied.':'Copy is unavailable. Select the saved passage and use your browser’s Copy command.');
+  }
+  function exportNotes(notes,format=exportFormat) {
+    if(!notes.length){toast('Select at least one note to export.');return;}
+    const exportedAt=new Date().toISOString();
+    const records=notes.map(note=>({id:note.id,title:note.title,chapter:note.file,url:passageURL(note),passage:note.anchor?.quote||'',note:note.text||'',createdAt:note.createdAt||null}));
+    const text=format==='json'?JSON.stringify({work:'DEMAHS',version:1,exportedAt,notes:records},null,2):'DEMAHS — Personal notes\n'+exportedAt+'\n\n'+records.map((note,index)=>`${index+1}. ${note.title}\n${note.url}\n\n${note.passage?'Passage:\n'+note.passage+'\n\n':''}Note:\n${note.note}`).join('\n\n────────────────────────\n\n');
+    const url=URL.createObjectURL(new Blob([text],{type:format==='json'?'application/json;charset=utf-8':'text/plain;charset=utf-8'}));
+    const a=document.createElement('a');a.href=url;a.download='DEMAHS-notes-'+exportedAt.slice(0,10)+'.'+format;panelBody.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);toast('Your note export is ready.');
+  }
+  function syncNoteSelection() {
+    const selected=panelBody.querySelector('.dem-export-selected');if(selected){const count=data.notes.filter(note=>selectedNotes.has(note.id)).length;selected.disabled=count===0;selected.textContent='Export selected'+(count?' ('+count+')':'');}
+    const all=panelBody.querySelector('.dem-export-all input');if(all){const count=data.notes.filter(note=>selectedNotes.has(note.id)).length;all.checked=count===data.notes.length&&count>0;all.indeterminate=count>0&&count<data.notes.length;}
+  }
+  function noteExportTools() {
+    const tools=document.createElement('div');tools.className='dem-note-export';
+    const label=document.createElement('label');label.className='dem-export-all';const check=document.createElement('input');check.type='checkbox';check.setAttribute('aria-label','Select all notes');label.append(check,document.createTextNode('Select all notes'));
+    check.addEventListener('change',()=>{for(const note of data.notes)if(check.checked)selectedNotes.add(note.id);else selectedNotes.delete(note.id);panelBody.querySelectorAll('[data-note-select]').forEach(input=>input.checked=check.checked);syncNoteSelection();});
+    const formatLabel=document.createElement('label');formatLabel.className='dem-export-format';formatLabel.textContent='Export format';const format=document.createElement('select');format.setAttribute('aria-label','Note export format');
+    for(const [value,text] of [['txt','Plain text (.txt)'],['json','JSON (.json)']]){const option=document.createElement('option');option.value=value;option.textContent=text;format.append(option);}format.value=exportFormat;format.addEventListener('change',()=>exportFormat=format.value);formatLabel.append(format);
+    const all=document.createElement('button');all.type='button';all.className='dem-primary';all.textContent='Export all notes';all.addEventListener('click',()=>exportNotes(data.notes));
+    const selected=document.createElement('button');selected.type='button';selected.className='dem-primary dem-export-selected';selected.textContent='Export selected';selected.addEventListener('click',()=>exportNotes(data.notes.filter(note=>selectedNotes.has(note.id))));tools.append(label,formatLabel,all,selected);return tools;
+  }
   function recordCard(item,kind) {
-    const card=document.createElement('div');card.className='dem-record';
+    const card=document.createElement('div');card.className='dem-record';card.dataset.recordId=item.id;
     const jump=document.createElement('button');jump.type='button';jump.textContent=item.name||item.title;
     jump.addEventListener('click',()=>{if(item.file===file){closePanel();go(item.anchor);}else location.href=item.file+'#dem-block-'+item.anchor.block;});card.append(jump);
     const meta=document.createElement('small');meta.textContent=item.file===file?'This chapter':item.title;card.append(meta);
     if(item.anchor.quote){const quote=document.createElement('blockquote');quote.textContent=item.anchor.quote;card.append(quote);}
     if(item.text)card.append(paragraph(item.text));
+    if(kind==='notes'){
+      const label=document.createElement('label');label.className='dem-note-selection';const check=document.createElement('input');check.type='checkbox';check.dataset.noteSelect=item.id;check.checked=selectedNotes.has(item.id);check.setAttribute('aria-label','Select note: '+item.text.slice(0,70));
+      check.addEventListener('change',()=>{if(check.checked)selectedNotes.add(item.id);else selectedNotes.delete(item.id);syncNoteSelection();});label.append(check,document.createTextNode('Select for export'));card.append(label);
+    }
     const actions=document.createElement('div');actions.className='dem-record-actions';
     if(kind==='notes'||kind==='bookmarks'){const edit=document.createElement('button');edit.type='button';edit.textContent=kind==='notes'?'Edit note':'Rename';edit.addEventListener('click',()=>editRecord(item,kind));actions.append(edit);}
-    const remove=document.createElement('button');remove.type='button';remove.textContent='Remove';remove.addEventListener('click',()=>{data[kind]=data[kind].filter(x=>x.id!==item.id);storeAnnotations();renderRecords(kind);});actions.append(remove);card.append(actions);return card;
+    if(kind==='notes'){const download=document.createElement('button');download.type='button';download.textContent='Export note';download.addEventListener('click',()=>exportNotes([item]));actions.append(download);}
+    if(kind==='highlights'){
+      const share=document.createElement('button');share.type='button';share.innerHTML=svg('share')+'<span>Share</span>';share.setAttribute('aria-label','Share highlighted passage');share.addEventListener('click',()=>sharePassage(item));
+      const copy=document.createElement('button');copy.type='button';copy.innerHTML=svg('copy')+'<span>Copy</span>';copy.setAttribute('aria-label','Copy highlighted passage');copy.addEventListener('click',()=>sharePassage(item,true));actions.append(share,copy);
+    }
+    const remove=document.createElement('button');remove.type='button';
+    if(kind==='highlights'){remove.className='dem-remove-highlight';remove.innerHTML=svg('close');remove.setAttribute('aria-label','Remove highlight');remove.title='Remove highlight';}else remove.textContent='Remove';
+    remove.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();data[kind]=data[kind].filter(x=>x.id!==item.id);selectedNotes.delete(item.id);const persisted=storeAnnotations();renderRecords(kind);if(kind==='highlights'&&persisted)toast('Highlight removed.');});actions.append(remove);card.append(actions);return card;
   }
   function renderRecords(kind) {
     panelBody.replaceChildren(paragraph('Saved on this browser. Your annotations do not change the original writing.'));
     const records=data[kind];if(!records.length){panelBody.append(paragraph(kind==='bookmarks'?'Use the bookmark button to save your current location.':'Select a passage in the manuscript to '+(kind==='notes'?'attach a note.':'highlight it.')));return;}
-    const list=document.createElement('div');list.className='dem-list';records.slice().reverse().forEach(item=>list.append(recordCard(item,kind)));panelBody.append(list);
+    if(kind==='notes')panelBody.append(noteExportTools());
+    const list=document.createElement('div');list.className='dem-list';records.slice().reverse().forEach(item=>list.append(recordCard(item,kind)));panelBody.append(list);if(kind==='notes')syncNoteSelection();
   }
   function editRecord(item,kind) {
     panelBody.replaceChildren();panelTitle.textContent=kind==='notes'?'Passage note':'Rename bookmark';
@@ -274,7 +322,7 @@
     form.addEventListener('submit',event=>{event.preventDefault();if(!input.value.trim())return;if(kind==='notes')item.text=input.value.trim();else item.name=input.value.trim();if(!data[kind].some(x=>x.id===item.id))data[kind].push(item);storeAnnotations();panelType=kind;panelTitle.textContent=kind==='notes'?'Notes':'Bookmarks';renderRecords(kind);toast('Saved.');});panelBody.append(form);requestAnimationFrame(()=>input.focus());
   }
   function renderChapters() {
-    const tools=document.createElement('details');tools.className='dem-mobile-tools';const summary=document.createElement('summary');summary.textContent='Bookmarks, notes & reading tools';const mobile=document.createElement('nav');mobile.className='dem-mobile-nav dem-nav';mobile.setAttribute('aria-label','Reading tools');mobile.innerHTML=nav();tools.append(summary,mobile);panelBody.append(tools);
+    const tools=document.createElement('details');tools.className='dem-mobile-tools';const summary=document.createElement('summary');summary.textContent='Bookmarks, notes & reading tools';const mobile=document.createElement('nav');mobile.className='dem-mobile-nav dem-nav';mobile.setAttribute('aria-label','Reading tools');mobile.innerHTML=nav();tools.append(summary,mobile);panelBody.append(tools,createWritingSearch());
     const label=document.createElement('label');label.className='dem-field';label.textContent='Find a chapter';const input=document.createElement('input');input.type='search';input.setAttribute('aria-label','Find a chapter');label.append(input);panelBody.append(label);
     const routes=document.createElement('nav');routes.className='dem-chapter-routes';routes.setAttribute('aria-label','Chapter navigation');
     for(const [route,label] of [[current.previous,'← Previous chapter'],['library.html','Library'],[current.next,'Next chapter →']])if(route){const a=document.createElement('a');a.href=route;a.textContent=label;routes.append(a);}panelBody.append(routes);
@@ -297,23 +345,78 @@
     }
     panelBody.querySelectorAll('[data-mode]').forEach(button=>button.addEventListener('click',()=>{prefs.mode=button.dataset.mode;applyPrefs();panelBody.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));}));
   }
-  function renderSearch() {
-    panelBody.innerHTML='<form class="dem-search-form"><input type="search" aria-label="Search text" placeholder="A word, a passage, an idea…" required><button class="dem-primary" type="submit">Search</button></form><label class="dem-search-scope"><input type="checkbox"> Search all chapters</label><p class="dem-search-status" role="status">Search the current manuscript or the complete collection.</p><div class="dem-search-results dem-list"></div>';
-    const form=panelBody.querySelector('form'),input=form.querySelector('input'),scope=panelBody.querySelector('[type=checkbox]'),status=panelBody.querySelector('.dem-search-status'),results=panelBody.querySelector('.dem-search-results');let generation=0;
+  function renderSearch({query='',all=false}={}) {
+    panelBody.innerHTML='<form class="dem-search-form"><input type="search" aria-label="Search text" placeholder="A word, a passage, an idea…" required><button class="dem-primary" type="submit">Search</button></form><label class="dem-search-scope"><input type="checkbox"> Search the complete work</label><p class="dem-search-status" role="status">Search this chapter or all chapters and introductory manuscripts.</p><div class="dem-search-results dem-list"></div>';
+    const form=panelBody.querySelector('form'),input=form.querySelector('input'),scope=panelBody.querySelector('[type=checkbox]'),status=panelBody.querySelector('.dem-search-status'),results=panelBody.querySelector('.dem-search-results');let generation=0;input.value=query;scope.checked=all;
     form.addEventListener('submit',async event=>{event.preventDefault();const query=input.value.trim();if(!query)return;const thisSearch=++generation;results.replaceChildren();status.textContent='Searching…';
       try {const index=scope.checked?await getIndex():blocks.filter(node=>content.contains(node)).map(node=>({file,title,text:node.textContent,block:Number(node.dataset.block)}));if(thisSearch!==generation)return;
         const matches=index.filter(unit=>unit.text.toLocaleLowerCase().includes(query.toLocaleLowerCase()));status.textContent=matches.length+' matching passages'+(matches.length>100?' · showing the first 100':'')+'.';
-        matches.slice(0,100).forEach(unit=>{const card=document.createElement('div');card.className='dem-record';const a=document.createElement('a');a.textContent=unit.title;a.href=unit.file+'?find='+encodeURIComponent(query);if(unit.file===file)a.addEventListener('click',event=>{event.preventDefault();const node=blocks[unit.block]||blocks.find(n=>n.textContent.includes(unit.text));if(!node)return;const at=node.textContent.toLowerCase().indexOf(query.toLowerCase());closePanel();go({block:Number(node.dataset.block),char:at});refreshMarks({block:Number(node.dataset.block),start:at,end:at+query.length});});const snippet=document.createElement('small');const at=unit.text.toLowerCase().indexOf(query.toLowerCase());snippet.textContent=(at>60?'…':'')+unit.text.slice(Math.max(0,at-60),at+query.length+110);card.append(a,snippet);results.append(card);});
+        matches.slice(0,100).forEach(unit=>{const card=document.createElement('div');card.className='dem-record';const a=document.createElement('a');a.textContent=unit.title;a.href=unit.file+(catalog.some(item=>item.file===unit.file)?'?find=':'#:~:text=')+encodeURIComponent(query);if(unit.file===file)a.addEventListener('click',event=>{event.preventDefault();const node=blocks[unit.block]||blocks.find(n=>n.textContent.includes(unit.text));if(!node)return;const at=node.textContent.toLowerCase().indexOf(query.toLowerCase());closePanel();go({block:Number(node.dataset.block),char:at});refreshMarks({block:Number(node.dataset.block),start:at,end:at+query.length});});const snippet=document.createElement('small');const at=unit.text.toLowerCase().indexOf(query.toLowerCase());snippet.textContent=(at>60?'…':'')+unit.text.slice(Math.max(0,at-60),at+query.length+110);card.append(a,snippet);results.append(card);});
       } catch(_){status.textContent='Some chapters could not be loaded. Please try again when connected.';}
     });
+    if(query)form.requestSubmit();
   }
   async function getIndex() {
-    if(!searchIndexPromise)searchIndexPromise=(async()=>{const index=[];let cursor=0;async function worker(){while(cursor<catalog.length){const item=catalog[cursor++];const response=await fetch(item.file);if(!response.ok)throw new Error('Chapter unavailable');const html=await response.text();const doc=new DOMParser().parseFromString(html,'text/html');const script=[...doc.scripts].map(s=>s.textContent).find(s=>/const CHAPTER_TEXT\s*=/.test(s))||'';const match=script.match(/const CHAPTER_TEXT\s*=\s*`([\s\S]*?)`\s*;/);const paragraphs=match?.[1].trim()?match[1].trim().split(/\n{2,}/):[...doc.querySelectorAll('.page:not(.page-cover) .page-body')].map(n=>n.textContent);paragraphs.filter(Boolean).forEach(text=>index.push({file:item.file,title:item.title,text}));}}await Promise.all(Array.from({length:5},worker));return index;})().catch(error=>{searchIndexPromise=null;throw error;});return searchIndexPromise;
+    if(!searchIndexPromise)searchIndexPromise=(async()=>{
+      const works=[{file:'introduction.html',title:'Introduction'},{file:'foreword.html',title:'Foreword'},{file:'authors-notes.html',title:"Author's Notes"},...catalog];
+      const index=[];let cursor=0;
+      async function worker(){while(cursor<works.length){
+        const item=works[cursor++],response=await fetch(item.file);if(!response.ok)throw new Error('Chapter unavailable');
+        const doc=new DOMParser().parseFromString(await response.text(),'text/html');
+        const script=[...doc.scripts].map(s=>s.textContent).find(s=>/const CHAPTER_TEXT\s*=/.test(s))||'';
+        const match=script.match(/const CHAPTER_TEXT\s*=\s*`([\s\S]*?)`\s*;/);
+        const paragraphs=match?.[1].trim()?match[1].trim().split(/\n{2,}/):[...doc.querySelectorAll('.page:not(.page-cover) .page-body,.manuscript')].map(n=>n.textContent);
+        paragraphs.filter(Boolean).forEach(text=>index.push({file:item.file,title:item.title,text}));
+      }}
+      await Promise.all(Array.from({length:5},worker));return index;
+    })().catch(error=>{searchIndexPromise=null;throw error;});return searchIndexPromise;
+  }
+  function createWritingSearch() {
+    const form=document.createElement('form');form.className='dem-writing-search';form.setAttribute('role','search');
+    const label=document.createElement('label');label.textContent='Search the writing';
+    const row=document.createElement('div');row.className='dem-writing-search-row';
+    const input=document.createElement('input');input.type='search';input.required=true;input.placeholder='A word or phrase…';input.setAttribute('aria-label','Search the writing');
+    const submit=document.createElement('button');submit.type='submit';submit.className='dem-icon';submit.setAttribute('aria-label','Search writing');submit.title='Search writing';submit.innerHTML=svg('search');row.append(input,submit);label.append(row);
+    const scopeLabel=document.createElement('label');scopeLabel.className='dem-scope-label';scopeLabel.textContent='Search in';const scope=document.createElement('select');scope.setAttribute('aria-label','Writing search scope');
+    for(const [value,text] of [['chapter','This chapter'],['collection','The complete work']]){const option=document.createElement('option');option.value=value;option.textContent=text;scope.append(option);}scopeLabel.append(scope);
+    form.append(label,scopeLabel);form.addEventListener('submit',event=>{event.preventDefault();const query=input.value.trim();if(query)openPanel('search',submit,{query,all:scope.value==='collection'});});return form;
+  }
+  function safeSource(value) {try{const url=new URL(value);return ['http:','https:'].includes(url.protocol)?url.href:'';}catch(_){return '';}}
+  function definitionCard(record,saved=false) {
+    const card=document.createElement('div');card.className='dem-record dem-definition-card';card.dataset.definitionWord=record.word;
+    const heading=document.createElement('h3');heading.textContent=record.word;const part=document.createElement('small');part.textContent=record.partOfSpeech;card.append(heading,part,paragraph(record.definition));
+    if(record.example){const example=document.createElement('blockquote');example.textContent=record.example;card.append(example);}
+    const source=document.createElement('a');source.className='dem-definition-source';source.textContent='Dictionary source';source.href=safeSource(record.source)||'https://dictionaryapi.dev/';source.target='_blank';source.rel='noopener noreferrer';card.append(source);
+    if(record.license?.name){const license=document.createElement('small');license.textContent='License: '+record.license.name;if(safeSource(record.license.url)){const a=document.createElement('a');a.href=safeSource(record.license.url);a.textContent=' · View license';a.target='_blank';a.rel='noopener noreferrer';license.append(a);}card.append(license);}
+    const actions=document.createElement('div');actions.className='dem-record-actions';const button=document.createElement('button');button.type='button';
+    if(saved){button.textContent='Remove';button.setAttribute('aria-label','Remove saved definition of '+record.word);button.addEventListener('click',()=>{data.definitions=data.definitions.filter(item=>item.id!==record.id);write(dataKey,data);refreshCounts();renderDefinitions();});}
+    else {
+      const exists=()=>data.definitions.some(item=>item.word.toLowerCase()===record.word.toLowerCase()&&item.definition===record.definition);
+      button.textContent=exists()?'Saved':'Save definition';button.disabled=exists();button.setAttribute('aria-label','Save definition of '+record.word);
+      button.addEventListener('click',()=>{if(!exists())data.definitions.push({...record,id:uid(),savedAt:Date.now()});const persisted=write(dataKey,data);refreshCounts();button.textContent='Saved';button.disabled=true;if(persisted)toast('Definition saved.');});
+    }
+    actions.append(button);card.append(actions);return card;
+  }
+  function renderDefinitions() {
+    panelBody.replaceChildren(paragraph('Your saved definitions are kept on this browser and remain available offline.'));
+    if(!data.definitions.length){panelBody.append(paragraph('Look up a word in Dictionary, then choose Save definition.'));return;}
+    const list=document.createElement('div');list.className='dem-list';data.definitions.slice().reverse().forEach(record=>list.append(definitionCard(record,true)));panelBody.append(list);
   }
   function renderDictionary(word='') {
-    panelBody.innerHTML='<p>Definitions are retrieved from the existing public dictionary service.</p><form class="dem-search-form"><input type="text" aria-label="Word to define" placeholder="Select or enter a word" required><button class="dem-primary" type="submit">Define</button></form><div class="dem-definition" role="status"></div>';
-    const form=panelBody.querySelector('form'),input=form.querySelector('input'),result=panelBody.querySelector('.dem-definition');input.value=word;
-    form.addEventListener('submit',async event=>{event.preventDefault();const term=input.value.trim();if(!term)return;result.textContent='Looking up '+term+'…';try {const response=await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(term));if(!response.ok)throw new Error('No definition available');const entries=await response.json();result.replaceChildren();let count=0;for(const entry of entries)for(const meaning of entry.meanings||[])for(const definition of meaning.definitions||[]){if(count++>=7)break;const card=document.createElement('div');card.className='dem-record';const part=document.createElement('small');part.textContent=meaning.partOfSpeech;card.append(part,paragraph(definition.definition));if(definition.example)card.append(paragraph('“'+definition.example+'”'));result.append(card);}if(!count)throw new Error('No definitions');}catch(_){result.textContent='A definition is not available right now. Check the word or your connection and try again.';}});
+    panelBody.innerHTML='<p>Look up a word and save the definitions you want to keep.</p><form class="dem-search-form"><input type="text" aria-label="Word to define" placeholder="Select or enter a word" required><button class="dem-primary" type="submit">Define</button></form><button type="button" class="dem-text-button" data-action="definitions">Saved definitions</button><div class="dem-definition" role="status"></div>';
+    const form=panelBody.querySelector('form'),input=form.querySelector('input'),result=panelBody.querySelector('.dem-definition');input.value=word;let generation=0;
+    form.addEventListener('submit',async event=>{
+      event.preventDefault();const term=input.value.trim();if(!term)return;const request=++generation;result.textContent='Looking up '+term+'…';
+      try {
+        const endpoint='https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(term),response=await fetch(endpoint);if(!response.ok)throw new Error('No definition available');
+        const entries=await response.json();if(request!==generation)return;result.replaceChildren();let count=0;
+        for(const entry of entries)for(const meaning of entry.meanings||[])for(const definition of meaning.definitions||[]){
+          if(count>=7)continue;if(typeof definition.definition!=='string'||!definition.definition.trim())continue;count++;
+          result.append(definitionCard({word:entry.word||term,partOfSpeech:meaning.partOfSpeech||'',definition:definition.definition,example:definition.example||'',source:(entry.sourceUrls||[]).map(safeSource).find(Boolean)||endpoint,license:definition.license||meaning.license||entry.license||null}));
+        }
+        if(!count)throw new Error('No definitions');
+      }catch(_){if(request===generation)result.textContent='A definition is not available right now. Check the word or your connection and try again.';}
+    });
     if(word)form.requestSubmit();
   }
   function addBookmark() {
@@ -352,7 +455,7 @@
     else if(action==='define-selection'&&selection){const word=selection.quote.trim().replace(/^[^\p{L}]+|[^\p{L}]+$/gu,'');if(/\s/.test(word)){toast('Select a single word to look it up.');return;}openPanel('dictionary',target);renderDictionary(word);}
     else if(action==='share'&&selection){const url=new URL(file+'#dem-block-'+selection.block,location.href).href;try{if(navigator.share)await navigator.share({title,text:selection.quote,url});else{await navigator.clipboard.writeText(selection.quote+'\n\n'+title+' — By EARNLIGHT\n'+url);toast('Passage and link copied.');}}catch(error){if(error.name!=='AbortError')toast('Sharing is unavailable here. Use Copy instead.');}}
     else if(action==='copy'&&selection){try{await navigator.clipboard.writeText(selection.quote);toast('Passage copied.');}catch(_){toast('Copy is unavailable here. Use your browser’s Copy command.');}}
-    else if(['chapters','bookmarks','notes','highlights','settings','search','dictionary','extras'].includes(action))openPanel(action,target);
+    else if(['chapters','bookmarks','notes','highlights','settings','search','dictionary','definitions','extras'].includes(action))openPanel(action,target);
   });
   // Capture before the legacy page-turn shortcuts; they must not change hidden pages.
   window.addEventListener('keydown',event=>{

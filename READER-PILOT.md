@@ -15,3 +15,13 @@ Run `python3 scripts/verify-reader-pilot.py` against a static server, setting `D
 The supplied illuminated-manuscript reference guides the parchment, dark-and-gold frame, celestial panorama, illustrated navigation and page controls, using existing artwork. Discussion and associated original links remain available through About & discussion, retaining their original destinations. The service worker uses a new cache version and includes the new assets so installed readers can update.
 
 Publishing this pilot is explicitly authorised. Extending the design to other chapters awaits the user's assessment of Advice.
+
+## Personal reading tools
+
+The desktop sidebar and mobile chapter drawer offer writing search scoped to Advice or the complete work. Collection search reads all 33 original chapter sources and the three introductory manuscripts, including quotations, on demand. Result snippets come directly from those sources.
+
+The notes panel exports all notes, any checked selection, or one note as a local plain-text or JSON download. Exports contain the note, selected passage, work title and source link. They do not send notes to a service. Highlights have a small red × inside a 44-pixel remove button, plus Share and Copy actions. Removing an imported highlight remains effective after reload without deleting original legacy storage; the import marker prevents it reappearing. Sharing opens the device share menu where available and falls back to copying the exact passage and source link. Cancelling a share does not copy it.
+
+Dictionary results can be saved individually to Saved definitions, with exact provider wording, examples, source and supplied license information. These records persist in the existing annotations storage alongside notes/highlights, are readable offline and can be removed. Failed lookups never generate a substitute definition.
+
+`python3 scripts/verify-reader-tools.py` verifies both search scopes, genuine TXT/JSON downloads, exact export selection, share payload/copy fallback, imported-highlight deletion after reload, saved-definition persistence/offline access/removal, source/license display, failed lookups and mobile navigation. The same `DEMAHS_TEST_URL` and `DEMAHS_TEST_BROWSER` overrides apply. Dictionary, clipboard and native sharing are intercepted in these tests; no external message or comment is sent.
