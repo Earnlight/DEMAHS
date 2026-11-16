@@ -76,11 +76,12 @@ with sync_playwright() as p:
   page.locator('#dem-page-number').fill('2');page.locator('.dem-page-jump').get_by_role('button',name='Go',exact=True).click()
   assert page.evaluate('DemahsReader.getPagination().page')==2
   anchor=page.evaluate('DemahsReader.getPosition()')
-  page.locator('[data-action=fullscreen]').click();expect(page.locator('.dem-top')).to_be_hidden()
+  page.locator('[data-action=fullscreen]').click();expect(page.locator('.dem-top')).to_be_hidden(timeout=4000)
   page.wait_for_timeout(150)
   assert page.evaluate(anchor_visible,anchor),(width,'fullscreen changed passage')
   assert not (geometry:=page.evaluate(glyph_check))['bad'],geometry
   rect=page.locator('#dem-app').bounding_box();assert abs(rect['width']-page.evaluate('visualViewport.width'))<=2
+  if page.locator('[data-action=show-controls]').is_visible():page.locator('[data-action=show-controls]').click()
   page.locator('[data-action=fullscreen]').click();expect(page.locator('.dem-top')).to_be_visible();page.wait_for_timeout(150)
   assert page.evaluate(anchor_visible,anchor),(width,'exit lost passage')
   page.keyboard.press('End');assert page.evaluate('DemahsReader.getPagination().page===DemahsReader.getPagination().total')
@@ -97,10 +98,11 @@ with sync_playwright() as p:
  page.locator('[data-action=next-page]').click();page.locator('.dem-top [data-action=bookmark]').click();page.wait_for_timeout(220)
  saved=page.evaluate('DemahsReader.getPosition()');page.reload();page.wait_for_function('window.DemahsReader?.getPagination().ready');page.wait_for_timeout(150)
  assert page.evaluate(anchor_visible,saved)
- page.locator('[data-action=fullscreen]').click();expect(page.locator('.dem-top')).to_be_hidden();page.wait_for_timeout(150)
+ page.locator('[data-action=fullscreen]').click();expect(page.locator('.dem-top')).to_be_hidden(timeout=4000);page.wait_for_timeout(150)
  oldheight=page.locator('.dem-page-window').bounding_box()['height'];assert oldheight>600
  page.set_viewport_size({'width':844,'height':390});page.wait_for_timeout(200);assert not (geometry:=page.evaluate(glyph_check))['bad'],geometry;assert page.evaluate(anchor_visible,saved)
  page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(200)
+ if page.locator('[data-action=show-controls]').is_visible():page.locator('[data-action=show-controls]').click()
  page.locator('[data-action=fullscreen]').click();page.wait_for_timeout(150)
  page.locator('.dem-reading-tools [data-action=settings]').click()
  page.get_by_label('Font size',exact=True).evaluate("el=>{el.value=30;el.dispatchEvent(new Event('input',{bubbles:true}));}")
