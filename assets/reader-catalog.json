@@ -1,0 +1,332 @@
+[
+  {
+    "file": "light-as-meaning.html",
+    "title": "Light as Meaning",
+    "section": "Foundations",
+    "chapterLabel": "Chapter I",
+    "slug": "light-as-meaning",
+    "cover": "assets/images/covers/light-as-meaning.webp",
+    "previous": null,
+    "next": "how-to-build-your-light.html"
+  },
+  {
+    "file": "how-to-build-your-light.html",
+    "title": "How to Build Light",
+    "section": "Foundations",
+    "chapterLabel": "Chapter II",
+    "slug": "how-to-build-your-light",
+    "cover": "assets/images/covers/how-to-build-your-light.webp",
+    "previous": "light-as-meaning.html",
+    "next": "purity.html"
+  },
+  {
+    "file": "purity.html",
+    "title": "Purity",
+    "section": "Foundations",
+    "chapterLabel": "Chapter III",
+    "slug": "purity",
+    "cover": "assets/images/covers/purity.webp",
+    "previous": "how-to-build-your-light.html",
+    "next": "reality.html"
+  },
+  {
+    "file": "reality.html",
+    "title": "Reality",
+    "section": "Foundations",
+    "chapterLabel": "Chapter One",
+    "slug": "reality",
+    "cover": "assets/images/covers/reality.webp",
+    "previous": "purity.html",
+    "next": "the-unseen.html"
+  },
+  {
+    "file": "the-unseen.html",
+    "title": "The Unseen",
+    "section": "Foundations",
+    "chapterLabel": "Chapter One",
+    "slug": "the-unseen",
+    "cover": "assets/images/covers/the-unseen.webp",
+    "previous": "reality.html",
+    "next": "gravitation.html"
+  },
+  {
+    "file": "gravitation.html",
+    "title": "Gravitation",
+    "section": "Foundations",
+    "chapterLabel": "Chapter One",
+    "slug": "gravitation",
+    "cover": "assets/images/covers/gravitation.webp",
+    "previous": "the-unseen.html",
+    "next": "the-continuum.html"
+  },
+  {
+    "file": "the-continuum.html",
+    "title": "The Continuum",
+    "section": "Foundations",
+    "chapterLabel": "Chapter One",
+    "slug": "the-continuum",
+    "cover": "assets/images/covers/the-continuum.webp",
+    "previous": "gravitation.html",
+    "next": "the-nature-of-life.html"
+  },
+  {
+    "file": "the-nature-of-life.html",
+    "title": "The Nature of Life",
+    "section": "The Person",
+    "chapterLabel": "Chapter One",
+    "slug": "the-nature-of-life",
+    "cover": "assets/images/covers/the-nature-of-life.webp",
+    "previous": "the-continuum.html",
+    "next": "our-heart.html"
+  },
+  {
+    "file": "our-heart.html",
+    "title": "Our Heart",
+    "section": "The Person",
+    "chapterLabel": "Chapter III",
+    "slug": "our-heart",
+    "cover": "assets/images/covers/our-heart.webp",
+    "previous": "the-nature-of-life.html",
+    "next": "our-mind.html"
+  },
+  {
+    "file": "our-mind.html",
+    "title": "Our Mind",
+    "section": "The Person",
+    "chapterLabel": "Chapter One",
+    "slug": "our-mind",
+    "cover": "assets/images/covers/our-mind.webp",
+    "previous": "our-heart.html",
+    "next": "thoughts.html"
+  },
+  {
+    "file": "thoughts.html",
+    "title": "Thoughts",
+    "section": "The Person",
+    "chapterLabel": "Chapter One",
+    "slug": "thoughts",
+    "cover": "assets/images/covers/thoughts.webp",
+    "previous": "our-mind.html",
+    "next": "the-conscience.html"
+  },
+  {
+    "file": "the-conscience.html",
+    "title": "The Conscience",
+    "section": "The Person",
+    "chapterLabel": "Chapter One",
+    "slug": "the-conscience",
+    "cover": "assets/images/covers/the-conscience.webp",
+    "previous": "thoughts.html",
+    "next": "age-vs-evolution.html"
+  },
+  {
+    "file": "age-vs-evolution.html",
+    "title": "Age vs Evolution",
+    "section": "The Person",
+    "chapterLabel": "Chapter One",
+    "slug": "age-vs-evolution",
+    "cover": "assets/images/covers/age-vs-evolution.webp",
+    "previous": "the-conscience.html",
+    "next": "reading.html"
+  },
+  {
+    "file": "reading.html",
+    "title": "Reading",
+    "section": "Knowledge",
+    "chapterLabel": "Chapter One",
+    "slug": "reading",
+    "cover": "assets/images/covers/reading.webp",
+    "previous": "age-vs-evolution.html",
+    "next": "understanding.html"
+  },
+  {
+    "file": "understanding.html",
+    "title": "Understanding",
+    "section": "Knowledge",
+    "chapterLabel": "Chapter One",
+    "slug": "understanding",
+    "cover": "assets/images/covers/understanding.webp",
+    "previous": "reading.html",
+    "next": "reason.html"
+  },
+  {
+    "file": "reason.html",
+    "title": "Reason",
+    "section": "Knowledge",
+    "chapterLabel": "Chapter One",
+    "slug": "reason",
+    "cover": "assets/images/covers/reason.webp",
+    "previous": "understanding.html",
+    "next": "truth.html"
+  },
+  {
+    "file": "truth.html",
+    "title": "Truth",
+    "section": "Knowledge",
+    "chapterLabel": "Chapter One",
+    "slug": "truth",
+    "cover": "assets/images/covers/truth.webp",
+    "previous": "reason.html",
+    "next": "belief.html"
+  },
+  {
+    "file": "belief.html",
+    "title": "Belief",
+    "section": "Knowledge",
+    "chapterLabel": "Chapter One",
+    "slug": "belief",
+    "cover": "assets/images/covers/belief.webp",
+    "previous": "truth.html",
+    "next": "delusion.html"
+  },
+  {
+    "file": "delusion.html",
+    "title": "Delusion",
+    "section": "Knowledge",
+    "chapterLabel": "Chapter One",
+    "slug": "delusion",
+    "cover": "assets/images/covers/delusion.webp",
+    "previous": "belief.html",
+    "next": "the-pen.html"
+  },
+  {
+    "file": "the-pen.html",
+    "title": "The Pen",
+    "section": "Expression",
+    "chapterLabel": "Chapter One",
+    "slug": "the-pen",
+    "cover": "assets/images/covers/the-pen.webp",
+    "previous": "delusion.html",
+    "next": "imagination.html"
+  },
+  {
+    "file": "imagination.html",
+    "title": "Imagination",
+    "section": "Expression",
+    "chapterLabel": "Chapter One",
+    "slug": "imagination",
+    "cover": "assets/images/covers/imagination.webp",
+    "previous": "the-pen.html",
+    "next": "advice.html"
+  },
+  {
+    "file": "advice.html",
+    "title": "Advice",
+    "section": "Expression",
+    "chapterLabel": "Chapter III",
+    "slug": "advice",
+    "cover": "assets/images/covers/advice.webp",
+    "previous": "imagination.html",
+    "next": "pleasure.html"
+  },
+  {
+    "file": "pleasure.html",
+    "title": "Pleasure",
+    "section": "Expression",
+    "chapterLabel": "Chapter One",
+    "slug": "pleasure",
+    "cover": "assets/images/covers/pleasure.webp",
+    "previous": "advice.html",
+    "next": "honour.html"
+  },
+  {
+    "file": "honour.html",
+    "title": "Honour",
+    "section": "Character",
+    "chapterLabel": "Chapter One",
+    "slug": "honour",
+    "cover": "assets/images/covers/honour.webp",
+    "previous": "pleasure.html",
+    "next": "morality.html"
+  },
+  {
+    "file": "morality.html",
+    "title": "Morality",
+    "section": "Character",
+    "chapterLabel": "Chapter One",
+    "slug": "morality",
+    "cover": "assets/images/covers/morality.webp",
+    "previous": "honour.html",
+    "next": "weakness.html"
+  },
+  {
+    "file": "weakness.html",
+    "title": "Weakness",
+    "section": "Character",
+    "chapterLabel": "Chapter One",
+    "slug": "weakness",
+    "cover": "assets/images/covers/weakness.webp",
+    "previous": "morality.html",
+    "next": "weight.html"
+  },
+  {
+    "file": "weight.html",
+    "title": "Weight",
+    "section": "Character",
+    "chapterLabel": "Chapter One",
+    "slug": "weight",
+    "cover": "assets/images/covers/weight.webp",
+    "previous": "weakness.html",
+    "next": "power.html"
+  },
+  {
+    "file": "power.html",
+    "title": "Power",
+    "section": "Power & Order",
+    "chapterLabel": "Chapter One",
+    "slug": "power",
+    "cover": "assets/images/covers/power.webp",
+    "previous": "weight.html",
+    "next": "greatness.html"
+  },
+  {
+    "file": "greatness.html",
+    "title": "Greatness",
+    "section": "Power & Order",
+    "chapterLabel": "Chapter One",
+    "slug": "greatness",
+    "cover": "assets/images/covers/greatness.webp",
+    "previous": "power.html",
+    "next": "hierarchy.html"
+  },
+  {
+    "file": "hierarchy.html",
+    "title": "Hierarchy",
+    "section": "Power & Order",
+    "chapterLabel": "Chapter One",
+    "slug": "hierarchy",
+    "cover": "assets/images/covers/hierarchy.webp",
+    "previous": "greatness.html",
+    "next": "the-finality.html"
+  },
+  {
+    "file": "the-finality.html",
+    "title": "The Finality",
+    "section": "Destiny",
+    "chapterLabel": "Chapter One",
+    "slug": "the-finality",
+    "cover": "assets/images/covers/the-finality.webp",
+    "previous": "hierarchy.html",
+    "next": "paradise.html"
+  },
+  {
+    "file": "paradise.html",
+    "title": "Paradise",
+    "section": "Destiny",
+    "chapterLabel": "Chapter One",
+    "slug": "paradise",
+    "cover": "assets/images/covers/paradise.webp",
+    "previous": "the-finality.html",
+    "next": "hellfire.html"
+  },
+  {
+    "file": "hellfire.html",
+    "title": "Hellfire",
+    "section": "Destiny",
+    "chapterLabel": "Chapter One",
+    "slug": "hellfire",
+    "cover": "assets/images/covers/hellfire.webp",
+    "previous": "paradise.html",
+    "next": null
+  }
+]
