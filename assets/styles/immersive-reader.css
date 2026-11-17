@@ -350,3 +350,9 @@ body.dem-active{background:#142b22}
 @media(max-width:760px){.dem-bottom .dem-page-turns .dem-label{display:inline}.dem-page-turns{gap:28px}.dem-page-turns>.dem-text-button{font-size:15px}.dem-jump-editing .dem-bottom{position:relative;inset:auto;height:auto}.dem-scroll>.dem-panorama img{object-position:72% 54%}}
 
 .dem-page-jump,.dem-sidebar-jump .dem-page-jump{flex-wrap:wrap;justify-content:center}.dem-jump-row-break{flex-basis:100%;height:0}.dem-page-jump>button[type=submit]{margin-inline:auto;min-width:64px}
+
+/* Selectable illuminated initial: ornament is CSS, never substituted chapter text. */
+.dem-reading-content .dem-illuminated-initial{display:inline-block;position:relative;font:500 3.6em/.98 'Cinzel',Georgia,serif;color:#a77b25;vertical-align:-.12em;padding:.10em .24em .08em;margin:0 .06em 0 .025em;border:3px double #bb963c99;border-radius:3px;background:linear-gradient(135deg,#fff4c932,transparent 65%),url('../images/manuscript-vine.svg') left center/22% 100% no-repeat,url('../images/manuscript-vine.svg') right center/22% 100% no-repeat;text-shadow:0 1px #fff7da,1px 2px 0 #62441835;box-shadow:inset 0 0 0 3px #cfb36a16;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.dem-reading-content .dem-initial-float{float:left;margin:.06em .16em .04em 0}
+.dem-app[data-mode=dark] .dem-illuminated-initial{color:#efd08a;text-shadow:0 1px #5d4019;background-color:#c9a84c0b}
+@media(max-width:760px){.dem-reading-content .dem-illuminated-initial{font-size:3.1em}}

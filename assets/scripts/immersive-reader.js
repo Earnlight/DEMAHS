@@ -79,7 +79,18 @@
     const synopsis = document.createElement('div'); synopsis.className = 'dem-synopsis';
     [...legacySummary.childNodes].forEach(node => synopsis.append(node)); app.querySelector('.dem-chapter-heading').append(synopsis);
   }
-  const opening=content.querySelector('p');if(opening&&/^\p{L}/u.test(opening.textContent.trim()))opening.classList.add('dem-opening-paragraph');
+  const opening=content.querySelector('p');
+  if(opening){
+    const walker=document.createTreeWalker(opening,NodeFilter.SHOW_TEXT);let text;
+    while(text=walker.nextNode()){
+      const initial=text.textContent.match(/\p{L}/u);if(!initial)continue;
+      const range=document.createRange();range.setStart(text,initial.index);range.setEnd(text,initial.index+initial[0].length);
+      const letter=document.createElement('span');letter.className='dem-illuminated-initial';
+      // Preserve punctuation, the actual letter and every source character in DOM order.
+      if(/^\s*\p{L}/u.test(opening.textContent))letter.classList.add('dem-initial-float');
+      range.surroundContents(letter);break;
+    }
+  }
   const hasChapterText = blocks.some(node => node.matches('p,ul,ol,blockquote'));
   if (!hasChapterText) {
     app.querySelector('.dem-end').hidden=true;
