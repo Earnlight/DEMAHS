@@ -1,7 +1,7 @@
 // My Noegenesis — Service Worker
 // Caches all pages for offline use and fast loading
 
-const CACHE_NAME = 'demahs-reader-pilot-v5';
+const CACHE_NAME = 'demahs-reader-pilot-v6';
 
 // List every file in your site here
 const ASSETS = [
