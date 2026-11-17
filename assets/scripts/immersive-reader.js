@@ -39,7 +39,7 @@
   app.innerHTML = `<a class="dem-skip" href="#dem-reading">Skip to chapter text</a>
     <header class="dem-top"><div style="display:flex;align-items:center;gap:5px">${button('chapters','menu','Open reader navigation','dem-menu')}<a class="dem-brand" href="library.html" aria-label="DEMAHS library">${crown}<span>DEMAHS <small>THE MANUSCRIPT READER</small></span></a></div><span class="dem-top-title">${esc(title)} <span aria-hidden="true" style="color:#766147;margin-inline:14px">/</span> By EARNLIGHT</span><nav class="dem-actions" aria-label="Reader actions">${button('search','search','Search chapters')}${button('bookmark','bookmark','Bookmark this location')}${button('settings','settings','Reader settings','dem-settings-top')}</nav></header>
     <div class="dem-workspace"><aside class="dem-sidebar" aria-label="Reader navigation"><div class="dem-cover"><img src="${esc(current.cover)}" alt="" width="1024" height="1536"><span>${esc(title)}</span></div><div class="dem-sidebar-search-slot"></div><p class="dem-sidebar-label">YOUR READING ROOM</p><nav class="dem-nav">${nav()}</nav><div class="dem-sidebar-foot">✦<a href="library.html">Return to the library</a><button class="dem-text-button" type="button" data-action="extras">About &amp; discussion</button></div></aside>
-    <main id="dem-reading" class="dem-scroll" tabindex="0" aria-label="${esc(title)} manuscript"><div class="dem-page-window"><article class="dem-manuscript" aria-labelledby="dem-title"><div class="dem-panorama" aria-hidden="true"><picture><source media="(max-width:760px)" srcset="assets/images/celestial-realm-mobile.webp"><img src="assets/images/celestial-realm.webp" width="1585" height="992" alt="" decoding="async" fetchpriority="high"></picture></div><header class="dem-chapter-heading"><div class="dem-kicker"></div><h1 id="dem-title">${esc(title)}</h1><div class="dem-ornament" aria-hidden="true">✦</div></header><div class="dem-reading-content" id="dem-content"></div><div class="dem-end"><span aria-hidden="true">❧</span>End of ${esc(title)}</div></article></div><span class="dem-folio" aria-hidden="true"></span></main></div>
+    <main id="dem-reading" class="dem-scroll" tabindex="0" aria-label="${esc(title)} manuscript"><div class="dem-page-window"><article class="dem-manuscript" aria-labelledby="dem-title"><div class="dem-panorama" aria-hidden="true"><picture><img src="assets/images/celestial-realm.webp" width="1585" height="992" alt="" decoding="async" fetchpriority="high"></picture></div><header class="dem-chapter-heading"><div class="dem-kicker"></div><h1 id="dem-title">${esc(title)}</h1><div class="dem-ornament" aria-hidden="true">✦</div></header><div class="dem-reading-content" id="dem-content"></div><div class="dem-end"><span aria-hidden="true">❧</span>End of ${esc(title)}</div></article></div><span class="dem-folio" aria-hidden="true"></span></main></div>
     <footer class="dem-bottom"><div class="dem-find-nav" role="navigation" aria-label="Search match navigation" hidden><button type="button" class="dem-icon" data-action="previous-match" aria-label="Previous search match">${svg('left')}</button><span class="dem-find-count" role="status" aria-live="polite"></span><button type="button" class="dem-icon" data-action="next-match" aria-label="Next search match">${svg('right')}</button><button type="button" class="dem-icon" data-action="clear-find" aria-label="Clear search highlights">${svg('close')}<span>Clear search</span></button></div><nav class="dem-page-turns" aria-label="Page navigation"><button class="dem-text-button dem-page-previous" type="button" data-action="previous-page" aria-label="Previous page">${svg('left')}<span class="dem-label">Previous page</span></button><form class="dem-page-jump"><label for="dem-page-number">Page</label><input id="dem-page-number" type="number" inputmode="numeric" enterkeyhint="go" min="1" value="1" aria-label="Go to page" aria-describedby="dem-page-total"><span class="dem-page-total" id="dem-page-total">of 1</span><button type="submit" class="dem-text-button">Go</button></form><button class="dem-text-button dem-page-next" type="button" data-action="next-page" aria-label="Next page"><span class="dem-label">Next page</span>${svg('right')}</button></nav><span class="dem-page-announcement" role="status" aria-live="polite" aria-atomic="true"></span><div class="dem-reading-tools">${button('chapters','chapters','Open chapter shelf')}<div class="dem-progress"><div class="dem-progress-line" role="progressbar" aria-label="Chapter reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><label class="dem-progress-label">Opening manuscript</label></div>${button('settings','settings','Font and appearance settings')}${button('mode','sun','Change reading appearance')}${button('fullscreen','full','Enter distraction-free fullscreen')}</div></footer>
     <button class="dem-reveal-controls" type="button" data-action="show-controls" aria-label="Show reader controls"><span></span></button><dialog class="dem-panel" aria-labelledby="dem-panel-title"><header class="dem-panel-header"><h2 id="dem-panel-title"></h2>${button('close','close','Close panel')}</header><div class="dem-panel-body"></div></dialog>
     <div class="dem-selection" role="toolbar" aria-label="Selected passage actions" hidden><button type="button" data-action="highlight">${svg('highlight')}Highlight</button><button type="button" data-action="note">${svg('note')}Note</button><button type="button" data-action="define-selection">${svg('dictionary')}Define</button><button type="button" data-action="copy">${svg('copy')}Copy</button><button type="button" data-action="share">${svg('share')}Share</button></div><div class="dem-toast" role="status" aria-live="polite" hidden></div>`;
@@ -51,6 +51,7 @@
   const historyKey='demahs.reader.search-history.v1';let searchHistory=read(historyKey,null);if(!Array.isArray(searchHistory))searchHistory=(read('noegenesis-recent-searches',[])||[]).filter(q=>typeof q==='string').slice(0,12).map(query=>({query,all:false}));
   let activeSearch={query:'',matches:[],index:0};
   const selectedNotes=new Set();let exportFormat='txt';
+  const jumpForm=app.querySelector('.dem-page-jump'),jumpHome=document.createElement('div');jumpHome.className='dem-sidebar-jump';jumpHome.append(jumpForm);app.querySelector('.dem-sidebar-search-slot').before(jumpHome);
   const pageInput=app.querySelector('#dem-page-number'),chromeBars=[app.querySelector('.dem-top'),app.querySelector('.dem-bottom')];
   let pageJumpLock=null,jumpReleaseTimer=0,chromeTimer=0,keyboardChrome=false,suppressSelectionUntil=0;
   const panorama=flow.querySelector('.dem-panorama'),spacer=document.createElement('div');spacer.className='dem-panorama-space';spacer.setAttribute('aria-hidden','true');panorama.before(spacer);viewport.prepend(panorama);
@@ -186,9 +187,16 @@
     }
     pageCount=Math.max(1,Math.ceil((extent+gap-1)/pageStride));
     if(prefs.view==='scroll'){
-      pageBoundaries=[];let words=0;
-      for(const unit of blocks.filter(node=>content.contains(node)&&node.matches('p,li,blockquote'))){const pattern=/\S+/g;let word;while(word=pattern.exec(unit.textContent)){if(words&&words%300===0)pageBoundaries[words/300]={unit,char:word.index};words++;}}
-      pageCount=Math.max(1,Math.ceil(words/300));
+      pageBoundaries=[];const words=[];
+      for(const unit of blocks.filter(node=>content.contains(node)&&node.matches('p,li,blockquote'))){const pattern=/\S+/g;let word;while(word=pattern.exec(unit.textContent))words.push({unit,char:word.index,stop:/\.[”’"')\]]*$/.test(word[0])});}
+      let start=0,index=1;
+      while(words.length-start>320){
+        const ends=[];for(let end=start+1;end<=words.length;end++)if(words[end-1].stop)ends.push(end);
+        const near=ends.filter(end=>end-start>=280&&end-start<=320);
+        const end=near.sort((a,b)=>Math.abs(a-start-300)-Math.abs(b-start-300))[0]??ends.find(end=>end-start>320);
+        if(!end||end>=words.length)break;pageBoundaries[index++]={unit:words[end].unit,char:words[end].char};start=end;
+      }
+      pageCount=index;
     }
     paginationReady=true;
     if(prefs.view==='scroll'){app.dataset.view='scroll';flow.style.transform='none';installDividers();layoutBusy=false;go(anchor,false);}
@@ -246,7 +254,7 @@
     revealChrome();pageInput.select();
   });
   pageInput.addEventListener('blur',()=>{clearTimeout(jumpReleaseTimer);jumpReleaseTimer=setTimeout(()=>releasePageJump(),220);});
-  app.querySelector('.dem-page-jump').addEventListener('submit',event=>{event.preventDefault();const target=Number(pageInput.value)-1;pageInput.blur();showPage(target,true);pageInput.value=pageIndex+1;revealChrome();});
+  app.querySelector('.dem-page-jump').addEventListener('submit',event=>{event.preventDefault();const target=Number(pageInput.value)-1;pageInput.blur();showPage(target,true);pageInput.value=pageIndex+1;if(panel.open)closePanel();revealChrome();});
   const resize=()=>{syncFullscreen();if(!mobileReader()){clearTimeout(chromeTimer);setChromeHidden(false);}if(pageJumpLock){releasePageJump();return;}schedulePagination();};
   window.addEventListener('resize',resize);window.addEventListener('orientationchange',resize);
   window.visualViewport?.addEventListener('resize',resize);window.visualViewport?.addEventListener('scroll',()=>{syncFullscreen();releasePageJump();});
@@ -330,7 +338,7 @@
   app.querySelector('.dem-selection').addEventListener('pointerdown',event=>event.preventDefault());
 
   function openPanel(type, source=document.activeElement, options={}) {
-    revealChrome();coverObserver?.disconnect();
+    revealChrome();if(panelBody.contains(jumpForm))jumpHome.append(jumpForm);coverObserver?.disconnect();
     if(panelType==='extras') supplemental.remove();
     opener=source;panelType=type;panel.dataset.panel=type;selection=selection?{...selection}:null;panelBody.replaceChildren();
     const names={chapters:'Chapters',bookmarks:'Bookmarks',notes:'Notes',highlights:'Highlights',settings:'Reader settings',search:'Search',dictionary:'Dictionary',definitions:'Saved definitions',extras:'About & discussion',editor:'Passage note'};
@@ -347,7 +355,7 @@
     requestAnimationFrame(()=>{(panelBody.querySelector('input,textarea,button,a')||panel.querySelector('button')).focus();});
   }
   function closePanel() { app.querySelectorAll('[data-action=chapters]').forEach(b=>b.setAttribute('aria-expanded','false')); panel.close();app.querySelectorAll('.dem-nav button').forEach(el=>el.removeAttribute('aria-current')); }
-  panel.addEventListener('close',()=>{coverObserver?.disconnect();revealChrome();if(opener?.isConnected&&opener.getClientRects().length)opener.focus({preventScroll:true});else viewport.focus({preventScroll:true});});
+  panel.addEventListener('close',()=>{if(panelBody.contains(jumpForm))jumpHome.append(jumpForm);coverObserver?.disconnect();revealChrome();if(opener?.isConnected&&opener.getClientRects().length)opener.focus({preventScroll:true});else viewport.focus({preventScroll:true});});
   panel.addEventListener('keydown',event=>{if(event.key==='Escape')event.stopPropagation();});
   panel.addEventListener('click',event=>{if(event.target===panel){const r=panel.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)closePanel();}});
   function paragraph(text){const p=document.createElement('p');p.textContent=text;return p;}
@@ -421,6 +429,7 @@
     form.addEventListener('submit',event=>{event.preventDefault();if(!input.value.trim())return;if(kind==='notes')item.text=input.value.trim();else item.name=input.value.trim();if(!data[kind].some(x=>x.id===item.id))data[kind].push(item);storeAnnotations();panelType=kind;panelTitle.textContent=kind==='notes'?'Notes':'Bookmarks';renderRecords(kind);toast('Saved.');});panelBody.append(form);requestAnimationFrame(()=>input.focus());
   }
   function renderChapters() {
+    panelBody.append(jumpForm);
     const tools=document.createElement('details');tools.className='dem-mobile-tools';const summary=document.createElement('summary');summary.textContent='Bookmarks, notes & reading tools';const mobile=document.createElement('nav');mobile.className='dem-mobile-nav dem-nav';mobile.setAttribute('aria-label','Reading tools');mobile.innerHTML=nav();tools.append(summary,mobile);panelBody.append(tools,createWritingSearch());
     const label=document.createElement('label');label.className='dem-field';label.textContent='Find a chapter';const input=document.createElement('input');input.type='search';input.setAttribute('aria-label','Find a chapter');label.append(input);panelBody.append(label);
     const routes=document.createElement('nav');routes.className='dem-chapter-routes';routes.setAttribute('aria-label','Chapter navigation');
@@ -565,7 +574,7 @@
   function revealChrome(keyboard=false) {
     clearTimeout(chromeTimer);setChromeHidden(false);if(keyboard)keyboardChrome=true;
     if(!fullscreen||!mobileReader())return;
-    chromeTimer=setTimeout(()=>{const active=document.activeElement,selected=getSelection();if(panel.open||keyboardChrome||active?.matches('input,textarea,select')||(selected&&!selected.isCollapsed))return;setChromeHidden(true);},1100);
+    chromeTimer=setTimeout(()=>{const active=document.activeElement,selected=getSelection();if(panel.open||keyboardChrome||active?.matches('input,textarea,select')||(selected&&!selected.isCollapsed))return;setChromeHidden(true);},1500);
   }
   app.addEventListener('pointerdown',event=>{keyboardChrome=false;if(!event.target.closest('.dem-scroll'))revealChrome();},{capture:true,passive:true});
   app.addEventListener('focusin',event=>{if(event.target.closest('.dem-top,.dem-bottom'))revealChrome();});
