@@ -507,3 +507,6 @@ body.realm-reader:not(.reader-fullscreen){padding-top:calc(var(--realm-header) +
 .dem-script-initial{display:inline-block;vertical-align:-.1em;margin-right:.05em}.dem-script-initial.dem-initial-float{float:left;margin:.06em .14em 0 0}
 
 .realm-reader .dem-chapter-opening::first-letter{font-family:'DEMAHS Illuminated',cursive!important;font-weight:400;font-size:4.5em;line-height:.85;float:left;margin:.06em .12em 0 0;color:var(--realm-gold)}
+
+@font-face{font-family:'DEMAHS Decorative';font-style:normal;font-weight:400;font-display:swap;src:url('../fonts/cinzel-decorative-latin-400-normal.woff2') format('woff2')}
+.realm-reader .dem-chapter-opening::first-letter,.realm-manuscript .dropcap{font-family:'DEMAHS Decorative',serif!important;line-height:1.2;padding:.08em .12em .14em;border:3px double #c9a84c99;background:url('../images/manuscript-vine.svg') left center/18% 100% no-repeat,url('../images/manuscript-vine.svg') right center/18% 100% no-repeat;color:#efd16d;text-shadow:0 1px #fff7c3,1px 2px #92602488;margin-bottom:.12em}

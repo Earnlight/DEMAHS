@@ -85,10 +85,10 @@
     while(text=walker.nextNode()){
       const initial=text.textContent.match(/\p{L}/u);if(!initial)continue;
       const range=document.createRange();range.setStart(text,initial.index);range.setEnd(text,initial.index+initial[0].length);
-      const letter=document.createElement('span');letter.className='dem-illuminated-initial';
+      const letter=document.createElement('span');letter.className='dem-illuminated-initial';const glyph=document.createElement('span');glyph.className='dem-initial-glyph';
       // Preserve punctuation, the actual letter and every source character in DOM order.
       if(/^\s*\p{L}/u.test(opening.textContent))letter.classList.add('dem-initial-float');
-      range.surroundContents(letter);break;
+      range.surroundContents(letter);glyph.append(...letter.childNodes);letter.append(glyph);break;
     }
   }
   const hasChapterText = blocks.some(node => node.matches('p,ul,ol,blockquote'));

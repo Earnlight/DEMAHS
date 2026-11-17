@@ -359,3 +359,8 @@ body.dem-active{background:#142b22}
 
 .dem-reading-content .dem-illuminated-initial{font-family:'DEMAHS Illuminated',cursive;font-weight:400;font-size:4.5em;line-height:.85;padding:.06em .08em 0;border:0;border-radius:0;background:none;box-shadow:none;text-shadow:0 1px #fff8df,1px 2px #79561426}.dem-app[data-mode=dark] .dem-illuminated-initial{background:none}
 @media(max-width:760px){.dem-reading-content .dem-illuminated-initial{font-size:4em}}
+
+/* Framed Cinzel initial: reserve room for the entire glyph and its ornament. */
+.dem-reading-content .dem-illuminated-initial,.dem-app[data-mode=dark] .dem-illuminated-initial{font-family:'DEMAHS Decorative',serif;font-weight:400;line-height:1.2;vertical-align:-.10em;padding:.12em .25em .18em;margin:0 .12em .16em .025em;border:3px double #b98d36;border-radius:4px;background:linear-gradient(135deg,#fff5bd38,transparent 48%,#e5ba4912),url('../images/manuscript-vine.svg') left center/19% 100% no-repeat,url('../images/manuscript-vine.svg') right center/19% 100% no-repeat;box-shadow:inset 0 1px 0 #fff8d1b0,inset 0 0 0 4px #d0a84412,0 2px 5px #97722420;text-shadow:none}
+.dem-initial-glyph{color:#bc8b1c;background:linear-gradient(165deg,#a16e1b 0%,#f1bf38 18%,#fff7b8 29%,#f7c641 40%,#b57d12 50%,#fff2a0 58%,#edb72d 76%,#a97616 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;-webkit-text-stroke:.3px #a77c25;filter:drop-shadow(0 1px 1px #83551e55)}
+.dem-reading-content .dem-initial-float{margin:.06em .2em .18em 0}
