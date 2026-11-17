@@ -184,7 +184,13 @@
         const unit=text.parentElement.closest('.dem-block,.dem-kicker,h1,.dem-synopsis p,.dem-end')||text.parentElement,prefix=document.createRange();prefix.selectNodeContents(unit);prefix.setEnd(text,lo);pageBoundaries[index]={unit,char:prefix.toString().length};
       }
     }
-    pageCount=Math.max(1,Math.ceil((extent+gap-1)/pageStride));paginationReady=true;
+    pageCount=Math.max(1,Math.ceil((extent+gap-1)/pageStride));
+    if(prefs.view==='scroll'){
+      pageBoundaries=[];let words=0;
+      for(const unit of blocks.filter(node=>content.contains(node)&&node.matches('p,li,blockquote'))){const pattern=/\S+/g;let word;while(word=pattern.exec(unit.textContent)){if(words&&words%300===0)pageBoundaries[words/300]={unit,char:word.index};words++;}}
+      pageCount=Math.max(1,Math.ceil(words/300));
+    }
+    paginationReady=true;
     if(prefs.view==='scroll'){app.dataset.view='scroll';flow.style.transform='none';installDividers();layoutBusy=false;go(anchor,false);}
     else {layoutBusy=false;showPage(pageForAnchor(anchor));}
     if(blocks[anchor?.block]||anchor?.end)lastAnchor=anchor;

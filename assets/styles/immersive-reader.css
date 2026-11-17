@@ -340,3 +340,8 @@ body.dem-active{background:#142b22}
 .dem-app[data-view=scroll] .dem-scroll::before{display:none}
 .dem-scroll-break[data-end-page]::after{content:'PAGE ' attr(data-end-page) '  ·  ❦  ·  PAGE ' attr(data-page-number)}
 .dem-scroll-break{user-select:none;-webkit-user-select:none}
+
+/* Each continuous reading page has one folio at its end. */
+.dem-scroll-break[data-page-index='0']:not([data-end]){height:0;margin:0;visibility:hidden}
+.dem-scroll-break[data-end-page]::after{content:attr(data-end-page)}
+.dem-scroll-break[data-end]::after{content:attr(data-page-number)}
