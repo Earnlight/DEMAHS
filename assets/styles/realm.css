@@ -501,3 +501,9 @@ body.realm-reader:not(.reader-fullscreen){padding-top:calc(var(--realm-header) +
 /* The low-opacity sky keeps its atmosphere without continuously rasterising large blurred layers. */
 .realm-page .cosmic-bg .nebula-blob{animation:none!important}
 .realm-header{backdrop-filter:none;-webkit-backdrop-filter:none}
+
+@font-face{font-family:'DEMAHS Illuminated';font-style:normal;font-weight:400;font-display:swap;src:url('../fonts/fleur-de-leah-latin-400-normal.woff2') format('woff2')}
+.realm-reader .dem-script-initial,.realm-manuscript .dropcap{font-family:'DEMAHS Illuminated',cursive!important;font-weight:400!important;font-size:4.5em;line-height:.85;color:var(--realm-gold);text-shadow:0 1px 2px #0002}
+.dem-script-initial{display:inline-block;vertical-align:-.1em;margin-right:.05em}.dem-script-initial.dem-initial-float{float:left;margin:.06em .14em 0 0}
+
+.realm-reader .dem-chapter-opening::first-letter{font-family:'DEMAHS Illuminated',cursive!important;font-weight:400;font-size:4.5em;line-height:.85;float:left;margin:.06em .12em 0 0;color:var(--realm-gold)}

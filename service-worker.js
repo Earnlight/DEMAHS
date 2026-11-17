@@ -1,7 +1,7 @@
 // My Noegenesis — Service Worker
 // Caches all pages for offline use and fast loading
 
-const CACHE_NAME = 'demahs-reader-pilot-v11';
+const CACHE_NAME = 'demahs-reader-pilot-v12';
 
 // List every file in your site here
 const ASSETS = [
@@ -61,6 +61,7 @@ const ASSETS = [
   '/assets/styles/library-shelf.css',
   '/assets/scripts/library-shelf.js',
   '/assets/fonts/cinzel-latin-wght-normal.woff2',
+  '/assets/fonts/fleur-de-leah-latin-400-normal.woff2',
   '/assets/fonts/cormorant-garamond-latin-wght-normal.woff2',
   '/assets/fonts/cormorant-garamond-latin-wght-italic.woff2',
   '/assets/images/celestial-realm.webp',

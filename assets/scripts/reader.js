@@ -3,6 +3,8 @@
   'use strict';
   const body = document.body;
   if (!body.classList.contains('realm-reader')) return;
+  // Style the original opening text without splitting nodes used by legacy search.
+  if(!document.querySelector('script[src$="immersive-reader.js"]'))document.querySelector('.page:not(.page-cover) .page-body p')?.classList.add('dem-chapter-opening');
   const root = document.documentElement;
   const book = document.getElementById('book');
   const enterButton = document.getElementById('fullscreen-btn');

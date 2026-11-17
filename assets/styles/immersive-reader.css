@@ -356,3 +356,6 @@ body.dem-active{background:#142b22}
 .dem-reading-content .dem-initial-float{float:left;margin:.06em .16em .04em 0}
 .dem-app[data-mode=dark] .dem-illuminated-initial{color:#efd08a;text-shadow:0 1px #5d4019;background-color:#c9a84c0b}
 @media(max-width:760px){.dem-reading-content .dem-illuminated-initial{font-size:3.1em}}
+
+.dem-reading-content .dem-illuminated-initial{font-family:'DEMAHS Illuminated',cursive;font-weight:400;font-size:4.5em;line-height:.85;padding:.06em .08em 0;border:0;border-radius:0;background:none;box-shadow:none;text-shadow:0 1px #fff8df,1px 2px #79561426}.dem-app[data-mode=dark] .dem-illuminated-initial{background:none}
+@media(max-width:760px){.dem-reading-content .dem-illuminated-initial{font-size:4em}}
