@@ -255,7 +255,7 @@
   });
   pageInput.addEventListener('blur',()=>{clearTimeout(jumpReleaseTimer);jumpReleaseTimer=setTimeout(()=>releasePageJump(),220);});
   app.querySelector('.dem-page-jump').addEventListener('submit',event=>{event.preventDefault();const target=Number(pageInput.value)-1;pageInput.blur();showPage(target,true);pageInput.value=pageIndex+1;if(panel.open)closePanel();revealChrome();});
-  const resize=()=>{syncFullscreen();if(!mobileReader()){clearTimeout(chromeTimer);setChromeHidden(false);}if(pageJumpLock){releasePageJump();return;}schedulePagination();};
+  const resize=()=>{syncFullscreen();if(!fullscreen){clearTimeout(chromeTimer);setChromeHidden(false);}if(pageJumpLock){releasePageJump();return;}schedulePagination();};
   window.addEventListener('resize',resize);window.addEventListener('orientationchange',resize);
   window.visualViewport?.addEventListener('resize',resize);window.visualViewport?.addEventListener('scroll',()=>{syncFullscreen();releasePageJump();});
   new ResizeObserver(()=>{if(paginationReady&&!pageJumpLock)schedulePagination();}).observe(viewport);
@@ -573,7 +573,7 @@
   }
   function revealChrome(keyboard=false) {
     clearTimeout(chromeTimer);setChromeHidden(false);if(keyboard)keyboardChrome=true;
-    if(!fullscreen||!mobileReader())return;
+    if(!fullscreen)return;
     chromeTimer=setTimeout(()=>{const active=document.activeElement,selected=getSelection();if(panel.open||keyboardChrome||active?.matches('input,textarea,select')||(selected&&!selected.isCollapsed))return;setChromeHidden(true);},1500);
   }
   app.addEventListener('pointerdown',event=>{keyboardChrome=false;if(!event.target.closest('.dem-scroll'))revealChrome();},{capture:true,passive:true});
